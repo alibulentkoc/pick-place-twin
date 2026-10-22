@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting - Pick-and-place twin help</title>
+<link rel="stylesheet" href="../assets/help.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Help guides">
+    <a class="home" href="../index.html">Pick-and-place twin</a>
+    <ol>
+      <li><a href="getting-started.html">Getting started</a></li>
+      <li><a href="lab-twin.html">Lab and tractor twin</a></li>
+      <li><a href="amiga-twin.html">Amiga watermelon twin</a></li>
+      <li><a href="how-it-works.html">How it works</a></li>
+      <li><a href="settings.html">Settings reference</a></li>
+      <li><a href="troubleshooting.html" aria-current="page">Troubleshooting</a></li>
+    </ol>
+    <div class="open">
+      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
+      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga watermelon twin</a>
+    </div>
+  </nav>
+  <main id="main">
+    <h1>Troubleshooting</h1>
+    <p class="lead">Common questions, and what to check first.</p>
+
+    <dl>
+      <dt>I pressed Start and nothing seems to happen.</dt>
+      <dd>Read the status line. While driving it updates every second with the distance to go. The view now follows the rover during a run; if it was off, use <em>Fit view to rig</em>. If watermelons from an earlier planting are still in the field, new ones go beyond them: press <em>Remove all watermelons</em>, then <em>Plant</em>.</dd>
+      <dt>The rover went off screen.</dt>
+      <dd>Turn on <em>Camera follows rover</em> under Settings, View, or use <em>Fit view to rig</em>. Right drag pans, the wheel zooms.</dd>
+      <dt>Many watermelons are skipped.</dt>
+      <dd>Check <em>Picks refused by checks</em> in Results. Elongated fruit lying across the row are too wide for the jaws: tick Wrist rotation or raise the actuator stroke. A full deck bin stops the run: press <em>Empty the deck bin</em>. Under heavy leaves with camera finding, some misses are expected.</dd>
+      <dt>"Gripper hit the watermelon during the move."</dt>
+      <dd>The open jaws would have swept into a fruit. Reload the page so you have the latest version. If it repeats, note the hardware, shape, leaf and finding choices so the case can be reproduced.</dd>
+      <dt>I see air blowing with Leaves set to None.</dt>
+      <dd>Choosing None removes the leaves only when you press Plant again. Until then the air knife keeps clearing the old leaves.</dd>
+      <dt>The wrist does not seem to turn.</dt>
+      <dd>It turns only for elongated fruit, or with the Wrist angle slider in Manual control. Round fruit look the same from every side, so the wrist stays at 0 degrees.</dd>
+      <dt>The page is slow.</dt>
+      <dd>Whole-row leaves at high coverage draw thousands of leaves. Lower the leaf coverage, close the live equations panel, or use a computer with a graphics chip.</dd>
+      <dt>Something went wrong and the twin stopped.</dt>
+      <dd>Press <em>Reset rig</em>. If the status line shows an error message, copy it into an issue on the GitHub repository.</dd>
+    </dl>
+
+    <div class="pager"><a href="settings.html">Previous: Settings reference</a><span></span></div>
+    <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
+  </main>
+</div>
+</body>
+</html>

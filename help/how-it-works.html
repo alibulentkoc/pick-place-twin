@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works - Pick-and-place twin help</title>
+<link rel="stylesheet" href="../assets/help.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Help guides">
+    <a class="home" href="../index.html">Pick-and-place twin</a>
+    <ol>
+      <li><a href="getting-started.html">Getting started</a></li>
+      <li><a href="lab-twin.html">Lab and tractor twin</a></li>
+      <li><a href="amiga-twin.html">Amiga watermelon twin</a></li>
+      <li><a href="how-it-works.html" aria-current="page">How it works</a></li>
+      <li><a href="settings.html">Settings reference</a></li>
+      <li><a href="troubleshooting.html">Troubleshooting</a></li>
+    </ol>
+    <div class="open">
+      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
+      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga watermelon twin</a>
+    </div>
+  </nav>
+  <main id="main">
+    <h1>How it works</h1>
+    <p class="lead">The physics and control ideas behind the twins, in the same order the machine uses them.</p>
+
+    <h2>Kinematics: two lengths set the tip</h2>
+    <p>Each cylinder pivots under the bar. The tip is where the two rod ends meet. Given the two lengths L1 and L2, the tip position follows from two circles centred on the pivots. The inverse problem, finding L1 and L2 for a wanted tip position, is just the distance from each pivot to that point.</p>
+    <p>The shaded reach region is every tip position that both cylinders can reach within their stroke, coloured by how much cylinder force each pound of load needs.</p>
+
+    <h2>Forces and pressures</h2>
+    <p>For a load W at the tip, each cylinder carries a force along its own axis. A pulling cylinder works on its rod side, so its pressure is p = F / A<sub>rod side</sub>. A pushing cylinder works on its cap side, with p = F / A<sub>bore</sub>. The pick check <em>light enough to lift</em> compares these pressures with the relief setting.</p>
+
+    <h2>Flow and speed</h2>
+    <p>Cylinder speed is v = 3.85 Q / A, with Q in gpm, A in in<sup>2</sup> and v in in/s. Extending uses the full bore area, so it is slower than retracting at the same flow. The twin adds a flow error to show why timed moves miss.</p>
+
+    <h2>Camera pipeline</h2>
+    <ol>
+      <li>Detect the object's pixel position (u, v) in the image.</li>
+      <li>Measure its depth Z from stereo disparity.</li>
+      <li>Convert pixel and depth to camera coordinates.</li>
+      <li>Rotate and shift camera coordinates into rig coordinates, using the camera's tilt, aim and mount position.</li>
+    </ol>
+    <p>The Camera tab in Live equations shows every step with current numbers, including noise and delay.</p>
+
+    <h2>Closing the loop with on/off valves</h2>
+    <p>With Basic hardware, the controller compares the camera's tip estimate with the target 15 times a second and opens one valve at a time. Camera delay and noise cause overshoot, so the deadband and stepped descent matter.</p>
+
+    <h2>Upgraded control</h2>
+    <p>The controller plans a straight tip path with an accelerate, cruise, slow-down speed profile, capped so both cylinders together never need more oil than the pump gives. About 250 times a second it converts the planned tip point into two target lengths and sets each proportional valve opening to the planned speed plus a correction from the cylinder's position sensor.</p>
+
+    <h2>Finding fruit under leaves</h2>
+    <ul>
+      <li><strong>Visible rind:</strong> if enough of the fruit shows, the camera locates it well.</li>
+      <li><strong>Depth mound:</strong> leaves draped over a watermelon form a bump in the depth image, which gives a rough position even when nothing is visible.</li>
+      <li><strong>Air knife and puff:</strong> clear leaves from the strip ahead of the arm, then from the spot itself, before a second look.</li>
+      <li><strong>Tracking while driving:</strong> sightings merge into tracks, the rover covers the last few inches by odometry, and it stops on its own estimate. It may creep forward or back once it can see the fruit up close.</li>
+    </ul>
+
+    <h2>Battery and stability</h2>
+    <p>The hydraulic motor runs only while a valve is open. Motor power is the idle power plus p Q / (1714 &eta;) in horsepower, converted to watts, and battery energy is tracked per pick. The rear tip-over check compares the rover's restoring moment with the moment of the loaded arm behind the rear axle, and should stay at or above 1.5.</p>
+
+    <div class="pager"><a href="amiga-twin.html">Previous: Amiga watermelon twin</a><a href="settings.html">Next: Settings reference</a></div>
+    <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
+  </main>
+</div>
+</body>
+</html>

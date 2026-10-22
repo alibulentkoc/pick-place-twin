@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab and tractor twin - Pick-and-place twin help</title>
+<link rel="stylesheet" href="../assets/help.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Help guides">
+    <a class="home" href="../index.html">Pick-and-place twin</a>
+    <ol>
+      <li><a href="getting-started.html">Getting started</a></li>
+      <li><a href="lab-twin.html" aria-current="page">Lab and tractor twin</a></li>
+      <li><a href="amiga-twin.html">Amiga watermelon twin</a></li>
+      <li><a href="how-it-works.html">How it works</a></li>
+      <li><a href="settings.html">Settings reference</a></li>
+      <li><a href="troubleshooting.html">Troubleshooting</a></li>
+    </ol>
+    <div class="open">
+      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
+      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga watermelon twin</a>
+    </div>
+  </nav>
+  <main id="main">
+    <h1>Lab and tractor twin</h1>
+    <p class="lead">Two hydraulic cylinders hang from a bar and meet at the tip. A camera finds an object, and on/off valves move the cylinders one at a time to pick it up.</p>
+
+    <h2>Load a preset</h2>
+    <p>Open <em>Settings</em> and choose one of the presets at the top.</p>
+    <div class="tablewrap"><table>
+      <caption>Built-in presets</caption>
+      <tr><th>Preset</th><th>Spacing</th><th>Bar height</th><th>Cylinders</th><th>Hydraulics</th></tr>
+      <tr><td>Lab rig</td><td>24 in</td><td>32 in</td><td>1.5 in bore, 12 in stroke</td><td>800 psi, 0.5 gpm</td></tr>
+      <tr><td>Tractor start</td><td>60 in</td><td>72 in</td><td>3.0 in bore, 30 in stroke</td><td>2500 psi, 10 gpm</td></tr>
+    </table></div>
+
+    <h2>Choose a control mode</h2>
+    <dl>
+      <dt>Manual</dt>
+      <dd>Hold the buttons or keys to run each cylinder, like the manual override on a solenoid valve. Good for learning how each cylinder moves the tip.</dd>
+      <dt>Camera auto</dt>
+      <dd>The camera finds the object, runs six pick checks, then guides the tip with on/off valve pulses. <em>Pick one</em> picks the nearest object; <em>Pick all</em> clears the table.</dd>
+      <dt>Timed moves</dt>
+      <dd>No camera. Each valve opens for a calculated time. Compare the positional error with Camera auto to see why feedback matters.</dd>
+    </dl>
+
+    <h2>Read the six pick checks</h2>
+    <p>Before any valve opens, the controller checks that the object is visible, sits on the arm plane, is inside the reach region, is light enough to lift, fits between the jaws, and that the drop spot is reachable. A failed check stops the pick and the status line says which one.</p>
+
+    <h2>Stepped descent</h2>
+    <p>Near the object, each cylinder moves at most one step (0.4 in by default) before the other takes over. The tip then comes down nearly straight, so the open jaws do not swing into the object. Switch <em>Descent near objects</em> to Direct to see the difference.</p>
+
+    <h2>Panels worth opening</h2>
+    <ul>
+      <li><strong>Hydraulic circuit (live):</strong> valve spools shift, pressure lines turn red, return lines blue, and the pistons move. Click a solenoid coil to shift that valve.</li>
+      <li><strong>Electronics (live):</strong> camera to ESP32 over UDP, relays to the 24 V solenoids, the gripper H-bridge and the E-stop loop.</li>
+      <li><strong>Live equations, Camera tab:</strong> every step from pixel to rig coordinates, with the current numbers.</li>
+    </ul>
+    <p class="note">The series tandem-center circuit in this twin shows valve 2 as starved while valve 1 is shifted. On real hardware, cylinder 2 can still move on the return oil from cylinder 1. Keep this in mind when comparing with the trainer.</p>
+
+    <div class="pager"><a href="getting-started.html">Previous: Getting started</a><a href="amiga-twin.html">Next: Amiga watermelon twin</a></div>
+    <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
+  </main>
+</div>
+</body>
+</html>

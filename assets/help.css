@@ -1,0 +1,83 @@
+/* Help pages for the hydraulic pick-and-place twins.
+   Palette taken from the live circuit diagram: pressure red, return blue, steel, oil amber. */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Semi+Condensed:wght@500;600&display=swap');
+
+:root{
+  --ink:#1c2430; --muted:#566170; --paper:#f7f9fa; --panel:#ffffff; --line:#d5dbe1;
+  --pressure:#c4372b; --return:#2c5fb0; --steel:#5d6875; --oil:#b77e06; --code-bg:#eef2f5;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e4e9ee; --muted:#a3adb8; --paper:#12171d; --panel:#1a2129; --line:#2e3742;
+    --pressure:#ef6b5f; --return:#76a3ec; --steel:#9aa5b1; --oil:#e2b245; --code-bg:#222b35;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e4e9ee; --muted:#a3adb8; --paper:#12171d; --panel:#1a2129; --line:#2e3742;
+  --pressure:#ef6b5f; --return:#76a3ec; --steel:#9aa5b1; --oil:#e2b245; --code-bg:#222b35;
+  color-scheme: dark;
+}
+*{ box-sizing:border-box; }
+html{ scroll-padding-top:1rem; }
+body{ margin:0; background:var(--paper); color:var(--ink);
+  font:17px/1.6 "Atkinson Hyperlegible", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+a{ color:var(--return); text-underline-offset:2px; }
+a:hover{ color:var(--pressure); }
+:focus-visible{ outline:3px solid var(--oil); outline-offset:2px; }
+h1,h2,h3{ font-family:"Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; font-weight:600; line-height:1.15; }
+h1{ font-size:2.4rem; margin:0 0 0.6rem; }
+h2{ font-size:1.6rem; margin:2.4rem 0 0.6rem; padding-top:0.4rem; border-top:2px solid var(--line); }
+h3{ font-size:1.2rem; margin:1.6rem 0 0.4rem; }
+p, li, dd{ max-width:72ch; }
+code, kbd{ font-family:"SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size:0.88em; background:var(--code-bg); padding:0.08em 0.35em; border-radius:4px; }
+kbd{ border:1px solid var(--line); border-bottom-width:2px; }
+pre{ background:var(--code-bg); padding:0.9rem 1rem; border-radius:6px; overflow-x:auto; max-width:80ch; }
+pre code{ background:none; padding:0; }
+.tablewrap{ overflow-x:auto; max-width:100%; }
+table{ border-collapse:collapse; margin:0.8rem 0 1.4rem; min-width:min(100%, 40rem); }
+caption{ caption-side:top; text-align:left; font-weight:700; padding:0 0 0.4rem; color:var(--muted); }
+th, td{ text-align:left; vertical-align:top; padding:0.45rem 0.9rem 0.45rem 0; border-bottom:1px solid var(--line); }
+th{ font-weight:700; }
+dt{ font-weight:700; margin-top:0.8rem; }
+dd{ margin:0.2rem 0 0 0; }
+.shell{ display:grid; grid-template-columns:15rem minmax(0,1fr); min-height:100vh; }
+.rail{ background:var(--panel); border-right:1px solid var(--line); padding:1.4rem 1.1rem; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.rail .home{ display:block; font-family:"Barlow Semi Condensed", Arial, sans-serif; font-weight:600; font-size:1.15rem; color:var(--ink); text-decoration:none; margin-bottom:1.2rem; }
+.rail ol{ list-style:none; padding:0; margin:0; counter-reset:guide; }
+.rail li{ counter-increment:guide; margin:0.15rem 0; }
+.rail li a{ display:flex; gap:0.6rem; padding:0.35rem 0.5rem; border-radius:6px; color:var(--ink); text-decoration:none; border-left:3px solid transparent; }
+.rail li a::before{ content:counter(guide); color:var(--muted); font-variant-numeric:tabular-nums; min-width:1.1rem; }
+.rail li a[aria-current="page"]{ background:var(--code-bg); border-left-color:var(--pressure); }
+.rail .open{ margin-top:1.6rem; font-size:0.92rem; }
+.rail .open a{ display:block; margin:0.3rem 0; }
+main{ padding:2.4rem 2.6rem 4rem; max-width:62rem; }
+.lead{ font-size:1.12rem; color:var(--muted); max-width:64ch; }
+.note{ border-left:3px solid var(--oil); padding:0.3rem 0 0.3rem 0.9rem; margin:1rem 0; max-width:70ch; }
+.pager{ display:flex; justify-content:space-between; gap:1rem; margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); }
+footer{ color:var(--muted); font-size:0.88rem; margin-top:2rem; }
+.hero{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:2rem; align-items:center; padding:1.2rem 0 1rem; }
+.hero svg{ width:100%; height:auto; max-height:22rem; }
+.hero .ln{ fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.hero .p{ stroke:var(--pressure); } .hero .r{ stroke:var(--return); } .hero .s{ stroke:var(--steel); }
+.hero .fill{ fill:var(--panel); stroke:var(--steel); stroke-width:2; }
+.hero text{ fill:var(--muted); font:13px "Atkinson Hyperlegible", Arial, sans-serif; }
+@media (prefers-reduced-motion: no-preference){
+  .hero .flow{ stroke-dasharray:10 8; animation:flow 1.6s linear infinite; }
+  @keyframes flow{ to{ stroke-dashoffset:-36; } }
+}
+.choices{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:1.2rem; margin:1.6rem 0 0.6rem; }
+.choice{ border:1px solid var(--line); border-top:4px solid var(--return); background:var(--panel); padding:1.1rem 1.2rem 1.2rem; border-radius:4px; }
+.choice.amiga{ border-top-color:var(--pressure); }
+.choice h3{ margin-top:0; }
+.btn{ display:inline-block; margin-top:0.6rem; padding:0.55rem 1rem; border-radius:4px; background:var(--ink); color:var(--paper); text-decoration:none; font-weight:700; }
+.btn:hover{ background:var(--pressure); color:#fff; }
+@media (max-width: 860px){
+  .shell{ grid-template-columns:1fr; }
+  .rail{ position:static; height:auto; border-right:none; border-bottom:1px solid var(--line); }
+  .rail ol{ display:flex; flex-wrap:wrap; gap:0.2rem 0.6rem; }
+  main{ padding:1.6rem 1.1rem 3rem; }
+  .hero, .choices{ grid-template-columns:1fr; }
+  h1{ font-size:2rem; }
+}

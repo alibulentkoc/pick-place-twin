@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amiga watermelon twin - Pick-and-place twin help</title>
+<link rel="stylesheet" href="../assets/help.css">
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Help guides">
+    <a class="home" href="../index.html">Pick-and-place twin</a>
+    <ol>
+      <li><a href="getting-started.html">Getting started</a></li>
+      <li><a href="lab-twin.html">Lab and tractor twin</a></li>
+      <li><a href="amiga-twin.html" aria-current="page">Amiga watermelon twin</a></li>
+      <li><a href="how-it-works.html">How it works</a></li>
+      <li><a href="settings.html">Settings reference</a></li>
+      <li><a href="troubleshooting.html">Troubleshooting</a></li>
+    </ol>
+    <div class="open">
+      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
+      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga watermelon twin</a>
+    </div>
+  </nav>
+  <main id="main">
+    <h1>Amiga watermelon twin</h1>
+    <p class="lead">A battery-powered hydraulic arm on a farm-ng Amiga rover. The rover drives along a watermelon row, the camera finds each fruit, and the arm picks it into a side tray or onto a conveyor that fills a deck bin.</p>
+
+    <h2>The panel, top to bottom</h2>
+    <p>The panel reads in the order you use it. The toolbar stays pinned at the top while you scroll.</p>
+    <dl>
+      <dt>Toolbar</dt>
+      <dd>E-stop, Pause, Speed (1x to 8x), Reset rig, Reach region on or off, and the status line. The status line always says what the machine is doing.</dd>
+      <dt>Rover setup</dt>
+      <dd><em>Remove harvest module</em> lifts the whole harvest unit (frame, arm, cylinders, camera, power unit, conveyor and bin) onto its own stands. The bare Amiga can then drive away for other tasks. <em>Install harvest module</em> drives the rover back and locks the unit on again.</dd>
+      <dt>1. Plant watermelons</dt>
+      <dd>Choose how many, the leaf cover (None, Over each watermelon, or Whole row), the shape (Round or Elongated) and the leaf coverage from 0 to 100%. Then press <em>Plant</em>. Fruit is placed ahead of the rover, inside the arm's reach.</dd>
+      <dt>2. Pick them</dt>
+      <dd>Choose where the fruit goes, whether to clear leaves first, the hardware, wrist rotation, and whether the camera must find fruit while driving. Then press <em>Start: drive along the row and pick</em>. The help line under the choices describes exactly what will happen.</dd>
+      <dt>3. Manual control</dt>
+      <dd>Hold-buttons for each cylinder and for driving, the gripper, home, a point-to-point move (with camera or by timing), a wrist angle slider, and sliders that set the cylinder lengths directly.</dd>
+    </dl>
+
+    <h2>Choices in step 2</h2>
+    <div class="tablewrap"><table>
+      <caption>What each choice changes</caption>
+      <tr><th>Choice</th><th>Effect</th></tr>
+      <tr><td>In the side tray</td><td>The arm swings each watermelon over and sets it in a tray next to the arm.</td></tr>
+      <tr><td>In the deck bin</td><td>The conveyor slides down, the arm sets the fruit on the belt, and the belt carries it into the bin on the deck (12 places for round fruit).</td></tr>
+      <tr><td>Clear leaves before each pick</td><td>The blue air knife in front of the arm blows leaves aside while there are leaves in the field. If the first camera look is poor, a puff at the gripper clears the spot before a second look.</td></tr>
+      <tr><td>Basic: on/off valves</td><td>Series valves move one cylinder at a time, guided by the camera.</td></tr>
+      <tr><td>Upgraded</td><td>Proportional valves in parallel move both cylinders together along smooth straight-line paths, guided by position sensors on the cylinders.</td></tr>
+      <tr><td>Wrist rotation</td><td>A worm gearmotor turns the jaws to close across the narrow side of an elongated watermelon. Adds 1.5 in below the tip.</td></tr>
+      <tr><td>Find watermelons with the camera while driving</td><td>The rover no longer knows where the fruit is. The camera searches ahead, yellow rings mark candidates, and they turn blue once confirmed. Some fruit can be missed and leaf piles can cause false stops.</td></tr>
+    </table></div>
+
+    <h2>Demo scenes</h2>
+    <p>Start each scene from a fresh field: press <em>Remove all watermelons</em>, then <em>Plant</em>. Speed 4x works well.</p>
+    <ol>
+      <li><strong>Basic harvest.</strong> Round, no leaves, deck bin. The full loop: drive, find, pick, convey, bin.</li>
+      <li><strong>Realistic canopy.</strong> Whole row at 80%, clearing on, find while driving on. Watch the rings, the air knife and the found, missed and false-stop counts in Results.</li>
+      <li><strong>Fruit shape.</strong> Elongated, wrist off, then on. Without the wrist many fruit are skipped as too wide.</li>
+      <li><strong>Smoother hardware.</strong> Basic, then Upgraded. Compare the motion and the valve openings in the live circuit.</li>
+      <li><strong>Platform reuse.</strong> Remove the harvest module and drive the bare rover.</li>
+    </ol>
+
+    <h2>Readouts and results</h2>
+    <p>Readouts are grouped under Arm, Workspace, Gripper, Hydraulics, Camera, Canopy, Harvest, Power and battery, and Stability. Results keep running totals: picks placed and attempted, cycle time, grab error, gripper hits blocked, picks refused by checks, energy per pick and picks per battery charge.</p>
+
+    <h2>The live hydraulic circuit</h2>
+    <p>With Basic hardware the circuit shows the series on/off valves. With Upgraded hardware it switches to the parallel circuit: pressure compensators, proportional valves, load-sense shuttles, counterbalance valves, cylinders and string pots, all live. Open <em>Parts, ports and hoses</em> under it for part numbers, cavities, port connections and hose sizes worked out from your settings.</p>
+
+    <div class="pager"><a href="lab-twin.html">Previous: Lab and tractor twin</a><a href="how-it-works.html">Next: How it works</a></div>
+    <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
+  </main>
+</div>
+</body>
+</html>
