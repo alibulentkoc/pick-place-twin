@@ -58,6 +58,16 @@ body{ margin:0; height:100%; background:var(--panel); color:var(--ink);
 h1{ font-size:19px; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
 .panel header p{ margin:0; color:var(--muted); }
 section{ padding:12px 18px 14px; border-top:1px solid var(--line); }
+section.toolbar{ position:sticky; top:0; z-index:5; background:var(--panel); border-bottom:1px solid var(--line); }
+.row.tight{ margin-top:0; }
+h2 .num, summary .num{ display:inline-flex; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; align-items:center; justify-content:center; margin-right:6px; vertical-align:1px; }
+.tag{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:2px; letter-spacing:0.02em; }
+.tag.req{ background:var(--accent); color:#fff; }
+.tag.opt{ background:transparent; color:var(--muted); border:1px solid var(--line); }
+details.sec > summary{ font-size:15px; font-weight:600; cursor:pointer; padding:2px 0; }
+details.sec[open] > summary{ margin-bottom:8px; }
+details.sub{ margin-top:10px; } details.sub > summary{ font-size:13px; color:var(--muted); cursor:pointer; }
+ol.steps{ margin:6px 0 8px 18px; padding:0; font-size:13px; } ol.steps li{ margin:2px 0; }
 h2{ font-size:14px; font-weight:600; margin:0 0 8px; }
 .seg{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
 .seg button{ flex:1; border:0; background:transparent; color:var(--ink); padding:7px 6px; font:inherit; cursor:pointer; }
@@ -159,8 +169,50 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <p>Digital twin of the semester project rig. Two cylinders hang from a bar, joined at one tip. Moving one cylinder at a time places the tip anywhere in the shaded zone.</p>
     </header>
 
+    <section class="toolbar">
+      <div class="row tight">
+        <button class="btn" id="pauseBtn">Pause (Space)</button>
+        <label class="small" style="margin:0">Speed
+          <select id="spd"><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option></select>
+        </label>
+        <button class="btn" id="resetBtn">Reset rig</button>
+      </div>
+      <div class="status" id="status">Steps 1 to 3 are required for the design project. Step 4 is optional.</div>
+    </section>
+
     <section>
-      <h2>Control</h2>
+      <h2><span class="num">1</span> Start from a preset <span class="tag req">Required</span></h2>
+      <div class="row">
+        <button class="btn primary" id="presetTractor">Load tractor start</button>
+        <button class="btn" id="presetLab">Load lab rig</button>
+      </div>
+      <p class="small">Design project: load the tractor start, then change it to your design in step 2.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">2</span> Enter your design <span class="tag req">Required</span></h2>
+      <p class="small">Your design values are in Settings at the bottom of this panel. Fill in the four folders marked Required:</p>
+      <ol class="steps">
+        <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke.</li>
+        <li><strong>Cylinders and hydraulics:</strong> bore, rod, pressure, flow.</li>
+        <li><strong>Load:</strong> fruit weight and end effector weight.</li>
+        <li><strong>Counterbalance valves:</strong> fitted, setting and pilot ratio.</li>
+      </ol>
+      <button class="btn" id="openDesign">Open my design settings</button>
+    </section>
+
+    <section>
+      <h2><span class="num">3</span> Check your design <span class="tag req">Required</span></h2>
+      <div class="row">
+        <button class="btn primary" id="worstBtn">Show worst point</button>
+        <button class="btn" id="reachBtn" aria-pressed="true">Reach region: on</button>
+      </div>
+      <p class="small">Then read the Readouts below: pick zone width, both cylinder forces and pressures at the worst point, and the counterbalance settings.</p>
+    </section>
+
+    <section>
+      <details class="sec">
+        <summary><span class="num">4</span> Run the arm <span class="tag opt">Optional</span></summary>
       <div class="seg" role="group" aria-label="Control mode">
         <button id="mJog" aria-pressed="true">Manual</button>
         <button id="mAuto" aria-pressed="false">Camera auto</button>
@@ -208,9 +260,10 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="row">
         <button class="btn" id="gripBtn">Close gripper (G)</button>
         <button class="btn" id="homeBtn">Home (H)</button>
-        <button class="btn" id="worstBtn">Show worst point</button>
         <button class="btn" id="clearBtn">Clear objects</button>
       </div>
+      <details class="sub">
+        <summary>Place an object or the drop spot by coordinates</summary>
       <div class="placer">
         <div class="inputs">
           <label>Object x <input id="ox" type="number" step="0.5" value="5"></label>
@@ -231,18 +284,13 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
           </div>
         </div>
       </div>
-      <div class="row">
-        <button class="btn" id="pauseBtn">Pause (Space)</button>
-        <label class="small" style="margin:0">Speed
-          <select id="spd"><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option></select>
-        </label>
-        <button class="btn" id="resetBtn">Reset rig</button>
-      </div>
-      <div class="status" id="status"></div>
+      </details>
+      </details>
     </section>
 
     <section>
-      <h2>Hydraulic circuit</h2>
+      <details class="sec">
+      <summary>Hydraulic circuit (live) <span class="tag opt">Optional</span></summary>
 <svg id="circ" viewBox="0 0 340 366" role="img" aria-label="Live hydraulic circuit drawn with the cylinders as mounted on the rig: two cylinders hanging from the bar and joined at the tip, two tandem-center solenoid valves in series, flow control, relief valve and pump">
 <defs><marker id="ah" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" class="ahead"/></marker></defs>
 <path class="ln" id="c0A" d=""/><path class="ln" id="c0B" d=""/><path class="ln" id="c1A" d=""/><path class="ln" id="c1B" d=""/>
@@ -289,27 +337,33 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="ckey"><span class="k kp"></span>Pressure flow <span class="k kr"></span>Return flow <span class="k ko"></span>No flow</div>
       <p class="small">The cylinders are drawn as mounted on the rig and move with it. Press and hold a solenoid coil (the small boxes at each valve end) to shift that valve.</p>
       <div class="pump" id="pump"></div>
+      </details>
     </section>
 
     <section>
-      <h2>Electronics</h2>
+      <details class="sec">
+      <summary>Electronics (live) <span class="tag opt">Optional</span></summary>
 <svg id="elec" viewBox="0 0 340 404" role="img" aria-label="Live electronics wiring: OAK camera to ESP32 over the network, ESP32 GPIO pins to a 4-channel relay module, relays switching 24 V to the four valve solenoids through an E-stop"><rect class="eblk" x="10" y="8" width="100" height="26" rx="3"/><text x="60" y="25" text-anchor="middle" class="m">OAK 4 Pro AF</text><path id="enet" class="ew dashw" d="M60,34 V54"/><text x="66" y="44">UDP over Ethernet (PoE+) and Wi-Fi:</text><text x="66" y="54">targets and tip feedback</text><rect class="eblk" x="10" y="54" width="96" height="296" rx="3"/><text x="18" y="72" class="m b">ESP32</text><text x="100" y="99" text-anchor="end">GPIO 16</text><circle class="pin" cx="106" cy="96" r="2"/><path id="eg0" class="ew" d="M106,96 H150"/><text x="100" y="123" text-anchor="end">GPIO 17</text><circle class="pin" cx="106" cy="120" r="2"/><path id="eg1" class="ew" d="M106,120 H150"/><text x="100" y="147" text-anchor="end">GPIO 18</text><circle class="pin" cx="106" cy="144" r="2"/><path id="eg2" class="ew" d="M106,144 H150"/><text x="100" y="171" text-anchor="end">GPIO 19</text><circle class="pin" cx="106" cy="168" r="2"/><path id="eg3" class="ew" d="M106,168 H150"/><text x="100" y="193" text-anchor="end">5V, GND</text><circle class="pin" cx="106" cy="190" r="2"/><path class="ew" d="M106,190 H134 V176 H150"/><rect class="eblk" x="150" y="80" width="70" height="104" rx="3"/><text x="185" y="75" text-anchor="middle">4-ch relay module</text><text x="156" y="99">IN1</text><circle id="el0" class="led" cx="178" cy="96" r="3.5"/><rect class="rcoil" x="190" y="90" width="16" height="12"/><path class="ew dashw" d="M206,96 H232"/><line id="es0" class="blade" x1="236" y1="96" x2="253" y2="87"/><circle class="pin" cx="256" cy="96" r="1.8"/><path id="ec0" class="ew" d="M256,96 H270 M304,96 H320"/><rect id="ek0" class="sol" x="270" y="90" width="34" height="12"/><path class="sym" d="M270,102 L304,90"/><text x="287" y="87" text-anchor="middle" class="tiny">V1 extend</text><text x="156" y="123">IN2</text><circle id="el1" class="led" cx="178" cy="120" r="3.5"/><rect class="rcoil" x="190" y="114" width="16" height="12"/><path class="ew dashw" d="M206,120 H232"/><line id="es1" class="blade" x1="236" y1="120" x2="253" y2="111"/><circle class="pin" cx="256" cy="120" r="1.8"/><path id="ec1" class="ew" d="M256,120 H270 M304,120 H320"/><rect id="ek1" class="sol" x="270" y="114" width="34" height="12"/><path class="sym" d="M270,126 L304,114"/><text x="287" y="111" text-anchor="middle" class="tiny">V1 retract</text><text x="156" y="147">IN3</text><circle id="el2" class="led" cx="178" cy="144" r="3.5"/><rect class="rcoil" x="190" y="138" width="16" height="12"/><path class="ew dashw" d="M206,144 H232"/><line id="es2" class="blade" x1="236" y1="144" x2="253" y2="135"/><circle class="pin" cx="256" cy="144" r="1.8"/><path id="ec2" class="ew" d="M256,144 H270 M304,144 H320"/><rect id="ek2" class="sol" x="270" y="138" width="34" height="12"/><path class="sym" d="M270,150 L304,138"/><text x="287" y="135" text-anchor="middle" class="tiny">V2 extend</text><text x="156" y="171">IN4</text><circle id="el3" class="led" cx="178" cy="168" r="3.5"/><rect class="rcoil" x="190" y="162" width="16" height="12"/><path class="ew dashw" d="M206,168 H232"/><line id="es3" class="blade" x1="236" y1="168" x2="253" y2="159"/><circle class="pin" cx="256" cy="168" r="1.8"/><path id="ec3" class="ew" d="M256,168 H270 M304,168 H320"/><rect id="ek3" class="sol" x="270" y="162" width="34" height="12"/><path class="sym" d="M270,174 L304,162"/><text x="287" y="159" text-anchor="middle" class="tiny">V2 retract</text><path id="ebus" class="ew" d="M236,86 V200"/><path id="e0v" class="ew" d="M320,86 V262 H262"/><text x="326" y="140" class="tiny" transform="rotate(90 326 140)">0 V</text><g id="estop" class="estop"><rect class="mush" x="208" y="205" width="12" height="16" rx="3"/><line class="sym" x1="220" y1="213" x2="226" y2="213"/><line id="ebar" class="blade" x1="230" y1="213" x2="242" y2="213"/><circle class="pin" cx="236" cy="200" r="1.8"/><circle class="pin" cx="236" cy="226" r="1.8"/><path class="sym" d="M236,200 V208 M236,218 V226"/><text x="204" y="216" text-anchor="end">E-stop</text><text id="etxt" x="248" y="216" class="tiny">closed</text></g><path id="epsu" class="ew" d="M236,226 V242"/><rect class="eblk" x="200" y="242" width="62" height="34" rx="3"/><text x="231" y="257" text-anchor="middle" class="m">24 VDC</text><text x="231" y="270" text-anchor="middle" class="tiny">supply</text><text x="18" y="226" class="tiny">Power: USB 5 V</text><text x="18" y="237" class="tiny">or a 24 V buck</text><text x="18" y="248" class="tiny">converter</text><text x="100" y="301" text-anchor="end">ADC 34</text><circle class="pin" cx="106" cy="298" r="2"/><path id="eadc" class="ew dashw" d="M106,298 H150"/><text x="100" y="315" text-anchor="end">GPIO 25</text><circle class="pin" cx="106" cy="312" r="2"/><path id="eg4" class="ew" d="M106,312 H150"/><text x="100" y="333" text-anchor="end">GPIO 26</text><circle class="pin" cx="106" cy="330" r="2"/><path id="eg5" class="ew" d="M106,330 H150"/><rect class="eblk" x="150" y="292" width="76" height="48" rx="3"/><text x="188" y="311" text-anchor="middle" class="m">H-bridge</text><text x="188" y="324" text-anchor="middle" class="tiny">close / open</text><text x="188" y="334" text-anchor="middle" class="tiny">+ current sense</text><path id="ehp" class="ew" d="M231,276 V284 H200 V292"/><text x="236" y="288" class="tiny">24 V, not via E-stop</text><path id="eh0" class="ew" d="M226,308 H262"/><path id="eh1" class="ew" d="M226,326 H262"/><rect id="ea" class="sol" x="262" y="298" width="66" height="40"/><text x="295" y="312" text-anchor="middle" class="tiny">Gripper linear</text><text x="295" y="322" text-anchor="middle" class="tiny">actuator</text><text id="egtxt" x="295" y="333" text-anchor="middle" class="tiny">open</text><text x="10" y="364" class="tiny">Pin numbers are examples. GPIO 21 and 22 stay free for I2C sensors.</text><text x="10" y="375" class="tiny">Each solenoid needs a flyback diode if the relay module has none.</text><text x="10" y="386" class="tiny">The gripper actuator is not on the E-stop. Its lead screw is</text><text x="10" y="397" class="tiny">self-locking, so it keeps holding the object.</text></svg>
       <div class="ckey"><span class="k kp"></span>Energized <span class="k ko"></span>Off</div>
       <p class="small">GPIO pins drive the relay inputs. Each relay switches 24 V to one solenoid coil. Two more pins drive the gripper actuator through an H-bridge, and its current sense goes to an analog input. Click the E-stop (or press E) to cut coil power: both valves spring to center.</p>
+      </details>
     </section>
 
     <section>
-      <h2>Readouts</h2>
+      <h2>Readouts <span class="tag req">Required</span></h2>
       <table class="read"><tbody id="readBody"></tbody></table>
     </section>
 
     <section>
-      <h2>Results</h2>
+      <details class="sec">
+      <summary>Results of runs <span class="tag opt">Optional</span></summary>
       <table class="read"><tbody id="resBody"></tbody></table>
+      </details>
     </section>
 
     <section>
-      <h2>Parameters</h2>
+      <h2 id="settingsHead">Settings</h2>
+      <p class="small">Folders marked Required hold your design values. The others are optional.</p>
       <div id="gui-host"></div>
     </section>
   </aside>
@@ -2590,11 +2644,28 @@ fV.add(viewFns, 'fitFoot').name('Fit view to camera frame');
 fV.add(viewFns, 'fitRig').name('Fit view to rig');
 fV.add(P, 'showTrail').name('Tip trail');
 fK.close(); fV.close();
+// Settings order: the four folders that hold the student's design come first and are marked required
+fG.title('Arm geometry (in): required'); fC.title('Cylinders and hydraulics: required'); fL.title('Load: required'); fCB.title('Counterbalance valves: required');
+fGr.title('Gripper details: optional'); fM.title('Camera mount: optional'); fQ.title('Camera pipeline: optional'); fK.title('Controller: optional'); fV.title('View: optional');
+[fG, fC, fL, fCB, fGr, fM, fQ, fK, fV].forEach(function(f){ gui.$children.appendChild(f.domElement); });
+[fG, fC, fL, fCB].forEach(function(f){ f.open(); }); [fGr, fM, fQ, fK, fV].forEach(function(f){ f.close(); });
+function reachUI(){ var b = document.getElementById('reachBtn'); if (!b) return; b.textContent = 'Reach region: ' + (P.showMap ? 'on' : 'off'); b.setAttribute('aria-pressed', P.showMap ? 'true' : 'false'); }
+document.getElementById('reachBtn').onclick = function(){
+  P.showMap = !P.showMap; if (mapMesh) mapMesh.visible = P.showMap; document.getElementById('legend').style.display = P.showMap ? '' : 'none';
+  gui.controllersRecursive().forEach(function(c){ if (c.property === 'showMap') c.updateDisplay(); }); reachUI();
+};
+document.getElementById('presetTractor').onclick = function(){ presets.tractor(); say('Tractor start loaded. Now enter your design in the Required settings folders (step 2).', ''); };
+document.getElementById('presetLab').onclick = function(){ presets.lab(); say('Lab rig loaded.', ''); };
+document.getElementById('openDesign').onclick = function(){
+  [fG, fC, fL, fCB].forEach(function(f){ f.open(); });
+  var h = document.getElementById('settingsHead'); if (h) h.scrollIntoView({ behavior:'smooth', block:'start' });
+};
+reachUI();
 var LIVE = { cbOn:1, cbSet:1, cbPilot:1, leak:1, flow:1, flowErr:1, deadband:1, latency:1, noise:1, camHz:1, showTrail:1, actForce:1, actSpeed:1, mu:1, descent:1, stepL:1, pixNoise:1, dispNoise:1, baseline:1 };
 gui.onFinishChange(function(e){
   if (!e.property || LIVE[e.property]) return;
   if (e.property === 'lab' || e.property === 'tractor' || e.property === 'fitFoot' || e.property === 'fitRig') return;
-  if (e.property === 'showMap') { if (mapMesh) mapMesh.visible = P.showMap; $('#legend').style.display = P.showMap ? '' : 'none'; return; }
+  if (e.property === 'showMap') { if (mapMesh) mapMesh.visible = P.showMap; $('#legend').style.display = P.showMap ? '' : 'none'; reachUI(); return; }
   if (e.property === 'showView') { if (viewCone) viewCone.visible = P.showView; return; }
   if (e.property === 'showFoot') { if (footGroup) footGroup.visible = P.showFoot; return; }
   applyParams(false, true);

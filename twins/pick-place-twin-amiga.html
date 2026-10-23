@@ -95,6 +95,11 @@ section.toolbar{ position:sticky; top:0; z-index:5; background:var(--panel); bor
 .btn.danger{ background:#c0392b; border-color:#c0392b; color:#fff; font-weight:600; }
 .btn.danger-outline{ border-color:#c0392b; color:#c0392b; }
 h2 .num, summary .num{ display:inline-flex; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; align-items:center; justify-content:center; margin-right:6px; vertical-align:1px; }
+.tag{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:2px; letter-spacing:0.02em; }
+.tag.req{ background:var(--accent); color:#fff; }
+.tag.opt{ background:transparent; color:var(--muted); border:1px solid var(--line); }
+.optbox{ border:1px dashed var(--line); border-radius:8px; padding:6px 10px 2px; margin:10px 0; }
+.optlabel{ font-size:12px; font-weight:600; color:var(--muted); }
 .covrow{ display:flex; gap:8px; align-items:center; } .covrow input{ flex:1; accent-color:var(--accent); } .covrow output{ width:3em; text-align:right; font-variant-numeric:tabular-nums; }
 .form{ display:grid; grid-template-columns:auto 1fr; gap:8px 10px; align-items:center; margin:6px 0 10px; }
 .flabel{ font-size:13px; color:var(--muted); }
@@ -202,17 +207,16 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
       <div class="status" id="status">Start with step 1: plant watermelons, then pick a run in step 2.</div>
     </section>
 
-    <section>
-      <h2>Rover setup</h2>
-      <button class="btn wide" id="modBtn">Remove harvest module</button>
-      <p class="small">The arm, cylinders, camera, hydraulic power unit, conveyor and bin are one unit on four quick-attach points. Remove it to use the bare Amiga for other tasks; it is set down on its own stands beside the rover.</p>
-    </section>
 
     <section>
-      <h2><span class="num">1</span> Plant watermelons</h2>
+      <h2><span class="num">1</span> Plant watermelons <span class="tag req">Required</span></h2>
       <div class="form">
         <label class="flabel" for="nObj">How many</label>
         <div><input id="nObj" type="number" min="1" max="30" value="8" style="width:60px"></div>
+      </div>
+      <div class="optbox">
+      <div class="optlabel">Options <span class="tag opt">Optional</span></div>
+      <div class="form">
         <span class="flabel">Leaves</span>
         <div class="seg seg-sm" role="group" aria-label="Leaf cover">
           <button id="lvNone" aria-pressed="true">None</button>
@@ -226,6 +230,7 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
         </div>
         <label class="flabel" for="leafCov">Leaf coverage</label>
         <div class="covrow"><input id="leafCov" type="range" min="0" max="100" step="5" value="60" disabled><output id="leafCovOut">60%</output></div>
+      </div>
       </div>
       <button class="btn primary wide" id="plantBtn">Plant 8 watermelons ahead of the rover</button>
       <p class="small" id="plantHelp">Watermelons go at random spots along the row, all within the arm's reach. Press again to add more further ahead.</p>
@@ -258,13 +263,21 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
     </section>
 
     <section>
-      <h2><span class="num">2</span> Pick them</h2>
+      <h2><span class="num">2</span> Pick them <span class="tag req">Required</span></h2>
       <div class="form">
         <span class="flabel">Put watermelons</span>
         <div class="seg seg-sm" role="group" aria-label="Where picked watermelons go">
           <button id="toTray" aria-pressed="false">In the side tray</button>
           <button id="toBin" aria-pressed="true">In the deck bin</button>
         </div>
+      </div>
+      <button class="btn primary wide" id="startRun">Start: drive along the row and pick</button>
+      <div class="row">
+        <button class="btn danger-outline" id="stopAuto">Stop</button>
+      </div>
+      <div class="optbox">
+      <div class="optlabel">Options <span class="tag opt">Optional</span></div>
+      <div class="form">
         <span class="flabel">Leaves</span>
         <label class="small" style="margin:0"><input type="checkbox" id="clearFirst"> Clear leaves before each pick</label>
         <span class="flabel">Hardware</span>
@@ -277,11 +290,8 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
         <span class="flabel">Finding</span>
         <label class="small" style="margin:0"><input type="checkbox" id="detectDrive"> Find watermelons with the camera while driving</label>
       </div>
-      <p class="small" id="runHelp">The arm hands each watermelon to the conveyor, which carries it into the bin on the rover.</p>
-      <button class="btn primary wide" id="startRun">Start: drive along the row and pick</button>
-      <div class="row">
-        <button class="btn danger-outline" id="stopAuto">Stop</button>
       </div>
+      <p class="small" id="runHelp">The arm hands each watermelon to the conveyor, which carries it into the bin on the rover.</p>
       <details class="sub">
         <summary>Pick without driving</summary>
         <div class="row">
@@ -294,7 +304,7 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
 
     <section>
       <details class="sec">
-        <summary><span class="num">3</span> Manual control</summary>
+        <summary><span class="num">3</span> Manual control <span class="tag opt">Optional</span></summary>
         <div class="jog">
           <span class="lab">Cylinder 1</span>
           <button class="btn hold" data-c="0" data-d="-1">Retract (A)</button>
@@ -331,10 +341,15 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
         </div>
       </details>
     </section>
+    <section>
+      <h2>Rover setup <span class="tag opt">Optional</span></h2>
+      <button class="btn wide" id="modBtn">Remove harvest module</button>
+      <p class="small">The arm, cylinders, camera, hydraulic power unit, conveyor and bin are one unit on four quick-attach points. Remove it to use the bare Amiga for other tasks; it is set down on its own stands beside the rover.</p>
+    </section>
 
     <section>
       <details class="sec">
-      <summary>Hydraulic circuit (live)</summary>
+      <summary>Hydraulic circuit (live) <span class="tag opt">Optional</span></summary>
 <div id="circBasic">
 <svg id="circ" viewBox="0 0 340 366" role="img" aria-label="Live hydraulic circuit drawn with the cylinders as mounted on the rig: two cylinders hanging from the bar and joined at the tip, two tandem-center solenoid valves in series, flow control, relief valve and pump">
 <defs><marker id="ah" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" class="ahead"/></marker></defs>
@@ -390,7 +405,7 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
 
     <section>
       <details class="sec">
-      <summary>Electronics (live)</summary>
+      <summary>Electronics (live) <span class="tag opt">Optional</span></summary>
 <svg id="elec" viewBox="0 0 340 404" role="img" aria-label="Live electronics wiring: OAK camera to ESP32 over the network, ESP32 GPIO pins to a 4-channel relay module, relays switching 24 V to the four valve solenoids through an E-stop"><rect class="eblk" x="10" y="8" width="100" height="26" rx="3"/><text x="60" y="25" text-anchor="middle" class="m">OAK 4 Pro AF</text><path id="enet" class="ew dashw" d="M60,34 V54"/><text x="66" y="44">UDP over Ethernet (PoE+) and Wi-Fi:</text><text x="66" y="54">targets and tip feedback</text><rect class="eblk" x="10" y="54" width="96" height="296" rx="3"/><text x="18" y="72" class="m b">ESP32</text><text x="100" y="99" text-anchor="end">GPIO 16</text><circle class="pin" cx="106" cy="96" r="2"/><path id="eg0" class="ew" d="M106,96 H150"/><text x="100" y="123" text-anchor="end">GPIO 17</text><circle class="pin" cx="106" cy="120" r="2"/><path id="eg1" class="ew" d="M106,120 H150"/><text x="100" y="147" text-anchor="end">GPIO 18</text><circle class="pin" cx="106" cy="144" r="2"/><path id="eg2" class="ew" d="M106,144 H150"/><text x="100" y="171" text-anchor="end">GPIO 19</text><circle class="pin" cx="106" cy="168" r="2"/><path id="eg3" class="ew" d="M106,168 H150"/><text x="100" y="193" text-anchor="end">5V, GND</text><circle class="pin" cx="106" cy="190" r="2"/><path class="ew" d="M106,190 H134 V176 H150"/><rect class="eblk" x="150" y="80" width="70" height="104" rx="3"/><text x="185" y="75" text-anchor="middle">4-ch relay module</text><text x="156" y="99">IN1</text><circle id="el0" class="led" cx="178" cy="96" r="3.5"/><rect class="rcoil" x="190" y="90" width="16" height="12"/><path class="ew dashw" d="M206,96 H232"/><line id="es0" class="blade" x1="236" y1="96" x2="253" y2="87"/><circle class="pin" cx="256" cy="96" r="1.8"/><path id="ec0" class="ew" d="M256,96 H270 M304,96 H320"/><rect id="ek0" class="sol" x="270" y="90" width="34" height="12"/><path class="sym" d="M270,102 L304,90"/><text x="287" y="87" text-anchor="middle" class="tiny">V1 extend</text><text x="156" y="123">IN2</text><circle id="el1" class="led" cx="178" cy="120" r="3.5"/><rect class="rcoil" x="190" y="114" width="16" height="12"/><path class="ew dashw" d="M206,120 H232"/><line id="es1" class="blade" x1="236" y1="120" x2="253" y2="111"/><circle class="pin" cx="256" cy="120" r="1.8"/><path id="ec1" class="ew" d="M256,120 H270 M304,120 H320"/><rect id="ek1" class="sol" x="270" y="114" width="34" height="12"/><path class="sym" d="M270,126 L304,114"/><text x="287" y="111" text-anchor="middle" class="tiny">V1 retract</text><text x="156" y="147">IN3</text><circle id="el2" class="led" cx="178" cy="144" r="3.5"/><rect class="rcoil" x="190" y="138" width="16" height="12"/><path class="ew dashw" d="M206,144 H232"/><line id="es2" class="blade" x1="236" y1="144" x2="253" y2="135"/><circle class="pin" cx="256" cy="144" r="1.8"/><path id="ec2" class="ew" d="M256,144 H270 M304,144 H320"/><rect id="ek2" class="sol" x="270" y="138" width="34" height="12"/><path class="sym" d="M270,150 L304,138"/><text x="287" y="135" text-anchor="middle" class="tiny">V2 extend</text><text x="156" y="171">IN4</text><circle id="el3" class="led" cx="178" cy="168" r="3.5"/><rect class="rcoil" x="190" y="162" width="16" height="12"/><path class="ew dashw" d="M206,168 H232"/><line id="es3" class="blade" x1="236" y1="168" x2="253" y2="159"/><circle class="pin" cx="256" cy="168" r="1.8"/><path id="ec3" class="ew" d="M256,168 H270 M304,168 H320"/><rect id="ek3" class="sol" x="270" y="162" width="34" height="12"/><path class="sym" d="M270,174 L304,162"/><text x="287" y="159" text-anchor="middle" class="tiny">V2 retract</text><path id="ebus" class="ew" d="M236,86 V200"/><path id="e0v" class="ew" d="M320,86 V262 H262"/><text x="326" y="140" class="tiny" transform="rotate(90 326 140)">0 V</text><g id="estop" class="estop"><rect class="mush" x="208" y="205" width="12" height="16" rx="3"/><line class="sym" x1="220" y1="213" x2="226" y2="213"/><line id="ebar" class="blade" x1="230" y1="213" x2="242" y2="213"/><circle class="pin" cx="236" cy="200" r="1.8"/><circle class="pin" cx="236" cy="226" r="1.8"/><path class="sym" d="M236,200 V208 M236,218 V226"/><text x="204" y="216" text-anchor="end">E-stop</text><text id="etxt" x="248" y="216" class="tiny">closed</text></g><path id="epsu" class="ew" d="M236,226 V242"/><rect class="eblk" x="200" y="242" width="62" height="34" rx="3"/><text x="231" y="257" text-anchor="middle" class="m">48 V battery</text><text x="231" y="270" text-anchor="middle" class="tiny">+ DC-DC to 24 V</text><text x="100" y="271" text-anchor="end">GPIO 27</text><circle class="pin" cx="106" cy="268" r="2"/><path id="eg6" class="ew" d="M106,268 H150"/><rect id="emot" class="sol" x="150" y="254" width="46" height="30"/><text x="173" y="266" text-anchor="middle" class="tiny">pump motor</text><text x="173" y="277" text-anchor="middle" class="tiny">contactor</text><path id="emp" class="ew" d="M196,268 H200"/><text x="18" y="226" class="tiny">Power: 5 V from</text><text x="18" y="237" class="tiny">the rover battery</text><text x="18" y="248" class="tiny">via DC-DC</text><text x="100" y="301" text-anchor="end">ADC 34</text><circle class="pin" cx="106" cy="298" r="2"/><path id="eadc" class="ew dashw" d="M106,298 H150"/><text x="100" y="315" text-anchor="end">GPIO 25</text><circle class="pin" cx="106" cy="312" r="2"/><path id="eg4" class="ew" d="M106,312 H150"/><text x="100" y="333" text-anchor="end">GPIO 26</text><circle class="pin" cx="106" cy="330" r="2"/><path id="eg5" class="ew" d="M106,330 H150"/><rect class="eblk" x="150" y="292" width="76" height="48" rx="3"/><text x="188" y="311" text-anchor="middle" class="m">H-bridge</text><text x="188" y="324" text-anchor="middle" class="tiny">close / open</text><text x="188" y="334" text-anchor="middle" class="tiny">+ current sense</text><path id="ehp" class="ew" d="M231,276 V284 H200 V292"/><text x="236" y="288" class="tiny">24 V, not via E-stop</text><path id="eh0" class="ew" d="M226,308 H262"/><path id="eh1" class="ew" d="M226,326 H262"/><rect id="ea" class="sol" x="262" y="298" width="66" height="40"/><text x="295" y="312" text-anchor="middle" class="tiny">Gripper linear</text><text x="295" y="322" text-anchor="middle" class="tiny">actuator</text><text id="egtxt" x="295" y="333" text-anchor="middle" class="tiny">open</text><text x="10" y="364" class="tiny">Pin numbers are examples. GPIO 21 and 22 stay free for I2C sensors.</text><text x="10" y="375" class="tiny">Each solenoid needs a flyback diode if the relay module has none.</text><text x="10" y="386" class="tiny">The gripper actuator is not on the E-stop. Its lead screw is</text><text x="10" y="397" class="tiny">self-locking, so it keeps holding the watermelon.</text></svg>
       <div class="ckey"><span class="k kp"></span>Energized <span class="k ko"></span>Off</div>
       <p class="small">GPIO pins drive the relay inputs. Each relay switches 24 V to one solenoid coil. Two more pins drive the gripper actuator through an H-bridge, and its current sense goes to an analog input. GPIO 27 switches the power unit's motor contactor whenever a valve opens; the E-stop cuts it too. Click the E-stop (or press E) to cut coil power: both valves spring to center.</p>
@@ -399,21 +414,21 @@ table.parts{ table-layout:auto; } table.parts td:first-child{ width:auto; }
 
     <section>
       <details class="sec" open>
-      <summary>Readouts</summary>
+      <summary>Readouts <span class="tag opt">Optional</span></summary>
       <table class="read"><tbody id="readBody"></tbody></table>
       </details>
     </section>
 
     <section>
       <details class="sec" open>
-      <summary>Results</summary>
+      <summary>Results <span class="tag opt">Optional</span></summary>
       <table class="read"><tbody id="resBody"></tbody></table>
       </details>
     </section>
 
     <section>
       <details class="sec">
-      <summary>Settings</summary>
+      <summary>Settings <span class="tag opt">Optional</span></summary>
       <div id="gui-host"></div>
       </details>
     </section>
@@ -2038,7 +2053,7 @@ function convTop(){ return new V3(0, deckTop() + P.binWall + 8, -P.armOffset - 5
 function convLowFull(){ return new V3(0, hY(), -1.5); }
 // Fixed-length conveyor on a slide. A linear actuator pulls it up the slide to stow it and lets it down to the handoff.
 function convAxis(){ var t = convTop(), l = convLowFull(), u = t.clone().sub(l), L = u.length(); u.normalize(); return { u:u, L:L, low:l, top:t }; }
-function convShift(ext){ return P.convStroke * (1 - ext); }
+function convShift(ext){ return (P.convStroke + (P.wrist ? 8 : 0)) * (1 - ext); }   // with a wrist, the stowed belt clears the turning gripper
 function convLow(ext){ var a = convAxis(); return a.low.clone().addScaledVector(a.u, convShift(ext)); }
 function convTopNow(ext){ var a = convAxis(); return a.top.clone().addScaledVector(a.u, convShift(ext)); }
 function axisPt(s, side, drop){ var a = convAxis(), n = convNormal(); return a.low.clone().addScaledVector(a.u, s).add(new V3(side, 0, 0)).addScaledVector(n, -drop); }
@@ -2430,7 +2445,7 @@ function tryHold(o){
   var lowEnough = P.shape === 'Bale' ? tipZ < P.objH * 0.6 : tipZ < o.y + 0.2 * r;
   if (!lowEnough) { S.gripNote = 'Fingers touch above the widest point. The watermelon would squeeze out.'; return false; }
   if (2 * P.mu * Fn < P.objW) { S.gripNote = 'Grip too weak: 2 x ' + P.mu.toFixed(2) + ' x ' + Fn.toFixed(1) + ' lb < ' + P.objW + ' lb. The watermelon slips.'; return false; }
-  S.held = o; o.z = 0; S.holdDy = tip.y - o.y; o.x = tip.x; S.gripNote = 'Holding: ' + Fn.toFixed(1) + ' lb per finger.';
+  S.held = o; o.z = 0; S.holdDy = tip.y - o.y; o.x = tip.x; S.heldWa0 = S.wristAng || 0; S.heldYaw0 = o.yaw || 0; S.gripNote = 'Holding: ' + Fn.toFixed(1) + ' lb per finger.';
   return true;
 }
 function updateGripper(dt){
@@ -2562,7 +2577,14 @@ function updateDyn(){
     c[0].material = S.v[i] < 0 ? mat.coilOn : mat.coilOff;
     c[1].material = S.v[i] > 0 ? mat.coilOn : mat.coilOff;
   });
-  if (S.held) { S.held.x = tip.x; S.held.y = tip.y - (S.holdDy === undefined ? gL() : S.holdDy); }
+  if (S.held) {
+    S.held.x = tip.x; S.held.y = tip.y - (S.holdDy === undefined ? gL() : S.holdDy);
+    if (P.wrist && S.heldWa0 !== undefined && S.held.a > S.held.b) {   // the fruit turns with the wrist
+      var hy = S.heldYaw0 + ((S.wristAng || 0) - S.heldWa0); S.held.yaw = hy;
+      S.held.hx = Math.sqrt(Math.pow(S.held.a * Math.cos(hy), 2) + Math.pow(S.held.b * Math.sin(hy), 2));
+      if (S.held.mesh) S.held.mesh.rotation.y = hy;
+    }
+  }
   S.objs.forEach(function(o){ o.mesh.position.set(o.x, o.y, o.z || 0); });
   trailLine.visible = P.showTrail;
   roverWheels.forEach(function(w){ w.rotation.x = -(S.wheelAng || 0); });
@@ -2587,6 +2609,7 @@ function objHX(o){ if (P.wrist && o && o.b) return o.b; return (o && o.hx) || ha
 function wristTarget(){
   var o = S.held || (A.phase !== 'idle' ? A.obj : null);
   if (P.wrist && !o && A.phase === 'idle' && S.wristManual !== undefined) return S.wristManual * Math.PI / 180;   // manual wrist slider
+  if (S.held) return 0;   // carry with the jaws square to the arm plane: the fruit turns with them and lies along the belt
   if (!P.wrist || !o || !(o.a > o.b + 1e-3)) return 0;
   var a = (o.yaw || 0) + Math.PI / 2; while (a > Math.PI / 2) a -= Math.PI; while (a < -Math.PI / 2) a += Math.PI;
   return a;
@@ -3435,7 +3458,7 @@ $('#startRun').onclick = function(){
   if (!P.followCam) { P.followCam = true; gui.controllersRecursive().forEach(function(c){ if (c.property === 'followCam') c.updateDisplay(); }); }
 };
 plantLabel();
-setTimeout(function(){ if (!$('#status').textContent) say('Step 1: plant watermelons. Step 2: choose where they go and press Start.', ''); }, 300);
+setTimeout(function(){ if (!$('#status').textContent) say('Steps 1 and 2 are all you need: plant watermelons, then press Start. Anything marked Optional can stay as it is.', ''); }, 300);
 [0, 1].forEach(function(i){
   var sl = $('#s' + i);
   sl.addEventListener('input', function(){
