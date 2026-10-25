@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hydraulic pick-and-place digital twin</title>
-<meta name="description" content="Browser-based digital twins of a two-cylinder hydraulic pick-and-place arm: a lab rig, a tractor-mounted version, and the Amiga Hydraulic Arm, a harvester on a farm-ng Amiga rover.">
+<meta name="description" content="A browser-based digital twin of a two-cylinder hydraulic pick-and-place arm, for AGM 4060 Fluid Power Systems at Clemson University.">
 <link rel="stylesheet" href="assets/help.css">
 </head>
 <body>
@@ -13,9 +13,9 @@
     <div>
       <h1>Hydraulic pick-and-place digital twin</h1>
       <p class="lead">Two cylinders hang from a bar and meet at a gripper. A depth camera finds the object, and the valves move the tip to pick it up. Everything runs in your browser, offline, from a single file.</p>
-      <p>Built for AGM 4060 Fluid Power Systems at Clemson University, and extended into the Amiga Hydraulic Arm, a harvester on a farm-ng Amiga rover.</p>
+      <p>Built for AGM 4060 Fluid Power Systems at Clemson University.</p>
     </div>
-    <svg viewBox="0 0 420 316" role="img" aria-label="Simplified circuit: a pump feeds two cylinders that hang from a bar and meet at a gripper above a watermelon">
+    <svg viewBox="0 0 420 316" role="img" aria-label="Simplified circuit: a pump feeds two cylinders that hang from a bar and meet at a gripper above an object">
       <line class="ln s" x1="70" y1="40" x2="350" y2="40"/>
       <circle class="fill" cx="150" cy="40" r="6"/><circle class="fill" cx="270" cy="40" r="6"/>
       <line class="ln s" x1="150" y1="40" x2="196" y2="150" style="stroke-width:12"/>
@@ -24,7 +24,7 @@
       <line class="ln s" x1="224" y1="150" x2="210" y2="196" style="stroke-width:5"/>
       <circle class="fill" cx="210" cy="196" r="6"/>
       <path class="ln s" d="M196 204 v28 M224 204 v28 M194 204 h32"/>
-      <ellipse cx="210" cy="252" rx="34" ry="22" fill="#3f8f3a" opacity="0.85"/>
+      <rect x="186" y="234" width="48" height="36" rx="4" fill="#8a96a3" opacity="0.85"/>
       <path class="ln p flow" d="M40 270 V120 H150 V52"/>
       <path class="ln r" d="M70 270 V140 H270 V52"/>
       <rect class="fill" x="22" y="262" width="66" height="26" rx="3"/>
@@ -41,23 +41,17 @@
       <p>The course rig on the Eaton HTS-2 trainer, and the design project: a harvesting arm on a tractor. Check the geometry, the bin clearance, the worst point of the work path, the cylinder forces and pressures, and the counterbalance valves. Manual, camera-guided and timed control, a live circuit, electronics and the camera pipeline.</p>
       <a class="btn" href="twins/pick-place-twin.html">Open the lab and tractor twin</a>
     </section>
-    <section class="choice amiga">
-      <h3>Amiga Hydraulic Arm twin</h3>
-      <p>The arm on a farm-ng Amiga rover that drives along a row. Leaf canopy and an air knife, finding fruit while driving, a conveyor to a deck bin, wrist rotation, upgraded proportional hydraulics and a removable harvest module.</p>
-      <a class="btn" href="twins/pick-place-twin-amiga.html">Open the Amiga Hydraulic Arm twin</a>
-    </section>
   </div>
 
   <h2>Help</h2>
   <ol>
-    <li><a href="help/getting-started.html">Getting started</a>: open a twin, move the view, the keys, and two first runs.</li>
+    <li><a href="help/getting-started.html">Getting started</a>: open the twin, move the view, the keys, and a first design check.</li>
     <li><a href="help/lab-twin.html">Lab and tractor twin</a>: the panel, the design project steps, the readouts and the counterbalance valves.</li>
-    <li><a href="help/amiga-twin.html">Amiga Hydraulic Arm twin</a>: the panel step by step, and five demo scenes.</li>
     <li><a href="help/how-it-works.html">How it works</a>: kinematics, the work path, forces, pressures, flow, the camera pipeline and control.</li>
     <li><a href="help/settings.html">Settings reference</a>: each setting, folder by folder.</li>
     <li><a href="help/troubleshooting.html">Troubleshooting</a>: frequent questions and what to check.</li>
   </ol>
-  <footer>AGM 4060 Fluid Power Systems, Clemson University. The twins are teaching and design tools, not a substitute for testing real hardware.</footer>
+  <footer>AGM 4060 Fluid Power Systems, Clemson University. The twin is a teaching and design tool. It does not replace tests on real hardware.</footer>
 </main>
 </body>
 </html>

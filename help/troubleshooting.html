@@ -13,42 +13,26 @@
     <ol>
       <li><a href="getting-started.html">Getting started</a></li>
       <li><a href="lab-twin.html">Lab and tractor twin</a></li>
-      <li><a href="amiga-twin.html">Amiga Hydraulic Arm twin</a></li>
       <li><a href="how-it-works.html">How it works</a></li>
       <li><a href="settings.html">Settings reference</a></li>
       <li><a href="troubleshooting.html" aria-current="page">Troubleshooting</a></li>
     </ol>
     <div class="open">
-      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
-      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga Hydraulic Arm twin</a>
+      <a href="../twins/pick-place-twin.html">Open the twin</a>
     </div>
   </nav>
   <main id="main">
     <h1>Troubleshooting</h1>
     <p class="lead">Frequent questions, and what to check first.</p>
     <dl>
-      <dt>Lab twin: Rim clearance over the inner rim shows NOT OK.</dt>
+      <dt>Rim clearance over the inner rim shows NOT OK.</dt>
       <dd>The front of the fruit passes too near the rim. The readout gives the x position and the tip height that is necessary. Increase the bin inner rim distance, or change the geometry (for example, a higher bar or a longer stroke).</dd>
-      <dt>Lab twin: Pick width reached shows NO.</dt>
+      <dt>Pick width reached shows NO.</dt>
       <dd>The tip cannot reach grasp height at the two ends of the pick width. Lower the bar, increase the stroke or the retracted length, or change the pivot spacing. Change one value at a time and record the effect.</dd>
-      <dt>Lab twin: the forces at the worst point are much larger than on the pick line.</dt>
+      <dt>the forces at the worst point are much larger than on the pick line.</dt>
       <dd>This is correct. The worst point is often the drop point above the bin, where the two cylinders are almost parallel. Use the forces at the worst point of the work path for your design.</dd>
-      <dt>Lab twin: the load sinks, or the status line shows a counterbalance warning.</dt>
+      <dt>the load sinks, or the status line shows a counterbalance warning.</dt>
       <dd>The counterbalance setting is less than the load pressure. Increase the setting in psi, or the ratio. If the valves are not fitted, the load drifts slowly through the valve spool. Tick <em>Fitted on both cylinders</em>.</dd>
-      <dt>Amiga twin: I pushed Start and nothing occurs.</dt>
-      <dd>Read the status line. While the rover drives, the status line shows the distance to go each second. The view follows the rover during a run. If you cannot see the rover, push <em>Fit view to rig</em>. If fruit from an earlier planting is still in the field, new fruit goes beyond it: push <em>Remove all watermelons</em>, then <em>Plant</em>.</dd>
-      <dt>Amiga twin: the rover went off the screen.</dt>
-      <dd>Tick <em>Camera follows rover</em> in Settings, View, or push <em>Fit view to rig</em>. Drag with the right button to move the view. Turn the scroll wheel to zoom.</dd>
-      <dt>Amiga twin: the arm does not pick many watermelons.</dt>
-      <dd>Read <em>Picks refused by checks</em> in Results. Elongated fruit across the row are too wide for the jaws: tick <em>Wrist rotation</em>, or increase the actuator stroke. A full deck bin stops the run: push <em>Empty the deck bin</em>. Under heavy leaves with the camera search on, some misses are normal.</dd>
-      <dt>Amiga twin: "Gripper hit the watermelon during the move."</dt>
-      <dd>The open jaws would hit a fruit. Load the page again to get the latest version. If the message occurs again, record the hardware, the shape, the leaves and the search choices, so that the problem can be repeated.</dd>
-      <dt>Amiga twin: air blows with Leaves set to None.</dt>
-      <dd>The choice None removes the leaves only when you push <em>Plant</em> again. Until then, the air knife continues to clear the old leaves.</dd>
-      <dt>Amiga twin: the wrist does not turn.</dt>
-      <dd>The wrist turns only for elongated fruit, or with the <em>Wrist angle</em> slider in Manual control. A round fruit is the same from all sides, so the wrist stays at 0 degrees. When the gripper holds the fruit, the wrist turns back to 0 degrees.</dd>
-      <dt>The page is slow.</dt>
-      <dd>A whole-row canopy with high coverage has thousands of leaves. Decrease the leaf coverage, close the Live equations box, or use a computer with a graphics card.</dd>
       <dt>The twin stopped because of an error.</dt>
       <dd>Push <em>Reset rig</em>. If the status line shows an error message, copy it into an issue on the GitHub repository.</dd>
     </dl>

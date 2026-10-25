@@ -13,19 +13,17 @@
     <ol>
       <li><a href="getting-started.html">Getting started</a></li>
       <li><a href="lab-twin.html">Lab and tractor twin</a></li>
-      <li><a href="amiga-twin.html">Amiga Hydraulic Arm twin</a></li>
       <li><a href="how-it-works.html" aria-current="page">How it works</a></li>
       <li><a href="settings.html">Settings reference</a></li>
       <li><a href="troubleshooting.html">Troubleshooting</a></li>
     </ol>
     <div class="open">
-      <a href="../twins/pick-place-twin.html">Open the lab and tractor twin</a>
-      <a href="../twins/pick-place-twin-amiga.html">Open the Amiga Hydraulic Arm twin</a>
+      <a href="../twins/pick-place-twin.html">Open the twin</a>
     </div>
   </nav>
   <main id="main">
     <h1>How it works</h1>
-    <p class="lead">The physics and the control behind the twins, in the sequence that the machine uses them.</p>
+    <p class="lead">The physics and the control behind the twin, in the sequence that the machine uses them.</p>
     <p>The equations on this page do not contain unit constants. Before you use an equation, convert all values to one set of units, for example in, lbf and s.</p>
 
     <h2>Kinematics: two lengths set the tip</h2>
@@ -33,7 +31,7 @@
     <p>The shaded reach region shows each tip position that the two cylinders can reach in their stroke. Its color shows the cylinder force for each pound of load.</p>
 
     <h2>The work path and the worst point</h2>
-    <p>The lab and tractor twin finds the worst point on the work path. The work path is each reachable tip position from the pick line (grasp height, across the pick width) up to the drop height, and across to the drop point. At each position, the twin calculates the two cylinder forces. The worst point is the position where a force is the maximum. The forces increase when the two cylinders are almost parallel. Thus, the worst point is often the drop point above the bin.</p>
+    <p>The twin finds the worst point on the work path. The work path is each reachable tip position from the pick line (grasp height, across the pick width) up to the drop height, and across to the drop point. At each position, the twin calculates the two cylinder forces. The worst point is the position where a force is the maximum. The forces increase when the two cylinders are almost parallel. Thus, the worst point is often the drop point above the bin.</p>
 
     <h2>Forces and pressures</h2>
     <p>Each cylinder has a pin at each end. Thus, the force in each cylinder is along its line. The force balance at the tip gives the two forces for a load W. A cylinder that pulls holds the load with the oil in its rod end: p = F / A<sub>r</sub>, where A<sub>r</sub> is the annulus area. A cylinder that pushes holds the load with the oil in its cap end: p = F / A<sub>c</sub>, where A<sub>c</sub> is the piston area. The design force is 2 times this force (safety factor 2).</p>
@@ -54,23 +52,10 @@
     <p>The Camera tab in Live equations shows each step with the current numbers, including noise and delay.</p>
 
     <h2>Control with on/off valves</h2>
-    <p>With Basic hardware, the controller compares the tip position from the camera with the target 15 times each second. It opens one valve at a time. The camera delay and noise cause overshoot. Thus, the deadband and the stepped descent are important.</p>
+    <p>The controller compares the tip position from the camera with the target 15 times each second. It opens one valve at a time. The camera delay and noise cause overshoot. Thus, the deadband and the stepped descent are important.</p>
 
-    <h2>Upgraded control (Amiga twin)</h2>
-    <p>The controller plans a straight path for the tip. The speed increases, stays constant, then decreases. The speed limit makes sure that the two cylinders together never need more oil than the pump supplies. Approximately 250 times each second, the controller changes the planned tip point into two target lengths. It sets the opening of each proportional valve to the planned speed plus a correction from the position sensor of the cylinder.</p>
 
-    <h2>Fruit under leaves (Amiga twin)</h2>
-    <ul>
-      <li><strong>Visible rind:</strong> if a sufficient area of the fruit is visible, the camera finds it accurately.</li>
-      <li><strong>Depth mound:</strong> leaves on a watermelon make a bump in the depth image. This gives an approximate position, also when the fruit is not visible.</li>
-      <li><strong>Air knife and puff:</strong> they clear the leaves from the strip ahead of the arm, then from the fruit area. Then the camera looks a second time.</li>
-      <li><strong>Tracking while driving:</strong> the sightings join into tracks. The rover drives the last few inches by odometry and stops at its estimate. When the camera sees the fruit near the arm, the rover can move a small distance forward or back.</li>
-    </ul>
-
-    <h2>Battery and stability (Amiga twin)</h2>
-    <p>The hydraulic motor operates only while a valve is open. Motor power is the no-load power plus p Q / &eta;, where &eta; is the motor x pump efficiency. With p in lbf/in<sup>2</sup> and Q in in<sup>3</sup>/s, p Q is in in-lbf/s. Divide by 8.85 in-lbf/s per W to get watts. The twin records the battery energy for each pick. The rear tip-over check compares the restoring moment of the rover with the moment of the loaded arm behind the rear axle. The ratio must be 1.5 or more.</p>
-
-    <div class="pager"><a href="amiga-twin.html">Previous: Amiga Hydraulic Arm twin</a><a href="settings.html">Next: Settings reference</a></div>
+    <div class="pager"><a href="lab-twin.html">Previous: Lab and tractor twin</a><a href="settings.html">Next: Settings reference</a></div>
     <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
   </main>
 </div>
