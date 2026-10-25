@@ -25,40 +25,87 @@
   </nav>
   <main id="main">
     <h1>Lab and tractor twin</h1>
-    <p class="lead">Two hydraulic cylinders hang from a bar and meet at the tip. A camera finds an object, and on/off valves move the cylinders one at a time to pick it up.</p>
+    <p class="lead">Two hydraulic cylinders hang from a bar and connect at the tip. The end effector hangs from the tip. Use this twin for the design project: find the geometry, the worst point, the cylinder forces and pressures, and the counterbalance valve settings.</p>
 
-    <h2>Load a preset</h2>
-    <p>Open <em>Settings</em> and choose one of the presets at the top.</p>
+    <h2>The panel, from top to bottom</h2>
+    <p>The toolbar stays at the top of the panel when you scroll.</p>
     <div class="tablewrap"><table>
-      <caption>Built-in presets</caption>
-      <tr><th>Preset</th><th>Spacing</th><th>Bar height</th><th>Cylinders</th><th>Hydraulics</th></tr>
-      <tr><td>Lab rig</td><td>24 in</td><td>32 in</td><td>1.5 in bore, 12 in stroke</td><td>800 psi, 0.5 gpm</td></tr>
-      <tr><td>Tractor start</td><td>60 in</td><td>72 in</td><td>3.0 in bore, 30 in stroke</td><td>2500 psi, 10 gpm</td></tr>
+      <caption>Sections of the panel</caption>
+      <tr><th>Section</th><th>Content</th></tr>
+      <tr><td>Toolbar</td><td>Pause, Speed (1x to 8x), Reset rig and the status line. The status line tells you what the rig does now.</td></tr>
+      <tr><td>1 Start from a preset (Required)</td><td><em>Load tractor start</em> or <em>Load lab rig</em>.</td></tr>
+      <tr><td>2 Enter your design (Required)</td><td>The list of the five settings folders with the Required label, and the button <em>Open my design settings</em>.</td></tr>
+      <tr><td>3 Check your design (Required)</td><td><em>Show worst point</em> and <em>Reach region</em> on or off.</td></tr>
+      <tr><td>4 Run the arm (Optional)</td><td>The three control modes: Manual, Camera auto and Timed moves.</td></tr>
+      <tr><td>Place an object or the drop spot by coordinates</td><td>Puts an object or the drop spot at an x position that you enter.</td></tr>
+      <tr><td>Hydraulic circuit (live) (Optional)</td><td>The valves, the cylinders and the oil flow during the movement.</td></tr>
+      <tr><td>Electronics (live) (Optional)</td><td>The camera, the ESP32 controller, the relays, the solenoids and the E-stop.</td></tr>
+      <tr><td>Readouts (Required)</td><td>The values for the design project. See the table below.</td></tr>
+      <tr><td>Results of runs (Optional)</td><td>Totals of the runs in step 4.</td></tr>
+      <tr><td>Settings</td><td>All settings, in folders. The folders with the Required label contain your design values.</td></tr>
     </table></div>
 
-    <h2>Choose a control mode</h2>
+    <h2>Step 1: presets</h2>
+    <div class="tablewrap"><table>
+      <caption>Built-in presets</caption>
+      <tr><th>Preset</th><th>Arm geometry</th><th>Cylinders and hydraulics</th><th>Load</th><th>Bin</th></tr>
+      <tr><td>Tractor start</td><td>Pivot spacing 60 in, bar height 72 in, retracted length 40 in, stroke 30 in, gripper length 12 in</td><td>3.0 in bore, 1.5 in rod, 2,500 psi, 10 gpm</td><td>Bale, 14 in, 60 lb; gripper 80 lb</td><td>Shown. Pick width 48 in, rim 36 in, inner rim 45 in, width 16 in, clearance 4 in</td></tr>
+      <tr><td>Lab rig</td><td>Pivot spacing 24 in, bar height 32 in, retracted length 20 in, stroke 12 in, gripper length 5 in</td><td>1.5 in bore, 1.0 in rod, 800 psi, 0.5 gpm</td><td>Ball, 5 in, 20 lb; gripper 5 lb</td><td>Not shown</td></tr>
+    </table></div>
+    <p>For the design project, push <em>Load tractor start</em>. Then change the values to your design in step 2.</p>
+
+    <h2>Step 2: enter your design</h2>
+    <p>Push <em>Open my design settings</em>. Enter your values in these five folders:</p>
+    <ol>
+      <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke and gripper length. The gripper length is the grip length: the distance from the tip to the fruit center.</li>
+      <li><strong>Cylinders and hydraulics:</strong> bore, rod diameter, pressure (relief valve setting) and flow rate.</li>
+      <li><strong>Load:</strong> fruit shape, height (the fruit diameter) and weight. Enter the end effector weight as the gripper weight.</li>
+      <li><strong>Bin and pick width:</strong> pick width, bin rim height, bin inner rim distance, bin width and rim clearance.</li>
+      <li><strong>Counterbalance valves:</strong> fitted or not, the setting in psi (or 0 to use the ratio), and the pilot ratio.</li>
+    </ol>
+    <p>The <a href="settings.html">Settings reference</a> page explains each setting.</p>
+
+    <h2>Step 3: check your design</h2>
+    <p>Push <em>Show worst point</em>. The tip moves to the worst point of the full work path. The work path is each tip position from the pick line (grasp height, across the pick width) up to the drop height and across to the drop point. The worst point is the position where a cylinder force is the maximum. For many designs, the worst point is at the drop point above the bin, not on the pick line.</p>
+    <p>Then read these readouts:</p>
+    <div class="tablewrap"><table>
+      <caption>Readouts for the design project</caption>
+      <tr><th>Readout</th><th>What it tells you</th></tr>
+      <tr><td>Pick zone width at pick height</td><td>The width where the tip can reach grasp height.</td></tr>
+      <tr><td>Pick width reached</td><td>Yes if the pick zone covers all of your pick width. NO if not.</td></tr>
+      <tr><td>Drop point (bin)</td><td>The drop point position and if the tip can reach it. The drop height is bin rim height + rim clearance + fruit radius + grip length.</td></tr>
+      <tr><td>Rim clearance over the inner rim</td><td>OK if the fruit clears the rim by the rim clearance or more. The twin checks the front of the fruit, not only its center, when the fruit passes over the rim. NOT OK tells you where the tip is too low.</td></tr>
+      <tr><td>Worst point of the work path</td><td>The x and y position of the worst point.</td></tr>
+      <tr><td>Cylinder 1 and 2 at the worst point</td><td>The force (push or pull), the end that holds the load (cap end or rod end), the pressure, and the design force and design pressure (x2).</td></tr>
+      <tr><td>Cylinder 1 and 2 pressure now</td><td>The pressure in the end that holds the load at the current tip position, and the design pressure (x2).</td></tr>
+      <tr><td>Counterbalance guide</td><td>1.3 times the maximum holding pressure in the work path, for each cylinder.</td></tr>
+      <tr><td>Counterbalance 1 and 2</td><td>With valves fitted: the setting, the holding pressure now, and the pilot pressure necessary to lower the load.</td></tr>
+      <tr><td>Load holding 1 and 2</td><td>Without valves: the holding pressure and the drift since the cylinder last moved.</td></tr>
+    </table></div>
+    <p><em>Reach region</em> shows the shaded region that the tip can reach. Its color shows the cylinder force for each pound of load.</p>
+
+    <h2>Counterbalance valves</h2>
+    <ul>
+      <li><strong>Not fitted:</strong> a load that pulls the cylinder (an overrunning load) moves faster than the pump flow. The status line shows a warning. When the arm stops, the load drifts slowly because oil leaks through the valve spool.</li>
+      <li><strong>Fitted:</strong> the valve holds the load. When the load lowers, the valve controls the speed. Readouts show the pilot pressure that opens the valve.</li>
+      <li><strong>Setting too low:</strong> if the setting is less than the load pressure, the status line shows a warning. The valve opens and the load sinks.</li>
+    </ul>
+
+    <h2>Step 4: run the arm (optional)</h2>
     <dl>
       <dt>Manual</dt>
-      <dd>Hold the buttons or keys to run each cylinder, like the manual override on a solenoid valve. Good for learning how each cylinder moves the tip.</dd>
+      <dd>Hold the buttons or the keys to move each cylinder, as with the manual override of a solenoid valve. The sliders set the cylinder lengths directly, without hydraulics. Use this mode to learn how each cylinder moves the tip.</dd>
       <dt>Camera auto</dt>
-      <dd>The camera finds the object, runs six pick checks, then guides the tip with on/off valve pulses. <em>Pick one</em> picks the nearest object; <em>Pick all</em> clears the table.</dd>
+      <dd>The camera finds the object and the controller does six pick checks. Then the controller moves the tip with on/off valve pulses. <em>Pick one</em> picks the nearest object. <em>Pick all</em> picks all objects.</dd>
       <dt>Timed moves</dt>
-      <dd>No camera. Each valve opens for a calculated time. Compare the positional error with Camera auto to see why feedback matters.</dd>
+      <dd>No camera. Each valve opens for a calculated time. The real flow rate is different from the setting, so the tip misses the target. Compare the position error with Camera auto. This shows why feedback is necessary.</dd>
     </dl>
+    <h3>The six pick checks</h3>
+    <p>Before a valve opens, the controller makes sure that the object is visible, it is on the arm plane, it is in the reach region, it is not too heavy, it fits between the jaws, and the drop spot is reachable. If a check fails, the pick stops. The status line tells you which check failed.</p>
+    <h3>Stepped descent</h3>
+    <p>Near the object, each cylinder moves one step or less (0.4 in by default). Then the other cylinder moves. Thus, the tip moves down almost straight, and the open jaws do not hit the object. Set <em>Descent near objects</em> to Direct to see the difference.</p>
 
-    <h2>Read the six pick checks</h2>
-    <p>Before any valve opens, the controller checks that the object is visible, sits on the arm plane, is inside the reach region, is light enough to lift, fits between the jaws, and that the drop spot is reachable. A failed check stops the pick and the status line says which one.</p>
-
-    <h2>Stepped descent</h2>
-    <p>Near the object, each cylinder moves at most one step (0.4 in by default) before the other takes over. The tip then comes down nearly straight, so the open jaws do not swing into the object. Switch <em>Descent near objects</em> to Direct to see the difference.</p>
-
-    <h2>Panels worth opening</h2>
-    <ul>
-      <li><strong>Hydraulic circuit (live):</strong> valve spools shift, pressure lines turn red, return lines blue, and the pistons move. Click a solenoid coil to shift that valve.</li>
-      <li><strong>Electronics (live):</strong> camera to ESP32 over UDP, relays to the 24 V solenoids, the gripper H-bridge and the E-stop loop.</li>
-      <li><strong>Live equations, Camera tab:</strong> every step from pixel to rig coordinates, with the current numbers.</li>
-    </ul>
-    <p class="note">The series tandem-center circuit in this twin shows valve 2 as starved while valve 1 is shifted. On real hardware, cylinder 2 can still move on the return oil from cylinder 1. Keep this in mind when comparing with the trainer.</p>
+    <p class="note">The circuit in this twin uses two tandem-center valves in series. The twin shows valve 2 with no flow while valve 1 is shifted. On real hardware, cylinder 2 can move on the return oil from cylinder 1. Remember this when you compare the twin with the trainer.</p>
 
     <div class="pager"><a href="getting-started.html">Previous: Getting started</a><a href="amiga-twin.html">Next: Amiga watermelon twin</a></div>
     <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>

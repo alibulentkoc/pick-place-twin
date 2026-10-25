@@ -25,60 +25,70 @@
   </nav>
   <main id="main">
     <h1>Getting started</h1>
-    <p class="lead">Both twins are single HTML files. They run in any modern browser, need no install and work offline.</p>
+    <p class="lead">Each twin is one HTML file. It operates in all modern browsers. It needs no installation and it operates offline.</p>
 
     <h2>Open a twin</h2>
-    <p>Pick the twin that matches what you are doing.</p>
+    <p>Select the twin for your task.</p>
     <div class="tablewrap"><table>
       <caption>The two twins</caption>
       <tr><th>Twin</th><th>Use it for</th><th>File</th></tr>
-      <tr><td>Lab and tractor twin</td><td>The course rig on the Eaton HTS-2 trainer, and sizing a tractor-mounted version</td><td><code>twins/pick-place-twin.html</code></td></tr>
-      <tr><td>Amiga watermelon twin</td><td>A battery-powered harvester on a farm-ng Amiga rover that drives along a row</td><td><code>twins/pick-place-twin-amiga.html</code></td></tr>
+      <tr><td>Lab and tractor twin</td><td>The course rig on the Eaton HTS-2 trainer, and the design project: a harvesting arm on a tractor</td><td><code>twins/pick-place-twin.html</code></td></tr>
+      <tr><td>Amiga watermelon twin</td><td>A harvester with a battery-powered hydraulic arm on a farm-ng Amiga rover. The rover drives along a row.</td><td><code>twins/pick-place-twin-amiga.html</code></td></tr>
     </table></div>
-    <p>Open the file directly from your computer, or use the links in the left rail. Chrome, Edge, Firefox and Safari all work. A laptop with a separate graphics chip runs the leaf canopy scenes more smoothly.</p>
+    <p>Open the file from your computer, or use the links in the left column. Chrome, Edge, Firefox and Safari operate correctly. The leaf canopy scenes of the Amiga twin move more smoothly on a computer with a graphics card.</p>
 
-    <h2>Find your way around the screen</h2>
+    <h2>The screen</h2>
     <ul>
       <li><strong>3D view (left):</strong> the rig, the objects and the camera frame on the floor.</li>
-      <li><strong>Live equations (top left):</strong> the numbers behind the motion. Use <em>Show</em> and <em>Hide</em> to open or close it. The tabs are Mechanics, Camera and Messages.</li>
-      <li><strong>OAK camera view (bottom left):</strong> what the depth camera sees, with detection boxes.</li>
-      <li><strong>Panel (right):</strong> controls, live hydraulic circuit, electronics, readouts, results and settings.</li>
+      <li><strong>Live equations (top left):</strong> the calculations behind the movement, with the current numbers. Push <em>Hide</em> or <em>Show</em> to close or open the box. The tabs are Mechanics, Camera and Messages.</li>
+      <li><strong>OAK camera view (bottom left):</strong> the image of the depth camera, with the detection boxes.</li>
+      <li><strong>Panel (right):</strong> the toolbar, the numbered steps, the live hydraulic circuit, the electronics, the readouts, the results and the settings. A step with the Required label is necessary for the design project. A step with the Optional label is not necessary.</li>
     </ul>
 
     <h2>Move the 3D view</h2>
     <div class="tablewrap"><table>
       <caption>Mouse controls in the 3D view</caption>
       <tr><th>Action</th><th>Mouse</th></tr>
-      <tr><td>Orbit</td><td>Left drag</td></tr>
-      <tr><td>Pan</td><td>Right drag, or Shift plus left drag</td></tr>
-      <tr><td>Zoom</td><td>Scroll wheel</td></tr>
-      <tr><td>Place an object, or move the drop spot</td><td>Click the floor</td></tr>
-      <tr><td>Send the tip to a point</td><td>Click inside the shaded reach region</td></tr>
+      <tr><td>Turn the view</td><td>Drag with the left button</td></tr>
+      <tr><td>Move the view to the side</td><td>Drag with the right button, or hold Shift and drag with the left button</td></tr>
+      <tr><td>Zoom</td><td>Turn the scroll wheel</td></tr>
+      <tr><td>Put an object on the floor, or move the drop spot</td><td>Click the floor</td></tr>
+      <tr><td>Send the tip to a point</td><td>Click in the shaded reach region</td></tr>
     </table></div>
-    <p>To jump back to the rig, use <em>Fit view to rig</em> under Settings, View.</p>
+    <p>To see the full rig again, push <em>Fit view to rig</em> in Settings, View.</p>
 
     <h2>Keyboard</h2>
     <div class="tablewrap"><table>
       <caption>Keyboard shortcuts (both twins)</caption>
-      <tr><th>Key</th><th>Does</th></tr>
-      <tr><td><kbd>Q</kbd> / <kbd>A</kbd></td><td>Extend or retract cylinder 1 while held</td></tr>
-      <tr><td><kbd>W</kbd> / <kbd>S</kbd></td><td>Extend or retract cylinder 2 while held</td></tr>
+      <tr><th>Key</th><th>Function</th></tr>
+      <tr><td><kbd>Q</kbd> / <kbd>A</kbd></td><td>Extend or retract cylinder 1 while you hold the key</td></tr>
+      <tr><td><kbd>W</kbd> / <kbd>S</kbd></td><td>Extend or retract cylinder 2 while you hold the key</td></tr>
       <tr><td><kbd>G</kbd></td><td>Close or open the gripper</td></tr>
-      <tr><td><kbd>H</kbd></td><td>Send the arm home</td></tr>
-      <tr><td><kbd>Space</kbd></td><td>Pause or resume</td></tr>
-      <tr><td><kbd>E</kbd></td><td>E-stop on or off</td></tr>
-      <tr><td><kbd>Up</kbd> / <kbd>Down</kbd></td><td>Amiga twin only: drive the rover forward or back while held</td></tr>
+      <tr><td><kbd>H</kbd></td><td>Move the arm to its home position</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>Pause or continue</td></tr>
+      <tr><td><kbd>E</kbd></td><td>Set the E-stop on or off</td></tr>
+      <tr><td><kbd>Up</kbd> / <kbd>Down</kbd></td><td>Amiga twin only: drive the rover forward or back while you hold the key</td></tr>
     </table></div>
 
-    <h2>A first run in five minutes</h2>
+    <h2>Design project: check a design in ten minutes</h2>
+    <ol>
+      <li>Open the lab and tractor twin.</li>
+      <li>Step 1: push <em>Load tractor start</em>.</li>
+      <li>Step 2: push <em>Open my design settings</em>. Enter your values in the five folders with the Required label: Arm geometry, Cylinders and hydraulics, Load, Bin and pick width, and Counterbalance valves.</li>
+      <li>Step 3: push <em>Show worst point</em>. The tip moves to the worst point of the full work path.</li>
+      <li>Read Readouts. Make sure that <em>Pick width reached</em> shows yes and that <em>Rim clearance over the inner rim</em> shows OK. Record the two cylinder forces and pressures at the worst point.</li>
+    </ol>
+    <p>The <a href="lab-twin.html">Lab and tractor twin</a> page gives the details.</p>
+
+    <h2>Amiga twin: a first run in five minutes</h2>
     <ol>
       <li>Open the Amiga watermelon twin.</li>
-      <li>In step 1, set <em>How many</em> to 4, keep Leaves on <em>None</em>, and press <em>Plant</em>.</li>
-      <li>In step 2, keep <em>In the deck bin</em>, then press <em>Start: drive along the row and pick</em>.</li>
-      <li>Watch the status line under the toolbar. Set Speed to 4x if it feels slow.</li>
-      <li>When the row is finished, open <em>Results</em> to see picks, cycle time and energy per pick.</li>
+      <li>Step 1: set <em>How many</em> to 4. Then push <em>Plant</em>.</li>
+      <li>Step 2: select <em>In the deck bin</em>. Then push <em>Start: drive along the row and pick</em>.</li>
+      <li>Read the status line under the toolbar. If the movement is too slow, set Speed to 4x.</li>
+      <li>At the end of the row, open <em>Results</em>. Read the picks, the cycle time and the energy for each pick.</li>
     </ol>
-    <p class="note">The twins are teaching and design tools. They model the main physics and the camera pipeline, but they are not a substitute for testing real hardware.</p>
+    <p class="note">The twins are teaching and design tools. They model the main physics and the camera pipeline. They do not replace tests on real hardware.</p>
 
     <div class="pager"><span></span><a href="lab-twin.html">Next: Lab and tractor twin</a></div>
     <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>

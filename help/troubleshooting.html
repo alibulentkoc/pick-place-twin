@@ -25,28 +25,35 @@
   </nav>
   <main id="main">
     <h1>Troubleshooting</h1>
-    <p class="lead">Common questions, and what to check first.</p>
-
+    <p class="lead">Frequent questions, and what to check first.</p>
     <dl>
-      <dt>I pressed Start and nothing seems to happen.</dt>
-      <dd>Read the status line. While driving it updates every second with the distance to go. The view now follows the rover during a run; if it was off, use <em>Fit view to rig</em>. If watermelons from an earlier planting are still in the field, new ones go beyond them: press <em>Remove all watermelons</em>, then <em>Plant</em>.</dd>
-      <dt>The rover went off screen.</dt>
-      <dd>Turn on <em>Camera follows rover</em> under Settings, View, or use <em>Fit view to rig</em>. Right drag pans, the wheel zooms.</dd>
-      <dt>Many watermelons are skipped.</dt>
-      <dd>Check <em>Picks refused by checks</em> in Results. Elongated fruit lying across the row are too wide for the jaws: tick Wrist rotation or raise the actuator stroke. A full deck bin stops the run: press <em>Empty the deck bin</em>. Under heavy leaves with camera finding, some misses are expected.</dd>
-      <dt>"Gripper hit the watermelon during the move."</dt>
-      <dd>The open jaws would have swept into a fruit. Reload the page so you have the latest version. If it repeats, note the hardware, shape, leaf and finding choices so the case can be reproduced.</dd>
-      <dt>I see air blowing with Leaves set to None.</dt>
-      <dd>Choosing None removes the leaves only when you press Plant again. Until then the air knife keeps clearing the old leaves.</dd>
-      <dt>The wrist does not seem to turn.</dt>
-      <dd>It turns only for elongated fruit, or with the Wrist angle slider in Manual control. Round fruit look the same from every side, so the wrist stays at 0 degrees.</dd>
+      <dt>Lab twin: Rim clearance over the inner rim shows NOT OK.</dt>
+      <dd>The front of the fruit passes too near the rim. The readout gives the x position and the tip height that is necessary. Increase the bin inner rim distance, or change the geometry (for example, a higher bar or a longer stroke).</dd>
+      <dt>Lab twin: Pick width reached shows NO.</dt>
+      <dd>The tip cannot reach grasp height at the two ends of the pick width. Lower the bar, increase the stroke or the retracted length, or change the pivot spacing. Change one value at a time and record the effect.</dd>
+      <dt>Lab twin: the forces at the worst point are much larger than on the pick line.</dt>
+      <dd>This is correct. The worst point is often the drop point above the bin, where the two cylinders are almost parallel. Use the forces at the worst point of the work path for your design.</dd>
+      <dt>Lab twin: the load sinks, or the status line shows a counterbalance warning.</dt>
+      <dd>The counterbalance setting is less than the load pressure. Increase the setting in psi, or the ratio. If the valves are not fitted, the load drifts slowly through the valve spool. Tick <em>Fitted on both cylinders</em>.</dd>
+      <dt>Amiga twin: I pushed Start and nothing occurs.</dt>
+      <dd>Read the status line. While the rover drives, the status line shows the distance to go each second. The view follows the rover during a run. If you cannot see the rover, push <em>Fit view to rig</em>. If fruit from an earlier planting is still in the field, new fruit goes beyond it: push <em>Remove all watermelons</em>, then <em>Plant</em>.</dd>
+      <dt>Amiga twin: the rover went off the screen.</dt>
+      <dd>Tick <em>Camera follows rover</em> in Settings, View, or push <em>Fit view to rig</em>. Drag with the right button to move the view. Turn the scroll wheel to zoom.</dd>
+      <dt>Amiga twin: the arm does not pick many watermelons.</dt>
+      <dd>Read <em>Picks refused by checks</em> in Results. Elongated fruit across the row are too wide for the jaws: tick <em>Wrist rotation</em>, or increase the actuator stroke. A full deck bin stops the run: push <em>Empty the deck bin</em>. Under heavy leaves with the camera search on, some misses are normal.</dd>
+      <dt>Amiga twin: "Gripper hit the watermelon during the move."</dt>
+      <dd>The open jaws would hit a fruit. Load the page again to get the latest version. If the message occurs again, record the hardware, the shape, the leaves and the search choices, so that the problem can be repeated.</dd>
+      <dt>Amiga twin: air blows with Leaves set to None.</dt>
+      <dd>The choice None removes the leaves only when you push <em>Plant</em> again. Until then, the air knife continues to clear the old leaves.</dd>
+      <dt>Amiga twin: the wrist does not turn.</dt>
+      <dd>The wrist turns only for elongated fruit, or with the <em>Wrist angle</em> slider in Manual control. A round fruit is the same from all sides, so the wrist stays at 0 degrees. When the gripper holds the fruit, the wrist turns back to 0 degrees.</dd>
       <dt>The page is slow.</dt>
-      <dd>Whole-row leaves at high coverage draw thousands of leaves. Lower the leaf coverage, close the live equations panel, or use a computer with a graphics chip.</dd>
-      <dt>Something went wrong and the twin stopped.</dt>
-      <dd>Press <em>Reset rig</em>. If the status line shows an error message, copy it into an issue on the GitHub repository.</dd>
+      <dd>A whole-row canopy with high coverage has thousands of leaves. Decrease the leaf coverage, close the Live equations box, or use a computer with a graphics card.</dd>
+      <dt>The twin stopped because of an error.</dt>
+      <dd>Push <em>Reset rig</em>. If the status line shows an error message, copy it into an issue on the GitHub repository.</dd>
     </dl>
 
-    <div class="pager"><a href="settings.html">Previous: Settings reference</a><span></span></div>
+    <div class="pager"><a href="settings.html">Previous: Settings reference</a></div>
     <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
   </main>
 </div>

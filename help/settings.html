@@ -25,148 +25,190 @@
   </nav>
   <main id="main">
     <h1>Settings reference</h1>
-    <p class="lead">What each setting does, folder by folder, in the order they appear.</p>
-    <p>Settings are at the bottom of the panel in the Amiga watermelon twin. The lab and tractor twin uses the same names for the folders it shares.</p>
-    <h2>Rover (farm-ng Amiga)</h2>
+    <p class="lead">The function of each setting, folder by folder, in the sequence of the panel.</p>
+    <p>The settings are at the bottom of the panel. In the lab and tractor twin, the five folders with the Required label contain your design values for the design project. All other folders are optional. The two twins use the same names for the folders that they share.</p>
+
+    <h2>Lab and tractor twin</h2>
+    <h3>Arm geometry (in): required</h3>
+    <div class="tablewrap"><table>
+      <caption>Arm geometry (in): required settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Pivot spacing</td><td>The distance between the two cylinder pivots on the bar.</td></tr>
+      <tr><td>Bar height</td><td>The height of the pivots above the ground.</td></tr>
+      <tr><td>Retracted length</td><td>The pin-to-pin length of each cylinder when it is fully retracted.</td></tr>
+      <tr><td>Stroke</td><td>The cylinder stroke. The extended length is the retracted length plus the stroke.</td></tr>
+      <tr><td>Gripper length</td><td>The grip length: the vertical distance from the tip to the center of the fruit.</td></tr>
+    </table></div>
+    <h3>Cylinders and hydraulics: required</h3>
+    <div class="tablewrap"><table>
+      <caption>Cylinders and hydraulics: required settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Bore (in)</td><td>The piston diameter. It sets the piston area, the push force and the extension speed.</td></tr>
+      <tr><td>Rod (in)</td><td>The rod diameter. It sets the annulus area and the retraction speed.</td></tr>
+      <tr><td>Pressure (psi)</td><td>The relief valve setting.</td></tr>
+      <tr><td>Flow setting (gpm)</td><td>The pump or flow control setting.</td></tr>
+      <tr><td>Actual flow error (%)</td><td>The difference between the real flow rate and the setting.</td></tr>
+    </table></div>
+    <h3>Load: required</h3>
+    <div class="tablewrap"><table>
+      <caption>Load: required settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Shape</td><td>Ball (round fruit) or Bale.</td></tr>
+      <tr><td>Height (in)</td><td>The height of the object. For a round fruit, this is the diameter.</td></tr>
+      <tr><td>Weight (lb)</td><td>The fruit weight.</td></tr>
+      <tr><td>Gripper weight (lb)</td><td>The end effector weight. The twin adds it to the load at the tip.</td></tr>
+    </table></div>
+    <h3>Bin and pick width: required</h3>
+    <p>A marker shows the drop point: green if the rim clearance check passes, red if not.</p>
+    <div class="tablewrap"><table>
+      <caption>Bin and pick width: required settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Show the bin</td><td>Shows the bin. It also turns on the drop point, the rim clearance check and the work-path search.</td></tr>
+      <tr><td>Pick width (in)</td><td>The width across the row where fruit can lie, centered on the arm. Orange marks on the ground show its two ends.</td></tr>
+      <tr><td>Bin rim height (in)</td><td>The height of the top edge of the bin above the ground.</td></tr>
+      <tr><td>Bin inner rim distance (in)</td><td>The horizontal distance from the arm center to the bin wall nearer the arm.</td></tr>
+      <tr><td>Bin width (in)</td><td>The inside width of the bin. The drop point is at its middle.</td></tr>
+      <tr><td>Rim clearance (in)</td><td>The minimum gap between the bottom of the fruit and the rim.</td></tr>
+    </table></div>
+    <h3>Counterbalance valves: required</h3>
+    <div class="tablewrap"><table>
+      <caption>Counterbalance valves: required settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Fitted on both cylinders</td><td>Installs a counterbalance valve on the port that holds the load on each cylinder.</td></tr>
+      <tr><td>Setting / highest load pressure</td><td>The setting as a ratio of the highest holding pressure in the work path. The twin uses this ratio when the setting in psi is 0.</td></tr>
+      <tr><td>Setting (psi), 0 = use ratio</td><td>The valve setting in psi. Use it for a valve with a minimum setting, for example 435 psi.</td></tr>
+      <tr><td>Pilot ratio (x:1)</td><td>The ratio of the pilot area to the load area, for example 4:1.</td></tr>
+      <tr><td>Valve leakage at 1000 psi (in3/min)</td><td>The leakage through the valve. It causes slow drift when the arm holds a load.</td></tr>
+    </table></div>
+    <h3>Gripper details: optional</h3>
+    <div class="tablewrap"><table>
+      <caption>Gripper details: optional settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Actuator stroke (in)</td><td>Sets the widest jaw opening.</td></tr>
+      <tr><td>Closed width (in)</td><td>The gap when the jaws are fully closed.</td></tr>
+      <tr><td>Actuator force (lb)</td><td>The squeeze force. Each jaw gets half.</td></tr>
+      <tr><td>Actuator speed (in/s)</td><td>The jaw closing speed.</td></tr>
+      <tr><td>Pad friction (mu)</td><td>The grip friction. With the force, it sets the heaviest fruit that the jaws can hold.</td></tr>
+    </table></div>
+    <h3>Camera mount: optional</h3>
+    <div class="tablewrap"><table>
+      <caption>Camera mount: optional settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Post height (in), Arm back (in)</td><td>The position of the camera.</td></tr>
+      <tr><td>Aim automatically, Aim at pick line (else above)</td><td>The twin aims the camera.</td></tr>
+      <tr><td>Tilt from vertical, Field of view</td><td>Manual aim and the lens angle.</td></tr>
+    </table></div>
+    <h3>Camera pipeline: optional</h3>
+    <div class="tablewrap"><table>
+      <caption>Camera pipeline: optional settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Detection noise (px), Disparity noise (px)</td><td>Image noise and depth noise.</td></tr>
+      <tr><td>Stereo baseline (in)</td><td>The distance between the two stereo lenses.</td></tr>
+      <tr><td>Detection image (px)</td><td>The image resolution for detection.</td></tr>
+    </table></div>
+    <h3>Controller: optional</h3>
+    <div class="tablewrap"><table>
+      <caption>Controller: optional settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Deadband (in)</td><td>The position error at which the controller stops a move.</td></tr>
+      <tr><td>Camera delay (ms), Camera rate (Hz)</td><td>The delay and the rate of the camera feedback.</td></tr>
+      <tr><td>Noise at 40 in (in)</td><td>The noise of the tip marker position.</td></tr>
+      <tr><td>Descent near objects, Step per cylinder (in)</td><td>Stepped or direct descent, and the step length.</td></tr>
+    </table></div>
+    <h3>View: optional</h3>
+    <div class="tablewrap"><table>
+      <caption>View: optional settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Workspace map, Map shows</td><td>The shaded reach region, and what its color shows (force for each pound of load, or lift capacity).</td></tr>
+      <tr><td>Camera view cone, Camera frame on floor</td><td>Camera overlays.</td></tr>
+      <tr><td>Tip trail</td><td>The path of the tip.</td></tr>
+    </table></div>
+
+    <h2>Amiga watermelon twin: additional folders</h2>
+    <p>The Amiga twin has Arm geometry, Cylinders and hydraulics, Camera mount, Camera pipeline, Controller and View, as above. It has no Bin and pick width folder and no Counterbalance valves folder. It also has these folders:</p>
+    <h3>Rover (farm-ng Amiga)</h3>
     <div class="tablewrap"><table>
       <caption>Rover (farm-ng Amiga) settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Track width (in)</td><td>Distance between left and right wheels.</td></tr>
-      <tr><td>Wheelbase (in)</td><td>Distance between front and rear axles.</td></tr>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Track width (in), Wheelbase (in)</td><td>The distance between the left and right wheels, and between the front and rear axles.</td></tr>
       <tr><td>Rover weight (lb)</td><td>Used in the tip-over check.</td></tr>
-      <tr><td>Arm plane behind rear axle (in)</td><td>How far behind the rear axle the arm works.</td></tr>
-      <tr><td>Frame height (in)</td><td>Height of the rover frame and deck.</td></tr>
-      <tr><td>Drive speed (in/s)</td><td>Speed between stops.</td></tr>
+      <tr><td>Arm plane behind rear axle (in)</td><td>The distance from the rear axle to the plane in which the arm moves.</td></tr>
+      <tr><td>Frame height (in)</td><td>The height of the rover frame and deck.</td></tr>
+      <tr><td>Drive speed (in/s)</td><td>The speed between stops.</td></tr>
     </table></div>
-    <h2>Arm geometry (in)</h2>
+    <h3>Watermelon</h3>
     <div class="tablewrap"><table>
-      <caption>Arm geometry (in) settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Pivot spacing</td><td>Distance between the two cylinder pivots on the bar.</td></tr>
-      <tr><td>Bar height</td><td>Height of the pivots above the ground.</td></tr>
-      <tr><td>Retracted length</td><td>Pin-to-pin length of each cylinder when fully retracted.</td></tr>
-      <tr><td>Stroke</td><td>Cylinder stroke.</td></tr>
-      <tr><td>Gripper length</td><td>Distance from the tip joint to the grasp point.</td></tr>
+      <caption>Watermelon settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Shape, Height (in)</td><td>Round or elongated fruit, and the fruit height (the short diameter).</td></tr>
+      <tr><td>Elongated: length / height</td><td>The length of elongated fruit.</td></tr>
+      <tr><td>Weight (lb), Gripper weight (lb)</td><td>The fruit weight, and the end effector weight added to the tip load.</td></tr>
     </table></div>
-    <h2>Cylinders and hydraulics</h2>
+    <h3>Gripper (electric actuator)</h3>
     <div class="tablewrap"><table>
-      <caption>Cylinders and hydraulics settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Bore (in)</td><td>Piston diameter; sets force and extend speed.</td></tr>
-      <tr><td>Rod (in)</td><td>Rod diameter; sets the rod-side area and retract speed.</td></tr>
-      <tr><td>Pressure (psi)</td><td>Relief setting.</td></tr>
-      <tr><td>Flow setting (gpm)</td><td>Pump or flow-control setting.</td></tr>
-      <tr><td>Actual flow error (%)</td><td>How far the real flow differs from the setting.</td></tr>
+      <caption>Gripper (electric actuator) settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Wrist rotation</td><td>Installs the wrist. The gripper hangs 1.5 in lower.</td></tr>
+      <tr><td>Wrist motor speed (deg/s)</td><td>The turning speed of the wrist.</td></tr>
+      <tr><td>Actuator stroke, Closed width, Actuator force, Actuator speed, Pad friction</td><td>As in Gripper details above.</td></tr>
     </table></div>
-    <h2>Upgraded hardware</h2>
+    <h3>Transfer conveyor</h3>
+    <div class="tablewrap"><table>
+      <caption>Transfer conveyor settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Handoff height (in)</td><td>The height of the low end of the extended conveyor.</td></tr>
+      <tr><td>Belt speed (in/s)</td><td>The belt speed.</td></tr>
+      <tr><td>Slide actuator stroke (in), Extend time (s)</td><td>How far the conveyor slides down to extend, and the time to extend or stow.</td></tr>
+      <tr><td>Bin wall height (in)</td><td>The wall height of the deck bin.</td></tr>
+      <tr><td>Belt motor (W), Extend actuator (W)</td><td>Electrical loads.</td></tr>
+    </table></div>
+    <h3>Detect while driving</h3>
+    <div class="tablewrap"><table>
+      <caption>Detect while driving settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Camera search range ahead (in)</td><td>The farthest distance that the camera searches.</td></tr>
+      <tr><td>Blind spot near the arm (in)</td><td>The last distance that the rover drives by odometry.</td></tr>
+      <tr><td>Mound threshold</td><td>The minimum size of a depth bump that counts as fruit.</td></tr>
+      <tr><td>Odometry error</td><td>The drift of the distance estimate of the rover.</td></tr>
+      <tr><td>Leaf piles and clods per 10 ft</td><td>False targets in leafy fields.</td></tr>
+      <tr><td>Sightings to confirm</td><td>The number of detections before the rover stops for a possible fruit.</td></tr>
+    </table></div>
+    <h3>Upgraded hardware</h3>
     <div class="tablewrap"><table>
       <caption>Upgraded hardware settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Max tip speed (in/s)</td><td>Speed cap for planned paths.</td></tr>
-      <tr><td>Tip acceleration (in/s2)</td><td>How fast moves speed up and slow down.</td></tr>
-      <tr><td>Position gain (1/s)</td><td>Correction from the cylinder position sensors.</td></tr>
-      <tr><td>Sensor noise (in)</td><td>Noise on the string pot readings.</td></tr>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Max tip speed (in/s)</td><td>The speed limit of the planned paths.</td></tr>
+      <tr><td>Tip acceleration (in/s2)</td><td>How quickly a move increases and decreases speed.</td></tr>
+      <tr><td>Position gain (1/s)</td><td>The size of the correction from the cylinder position sensors.</td></tr>
+      <tr><td>Sensor noise (in)</td><td>The noise of the string potentiometer readings.</td></tr>
     </table></div>
-    <h2>Power unit and battery</h2>
+    <h3>Canopy</h3>
+    <div class="tablewrap"><table>
+      <caption>Canopy settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Leaf cover min and max</td><td>The range of leaf cover on each watermelon.</td></tr>
+      <tr><td>Strip clearing (air knife)</td><td>Installs the air knife.</td></tr>
+      <tr><td>Clearing effectiveness</td><td>The part of the leaves that the air knife removes each second in the cleared strip.</td></tr>
+      <tr><td>Wrist puff radius (in)</td><td>The area that the puff at the gripper clears.</td></tr>
+      <tr><td>Depth mound error (in)</td><td>The position error when the camera finds the fruit only by its depth bump.</td></tr>
+      <tr><td>Row canopy density</td><td>The leaves for each unit of area in the whole-row canopy.</td></tr>
+    </table></div>
+    <h3>Power unit and battery</h3>
     <div class="tablewrap"><table>
       <caption>Power unit and battery settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Battery voltage (V) and energy (Wh)</td><td>Amiga battery.</td></tr>
-      <tr><td>Motor x pump efficiency</td><td>Overall efficiency of the hydraulic power unit.</td></tr>
-      <tr><td>Motor no-load power (W)</td><td>Power drawn while the motor runs with no load.</td></tr>
-      <tr><td>Line and valve losses (psi)</td><td>Pressure lost on the way to the cylinders.</td></tr>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Battery voltage (V), Battery energy (Wh)</td><td>The Amiga battery.</td></tr>
+      <tr><td>Motor x pump efficiency</td><td>The overall efficiency of the hydraulic power unit.</td></tr>
+      <tr><td>Motor no-load power (W)</td><td>The power when the motor operates with no load.</td></tr>
+      <tr><td>Line and valve losses (psi)</td><td>The pressure loss between the pump and the cylinders.</td></tr>
       <tr><td>Camera + controller (W), Gripper actuator (W)</td><td>Electrical loads.</td></tr>
       <tr><td>Arm weight (lb), Power unit weight (lb)</td><td>Used in the tip-over check.</td></tr>
     </table></div>
-    <h2>Gripper (electric actuator)</h2>
+    <h3>View (Amiga twin)</h3>
     <div class="tablewrap"><table>
-      <caption>Gripper (electric actuator) settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Actuator stroke (in)</td><td>Sets the widest jaw opening.</td></tr>
-      <tr><td>Closed width (in)</td><td>Gap when fully closed.</td></tr>
-      <tr><td>Actuator force (lb)</td><td>Squeeze force; half goes to each jaw.</td></tr>
-      <tr><td>Wrist motor speed (deg/s)</td><td>How fast the wrist turns.</td></tr>
-      <tr><td>Wrist rotation</td><td>Fits the wrist; the gripper hangs 1.5 in lower.</td></tr>
-      <tr><td>Actuator speed (in/s)</td><td>Jaw closing speed.</td></tr>
-      <tr><td>Pad friction (mu)</td><td>Grip friction; with force, sets how heavy a fruit can be held.</td></tr>
-    </table></div>
-    <h2>Watermelon</h2>
-    <div class="tablewrap"><table>
-      <caption>Watermelon settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Shape</td><td>Ball or bale shape for the object.</td></tr>
-      <tr><td>Height (in)</td><td>Fruit height; also its short diameter.</td></tr>
-      <tr><td>Elongated: length / height</td><td>How long elongated fruit are.</td></tr>
-      <tr><td>Weight (lb)</td><td>Fruit weight.</td></tr>
-      <tr><td>Gripper weight (lb)</td><td>Added to the tip load.</td></tr>
-    </table></div>
-    <h2>Transfer conveyor</h2>
-    <div class="tablewrap"><table>
-      <caption>Transfer conveyor settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Handoff height (in)</td><td>Low end of the extended conveyor.</td></tr>
-      <tr><td>Belt speed (in/s)</td><td>Belt speed.</td></tr>
-      <tr><td>Slide actuator stroke (in)</td><td>How far the conveyor slides down to extend.</td></tr>
-      <tr><td>Extend time (s)</td><td>Time to extend or stow.</td></tr>
-      <tr><td>Bin wall height (in)</td><td>Deck bin wall.</td></tr>
-      <tr><td>Belt motor (W), Extend actuator (W)</td><td>Electrical loads.</td></tr>
-    </table></div>
-    <h2>Canopy</h2>
-    <div class="tablewrap"><table>
-      <caption>Canopy settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Leaf cover min and max</td><td>Range of cover for leaves over each watermelon.</td></tr>
-      <tr><td>Strip clearing (air knife)</td><td>Fits the air knife.</td></tr>
-      <tr><td>Clearing effectiveness</td><td>Share of leaves blown away per second in the cleared strip.</td></tr>
-      <tr><td>Wrist puff radius (in)</td><td>Area cleared by the puff at the gripper.</td></tr>
-      <tr><td>Depth mound error (in)</td><td>Position error when fruit is found only by its depth bump.</td></tr>
-      <tr><td>Row canopy density</td><td>Leaves per area for the whole-row canopy.</td></tr>
-    </table></div>
-    <h2>Detect while driving</h2>
-    <div class="tablewrap"><table>
-      <caption>Detect while driving settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Camera search range ahead (in)</td><td>Farthest distance the camera searches.</td></tr>
-      <tr><td>Blind spot near the arm (in)</td><td>The last stretch the rover covers by odometry.</td></tr>
-      <tr><td>Mound threshold</td><td>How strong a depth bump must be to count.</td></tr>
-      <tr><td>Odometry error</td><td>Drift in the rover's distance estimate.</td></tr>
-      <tr><td>Leaf piles and clods per 10 ft</td><td>False targets placed in leafy fields.</td></tr>
-      <tr><td>Sightings to confirm</td><td>Detections needed before the rover stops for a candidate.</td></tr>
-    </table></div>
-    <h2>Camera mount</h2>
-    <div class="tablewrap"><table>
-      <caption>Camera mount settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Post height (in), Arm back (in)</td><td>Where the camera sits.</td></tr>
-      <tr><td>Arm points away from rover</td><td>Camera looks outward over the row.</td></tr>
-      <tr><td>Aim automatically, Aim at pick line</td><td>Let the twin aim the camera.</td></tr>
-      <tr><td>Tilt from vertical, Field of view</td><td>Manual aim and lens.</td></tr>
-    </table></div>
-    <h2>Camera pipeline</h2>
-    <div class="tablewrap"><table>
-      <caption>Camera pipeline settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Detection noise (px), Disparity noise (px)</td><td>Image and depth noise.</td></tr>
-      <tr><td>Stereo baseline (in)</td><td>Distance between the stereo lenses.</td></tr>
-      <tr><td>Detection image (px)</td><td>Image resolution used for detection.</td></tr>
-    </table></div>
-    <h2>Controller</h2>
-    <div class="tablewrap"><table>
-      <caption>Controller settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Deadband (in)</td><td>Error at which a move counts as done.</td></tr>
-      <tr><td>Camera delay (ms), Camera rate (Hz)</td><td>Feedback delay and rate.</td></tr>
-      <tr><td>Noise at 40 in (in)</td><td>Tip marker noise.</td></tr>
-      <tr><td>Descent near watermelons, Step per cylinder (in)</td><td>Stepped or direct descent.</td></tr>
-    </table></div>
-    <h2>View</h2>
-    <div class="tablewrap"><table>
-      <caption>View settings</caption>
-      <tr><th>Setting</th><th>What it does</th></tr>
-      <tr><td>Workspace map, Map shows</td><td>The shaded reach region and what it colours.</td></tr>
-      <tr><td>Camera view cone, Camera frame on floor</td><td>Camera overlays.</td></tr>
-      <tr><td>Tip trail</td><td>Path of the tip.</td></tr>
-      <tr><td>Camera follows rover</td><td>The view rides along with the rover. Turned on automatically when a run starts.</td></tr>
+      <caption>View (Amiga twin) settings</caption>
+      <tr><th>Setting</th><th>Function</th></tr>
+      <tr><td>Camera follows rover</td><td>The view moves with the rover. It turns on automatically when a run starts.</td></tr>
     </table></div>
 
     <div class="pager"><a href="how-it-works.html">Previous: How it works</a><a href="troubleshooting.html">Next: Troubleshooting</a></div>

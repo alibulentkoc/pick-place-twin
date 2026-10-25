@@ -25,43 +25,50 @@
   </nav>
   <main id="main">
     <h1>How it works</h1>
-    <p class="lead">The physics and control ideas behind the twins, in the same order the machine uses them.</p>
+    <p class="lead">The physics and the control behind the twins, in the sequence that the machine uses them.</p>
+    <p>The equations on this page do not contain unit constants. Before you use an equation, convert all values to one set of units, for example in, lbf and s.</p>
 
     <h2>Kinematics: two lengths set the tip</h2>
-    <p>Each cylinder pivots under the bar. The tip is where the two rod ends meet. Given the two lengths L1 and L2, the tip position follows from two circles centred on the pivots. The inverse problem, finding L1 and L2 for a wanted tip position, is just the distance from each pivot to that point.</p>
-    <p>The shaded reach region is every tip position that both cylinders can reach within their stroke, coloured by how much cylinder force each pound of load needs.</p>
+    <p>Each cylinder turns on a pivot below the bar. The tip is the point where the two rod ends connect. For two lengths L1 and L2, the tip is where two circles cross. Each circle has its center at a pivot. For a tip position that you want, each cylinder length is the distance from its pivot to that point.</p>
+    <p>The shaded reach region shows each tip position that the two cylinders can reach in their stroke. Its color shows the cylinder force for each pound of load.</p>
+
+    <h2>The work path and the worst point</h2>
+    <p>The lab and tractor twin finds the worst point on the work path. The work path is each reachable tip position from the pick line (grasp height, across the pick width) up to the drop height, and across to the drop point. At each position, the twin calculates the two cylinder forces. The worst point is the position where a force is the maximum. The forces increase when the two cylinders are almost parallel. Thus, the worst point is often the drop point above the bin.</p>
 
     <h2>Forces and pressures</h2>
-    <p>For a load W at the tip, each cylinder carries a force along its own axis. A pulling cylinder works on its rod side, so its pressure is p = F / A<sub>rod side</sub>. A pushing cylinder works on its cap side, with p = F / A<sub>bore</sub>. The pick check <em>light enough to lift</em> compares these pressures with the relief setting.</p>
+    <p>Each cylinder has a pin at each end. Thus, the force in each cylinder is along its line. The force balance at the tip gives the two forces for a load W. A cylinder that pulls holds the load with the oil in its rod end: p = F / A<sub>r</sub>, where A<sub>r</sub> is the annulus area. A cylinder that pushes holds the load with the oil in its cap end: p = F / A<sub>c</sub>, where A<sub>c</sub> is the piston area. The design force is 2 times this force (safety factor 2).</p>
 
-    <h2>Flow and speed</h2>
-    <p>Cylinder speed is v = 3.85 Q / A, with Q in gpm, A in in<sup>2</sup> and v in in/s. Extending uses the full bore area, so it is slower than retracting at the same flow. The twin adds a flow error to show why timed moves miss.</p>
+    <h2>Counterbalance valves</h2>
+    <p>A counterbalance valve stays closed up to its setting p<sub>set</sub>. It opens when p<sub>load</sub> + R p<sub>pilot</sub> is equal to or more than p<sub>set</sub>. R is the pilot ratio. Thus, the load pressure alone cannot open the valve, and a small pilot pressure lowers the load at a controlled speed. The pilot pressure necessary to lower the load is (p<sub>set</sub> - p<sub>load</sub>) / R.</p>
+
+    <h2>Flow rate and speed</h2>
+    <p>Cylinder speed is v = Q / A. First, convert the flow rate to in<sup>3</sup>/s: multiply gpm by 231 in<sup>3</sup>/gal and divide by 60 s/min. During extension, oil fills the cap end (the full piston area). During retraction, oil fills the smaller rod end. Thus, retraction is faster at the same flow rate. The twin adds a flow error to show why timed moves miss the target.</p>
 
     <h2>Camera pipeline</h2>
     <ol>
-      <li>Detect the object's pixel position (u, v) in the image.</li>
-      <li>Measure its depth Z from stereo disparity.</li>
-      <li>Convert pixel and depth to camera coordinates.</li>
-      <li>Rotate and shift camera coordinates into rig coordinates, using the camera's tilt, aim and mount position.</li>
+      <li>Find the pixel position (u, v) of the object in the image.</li>
+      <li>Measure its depth Z from the stereo disparity.</li>
+      <li>Change the pixel position and the depth to camera coordinates.</li>
+      <li>Turn and move the camera coordinates to rig coordinates. Use the tilt, the aim and the mount position of the camera.</li>
     </ol>
-    <p>The Camera tab in Live equations shows every step with current numbers, including noise and delay.</p>
+    <p>The Camera tab in Live equations shows each step with the current numbers, including noise and delay.</p>
 
-    <h2>Closing the loop with on/off valves</h2>
-    <p>With Basic hardware, the controller compares the camera's tip estimate with the target 15 times a second and opens one valve at a time. Camera delay and noise cause overshoot, so the deadband and stepped descent matter.</p>
+    <h2>Control with on/off valves</h2>
+    <p>With Basic hardware, the controller compares the tip position from the camera with the target 15 times each second. It opens one valve at a time. The camera delay and noise cause overshoot. Thus, the deadband and the stepped descent are important.</p>
 
-    <h2>Upgraded control</h2>
-    <p>The controller plans a straight tip path with an accelerate, cruise, slow-down speed profile, capped so both cylinders together never need more oil than the pump gives. About 250 times a second it converts the planned tip point into two target lengths and sets each proportional valve opening to the planned speed plus a correction from the cylinder's position sensor.</p>
+    <h2>Upgraded control (Amiga twin)</h2>
+    <p>The controller plans a straight path for the tip. The speed increases, stays constant, then decreases. The speed limit makes sure that the two cylinders together never need more oil than the pump supplies. Approximately 250 times each second, the controller changes the planned tip point into two target lengths. It sets the opening of each proportional valve to the planned speed plus a correction from the position sensor of the cylinder.</p>
 
-    <h2>Finding fruit under leaves</h2>
+    <h2>Fruit under leaves (Amiga twin)</h2>
     <ul>
-      <li><strong>Visible rind:</strong> if enough of the fruit shows, the camera locates it well.</li>
-      <li><strong>Depth mound:</strong> leaves draped over a watermelon form a bump in the depth image, which gives a rough position even when nothing is visible.</li>
-      <li><strong>Air knife and puff:</strong> clear leaves from the strip ahead of the arm, then from the spot itself, before a second look.</li>
-      <li><strong>Tracking while driving:</strong> sightings merge into tracks, the rover covers the last few inches by odometry, and it stops on its own estimate. It may creep forward or back once it can see the fruit up close.</li>
+      <li><strong>Visible rind:</strong> if a sufficient area of the fruit is visible, the camera finds it accurately.</li>
+      <li><strong>Depth mound:</strong> leaves on a watermelon make a bump in the depth image. This gives an approximate position, also when the fruit is not visible.</li>
+      <li><strong>Air knife and puff:</strong> they clear the leaves from the strip ahead of the arm, then from the fruit area. Then the camera looks a second time.</li>
+      <li><strong>Tracking while driving:</strong> the sightings join into tracks. The rover drives the last few inches by odometry and stops at its estimate. When the camera sees the fruit near the arm, the rover can move a small distance forward or back.</li>
     </ul>
 
-    <h2>Battery and stability</h2>
-    <p>The hydraulic motor runs only while a valve is open. Motor power is the idle power plus p Q / (1714 &eta;) in horsepower, converted to watts, and battery energy is tracked per pick. The rear tip-over check compares the rover's restoring moment with the moment of the loaded arm behind the rear axle, and should stay at or above 1.5.</p>
+    <h2>Battery and stability (Amiga twin)</h2>
+    <p>The hydraulic motor operates only while a valve is open. Motor power is the no-load power plus p Q / &eta;, where &eta; is the motor x pump efficiency. With p in lbf/in<sup>2</sup> and Q in in<sup>3</sup>/s, p Q is in in-lbf/s. Divide by 8.85 in-lbf/s per W to get watts. The twin records the battery energy for each pick. The rear tip-over check compares the restoring moment of the rover with the moment of the loaded arm behind the rear axle. The ratio must be 1.5 or more.</p>
 
     <div class="pager"><a href="amiga-twin.html">Previous: Amiga watermelon twin</a><a href="settings.html">Next: Settings reference</a></div>
     <footer>AGM 4060 Fluid Power Systems, Clemson University. Help pages for the hydraulic pick-and-place digital twins.</footer>
