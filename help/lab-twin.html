@@ -47,7 +47,7 @@
     <div class="tablewrap"><table>
       <caption>Built-in presets</caption>
       <tr><th>Preset</th><th>Arm geometry</th><th>Cylinders and hydraulics</th><th>Load</th><th>Bin</th></tr>
-      <tr><td>Tractor start</td><td>Pivot spacing 60 in, bar height 72 in, retracted length 40 in, stroke 30 in, gripper length 12 in</td><td>3.0 in bore, 1.5 in rod, 2,500 psi, 10 gpm</td><td>Bale, 14 in, 60 lb; gripper 80 lb</td><td>Shown. Pick width 48 in, rim 36 in, inner rim 45 in, width 16 in, clearance 4 in</td></tr>
+      <tr><td>Tractor start</td><td>Pivot spacing 60 in, bar height 72 in, retracted length 40 in, stroke 30 in, gripper length 12 in</td><td>3.0 in bore, 1.5 in rod, 2,500 psi, 10 gpm</td><td>Bale, 14 in, 60 lb; gripper 80 lb</td><td>Off. The values are filled in (pick width 48 in, rim 36 in, inner rim 45 in, width 16 in, clearance 4 in). Tick <em>Show the bin</em>.</td></tr>
       <tr><td>Lab rig</td><td>Pivot spacing 24 in, bar height 32 in, retracted length 20 in, stroke 12 in, gripper length 5 in</td><td>1.5 in bore, 1.0 in rod, 800 psi, 0.5 gpm</td><td>Ball, 5 in, 20 lb; gripper 5 lb</td><td>Not shown</td></tr>
     </table></div>
     <p>For the design project, push <em>Load tractor start</em>. Then change the values to your design in step 2.</p>
@@ -58,7 +58,7 @@
       <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke and gripper length. The gripper length is the grip length: the distance from the tip to the fruit center.</li>
       <li><strong>Cylinders and hydraulics:</strong> bore, rod diameter, pressure (relief valve setting) and flow rate.</li>
       <li><strong>Load:</strong> fruit shape, height (the fruit diameter) and weight. Enter the end effector weight as the gripper weight.</li>
-      <li><strong>Bin and pick width:</strong> pick width, bin rim height, bin inner rim distance, bin width and rim clearance.</li>
+      <li><strong>Bin and pick width:</strong> tick <em>Show the bin</em>, then enter the pick width, bin rim height, bin inner rim distance, bin width and rim clearance.</li>
       <li><strong>Counterbalance valves:</strong> fitted or not, the setting in psi (or 0 to use the ratio), and the pilot ratio.</li>
     </ol>
     <p>The <a href="settings.html">Settings reference</a> page explains each setting.</p>
@@ -82,6 +82,9 @@
     </table></div>
     <p><em>Reach region</em> shows the shaded region that the tip can reach. Its color shows the cylinder force for each pound of load.</p>
 
+    <h2>Collision stops</h2>
+    <p>The frame legs stand beside the arm plane, so the arm can pass them. The two cylinders are on opposite sides of the arm plane, so they cannot touch. In all control modes, the twin stops a move if the gripper would hit the floor, the bar, an object or a bin wall. It also stops a move if a held fruit or a cylinder would hit a bin wall. The status line tells you which part would hit.</p>
+
     <h2>Counterbalance valves</h2>
     <ul>
       <li><strong>Not fitted:</strong> a load that pulls the cylinder (an overrunning load) moves faster than the pump flow. The status line shows a warning. When the arm stops, the load drifts slowly because oil leaks through the valve spool.</li>
@@ -98,6 +101,7 @@
       <dt>Timed moves</dt>
       <dd>No camera. Each valve opens for a calculated time. The real flow rate is different from the setting, so the tip misses the target. Compare the position error with Camera auto. This shows why feedback is necessary.</dd>
     </dl>
+    <p class="note">Camera auto works best when the two cylinders meet at a large angle. If the pivot spacing is small, the cylinders are almost parallel, and one valve pulse moves the tip a long way to the side. Then the jaws can hit the object or miss the grab. For such a design, use Manual to move the arm.</p>
     <h3>The six pick checks</h3>
     <p>Before a valve opens, the controller makes sure that the object is visible, it is on the arm plane, it is in the reach region, it is not too heavy, it fits between the jaws, and the drop spot is reachable. If a check fails, the pick stops. The status line tells you which check failed.</p>
     <h3>Stepped descent</h3>
