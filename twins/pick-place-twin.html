@@ -196,7 +196,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
         <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke.</li>
         <li><strong>Cylinders and hydraulics:</strong> bore, rod, pressure, flow.</li>
         <li><strong>Load:</strong> fruit shape and height (diameter), fruit weight and end effector weight (gripper weight). The gripper length is in Arm geometry.</li>
-        <li><strong>Bin and pick width:</strong> tick <em>Show the bin</em>, then enter the pick width, bin rim height, inner rim distance, bin width and rim clearance.</li>
+        <li><strong>Bin and pick width:</strong> select <em>Show the bin</em>, then enter the pick width, bin rim height, inner rim distance, bin width and rim clearance.</li>
         <li><strong>Counterbalance valves:</strong> fitted, setting in psi (or the ratio) and pilot ratio.</li>
       </ol>
       <button class="btn" id="openDesign">Open my design settings</button>
@@ -244,7 +244,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
         </div>
         <div class="inputs">
           <label>x <input id="gx" type="number" step="0.5" value="4"></label>
-          <label>z <input id="gy" type="number" step="0.5" value="12"></label>
+          <label>y <input id="gy" type="number" step="0.5" value="12"></label>
           <button class="btn" id="goBtn">Go to point</button>
         </div>
         <p class="small">The camera reads the tip marker and the ESP32 opens one valve at a time. You can also click inside the shaded zone to send the tip there.</p>
@@ -1512,7 +1512,7 @@ var TRACTOR = { binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4,
   camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:60,
   gStroke:12, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:450, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.8 };
-var P = Object.assign({}, LAB, { binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
+var P = Object.assign({}, LAB, { showAnswers:false, binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
 
 function Lmax(){ return P.Lmin + P.stroke; }
 function Abore(){ return 0.7854 * P.bore * P.bore; }
@@ -1604,13 +1604,16 @@ function workPath(){
   var key = JSON.stringify([P.spacing, P.barH, P.Lmin, P.stroke, P.bore, P.rod, P.objW, P.gripW, P.objH, P.gripLen, P.binOn, P.pickW, P.binRim, P.binIn, P.binW, P.binClear]);
   if (workPath.key === key) return workPath.v;
   var xa = -half, xb = d ? Math.max(half, d.x) : half, yb = d ? Math.max(y0, d.y) : y0, W = P.objW + P.gripW;
-  var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0] };
+  var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0], holdRod:[0, 0], holdCap:[0, 0], pull:[null, null], push:[null, null] };
   for (var x = xa; x <= xb + 1e-9; x += 0.5) for (var y = y0; y <= yb + 1e-9; y += 0.5) {
     if (!reachable(x, y)) continue; var f = forcesPerLb(x, y); if (!f) continue; v.n++;
     for (var c = 0; c < 2; c++) {
       var F = f[c] * W, A = F > 0 ? Aann() : Abore();
       if (!v.cyl[c] || Math.abs(F) > Math.abs(v.cyl[c].F)) v.cyl[c] = { F:F, x:x, y:y };
       v.hold[c] = Math.max(v.hold[c], Math.abs(F) / A);
+      // each end separately: a pull is held by the rod end, a push by the cap end
+      if (F > 0) { v.holdRod[c] = Math.max(v.holdRod[c], F / Aann()); if (!v.pull[c] || F > v.pull[c].F) v.pull[c] = { F:F, x:x, y:y }; }
+      else if (F < 0) { v.holdCap[c] = Math.max(v.holdCap[c], -F / Abore()); if (!v.push[c] || -F > v.push[c].F) v.push[c] = { F:-F, x:x, y:y }; }
       if (!v.worst || Math.abs(F) > v.worst.Fmax) v.worst = { x:x, y:y, Fmax:Math.abs(F) };
     }
   }
@@ -1630,8 +1633,10 @@ function binChecks(){
   return { d:d, reach:reach, rim:rim, failX:worstX, failY:need };
 }
 // Counterbalance setting: a value in psi if given, otherwise the ratio times the highest holding pressure in the work path
-function cbHoldPsi(k){ var w = workPath(); return (w && w.hold[k]) || 1; }
-function cbSetting(k){ return P.cbPsi > 0 ? P.cbPsi : P.cbSet * cbHoldPsi(k); }
+// Holding pressure of one end of one cylinder: the largest in the work path. end = 'rod' (pull) or 'cap' (push).
+function cbHoldPsi(k, end){ var w = workPath(); if (!w) return 1; var h = end === 'rod' ? w.holdRod[k] : end === 'cap' ? w.holdCap[k] : w.hold[k]; return h || 1; }
+// Each port has its own valve (a dual counterbalance valve when the force changes sign in the work path).
+function cbSetting(k, end){ return P.cbPsi > 0 ? P.cbPsi : P.cbSet * cbHoldPsi(k, end); }
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
 var css = function(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); };
@@ -2278,7 +2283,7 @@ function step(dt){
     var Fk = fk2[k] * tipLoad(); if (Math.abs(Fk) < 1) continue;
     var dk = Fk > 0 ? 1 : -1, Ak = Fk > 0 ? Aann() : Abore(), pk = Math.abs(Fk) / Ak, rate = 0;
     if (!P.cbOn) rate = P.leak * Math.min(2, pk / 1000) / 60 / Ak;                      // valve spool leakage, in/s
-    else if (pk > cbSetting(k)) rate = 0.5 * P.flow * 3.85 / Ak;          // setting too low: valve cracks open
+    else if (pk > cbSetting(k, Fk > 0 ? 'rod' : 'cap')) rate = 0.5 * P.flow * 3.85 / Ak;          // setting too low: valve cracks open
     if (rate > 0) { var mk = moveCheck(k, dk, rate * dt); if (!mk) { S.L[k] += dk * rate * dt; S.drift[k] += rate * dt; if (S.drift[k] > 0.05) S.drifting = k; } }
   }
   updateGripper(dt);
@@ -2735,6 +2740,7 @@ fK.add(P, 'camHz', 5, 60, 1).name('Camera rate (Hz)');
 fK.add(P, 'descent', ['Stepped', 'Direct']).name('Descent near objects');
 fK.add(P, 'stepL', 0.1, 2, 0.05).name('Step per cylinder (in)');
 var fV = gui.addFolder('View');
+fV.add(P, 'showAnswers').name('Show answers: pressures and speeds');
 fV.add(P, 'showMap').name('Workspace map');
 fV.add(P, 'mapMode', ['Force per lb of load', 'Lift capacity']).name('Map shows');
 fV.add(P, 'showView').name('Camera view cone');
@@ -2827,13 +2833,13 @@ function updateReadouts(){
   }
   for (i = 0; i < 2; i++) {
     var F = t ? t[i] * W : 0, Fo = t ? t[i] * Wo : 0;
-    var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i);
-    if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' end; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi']);
-    else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + ph.toFixed(0) + ' psi held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
-    rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%)']);
+    var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i, Fh >= 0 ? 'rod' : 'cap');
+    if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' end' + (P.showAnswers ? '; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi' : '')]);
+    else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + (P.showAnswers ? ph.toFixed(0) + ' psi ' : '') + 'held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
+    rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + (P.showAnswers ? ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%' : '') + ')']);
   }
   for (var pc = 0; pc < 2; pc++) {
-    if (!t) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
+    if (!t || !P.showAnswers) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
     rows.push(['Cylinder ' + (pc + 1) + ' pressure now', pp.toFixed(0) + ' psi in the ' + (Fp >= 0 ? 'rod end' : 'cap end') + ' (design, x2: ' + (2 * pp).toFixed(0) + ' psi)']);
   }
   var bc = binChecks();
@@ -2841,14 +2847,25 @@ function updateReadouts(){
     rows.push(['Drop point (bin)', 'x = ' + f1(bc.d.x) + ' in, tip at ' + f1(bc.d.y) + ' in: ' + (bc.reach ? 'reachable' : 'NOT reachable'), 1]);
     rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
   }
+  if (bc && bc.reach) {
+    var xf = -P.pickW / 2, yf = pickY();
+    if (reachable(xf, yf)) {
+      var Lf = ik(xf, yf), Ld = ik(bc.d.x, bc.d.y), sg = function(v){ return (v >= 0 ? '+' : '') + v.toFixed(2); };
+      rows.push(['Length change, far pick point to drop point', 'from (' + f1(xf) + ', ' + f1(yf) + ') to (' + f1(bc.d.x) + ', ' + f1(bc.d.y) + ') in: cylinder 1 ' + sg(Ld[0] - Lf[0]) + ' in, cylinder 2 ' + sg(Ld[1] - Lf[1]) + ' in (+ extends, - retracts)', 1]);
+    }
+  }
   var wp = workPath();
   if (wp && wp.worst) {
     rows.push(['Worst point of the work path', 'x = ' + f1(wp.worst.x) + ', y = ' + f1(wp.worst.y) + ' in', 1]);
     for (var wc = 0; wc < 2; wc++) {
       var Fw = wp.worst.F[wc], Aw = Fw >= 0 ? Aann() : Abore(), pw = Math.abs(Fw) / Aw;
-      rows.push(['Cylinder ' + (wc + 1) + ' at the worst point', Math.abs(Fw).toFixed(1) + ' lb ' + (Fw >= 0 ? 'pull (rod end)' : 'push (cap end)') + '; ' + pw.toFixed(0) + ' psi; design (x2) ' + (2 * Math.abs(Fw)).toFixed(1) + ' lb, ' + (2 * pw).toFixed(0) + ' psi', 1]);
+      rows.push(['Cylinder ' + (wc + 1) + ' at the worst point', Math.abs(Fw).toFixed(1) + ' lb ' + (Fw >= 0 ? 'pull (rod end)' : 'push (cap end)') + (P.showAnswers ? '; ' + pw.toFixed(0) + ' psi; design (x2) ' + (2 * Math.abs(Fw)).toFixed(1) + ' lb, ' + (2 * pw).toFixed(0) + ' psi' : ''), 1]);
     }
-    rows.push(['Counterbalance guide', '1.3 x maximum holding pressure: ' + (1.3 * wp.hold[0]).toFixed(0) + ' psi (cylinder 1), ' + (1.3 * wp.hold[1]).toFixed(0) + ' psi (cylinder 2)']);
+    for (var sc = 0; sc < 2; sc++) {
+      var pu = wp.pull[sc], ps = wp.push[sc], both = pu && ps;
+      rows.push(['Cylinder ' + (sc + 1) + ' in the work path', (pu ? 'largest pull ' + pu.F.toFixed(1) + ' lb (rod end) at (' + f1(pu.x) + ', ' + f1(pu.y) + ')' : 'never pulls') + '; ' + (ps ? 'largest push ' + ps.F.toFixed(1) + ' lb (cap end) at (' + f1(ps.x) + ', ' + f1(ps.y) + ')' : 'never pushes') + (both ? '. The force changes sign: put a counterbalance valve on both ports (dual valve).' : '. One counterbalance valve, on the ' + (pu ? 'rod' : 'cap') + ' end.'), 1]);
+    }
+    if (P.showAnswers) rows.push(['Counterbalance guide', '1.3 x largest holding pressure of each end: cylinder 1 rod end ' + (1.3 * wp.holdRod[0]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[0]).toFixed(0) + ' psi; cylinder 2 rod end ' + (1.3 * wp.holdRod[1]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[1]).toFixed(0) + ' psi']);
   }
   rows.push(['Load on tip now', W.toFixed(0) + ' lb']);
   rows.push(['Max object weight here', Math.max(0, maxTipLoad(tip.x, tip.y) - P.gripW).toFixed(0) + ' lb']);
@@ -2997,12 +3014,15 @@ function eqHTML(){
   var u1x = (p[0].x - tip.x) / L[0], u1y = (p[0].y - tip.y) / L[0], u2x = (p[1].x - tip.x) / L[1], u2y = (p[1].y - tip.y) / L[1];
   var det = u1x * u2y - u1y * u2x, W = tipLoad(), T1 = Math.abs(det) > 1e-9 ? -W * u2x / det : 0, T2 = Math.abs(det) > 1e-9 ? W * u1x / det : 0;
   h += '<h3>Cylinder forces from the load</h3>';
-  h += M(sb(mi('e'), mn(1, 0)) + EQ + pr(mn(u1x) + CM + mn(u1y)) + GAP + sb(mi('e'), mn(2, 0)) + EQ + pr(mn(u2x) + CM + mn(u2y)));
-  h += M(sb(mi('T'), mn(1, 0)) + sb(mi('e'), mn(1, 0)) + PL + sb(mi('T'), mn(2, 0)) + sb(mi('e'), mn(2, 0)) + EQ + pr(mn(0, 0) + CM + mi('W')) + GAP + mi('W') + EQ + mn(W, 0) + un('lb'));
-  h += M('<mi>&#916;</mi>' + EQ + sb(mi('e'), mi('1x')) + sb(mi('e'), mi('2y')) + MI + sb(mi('e'), mi('2x')) + sb(mi('e'), mi('1y')) + EQ + mn(det, 3));
-  h += M(sb(mi('T'), mn(1, 0)) + EQ + fr(MI + mi('W') + sb(mi('e'), mi('2x')), '<mi>&#916;</mi>') + EQ + fr(MI + mn(W, 0) + X + nv(u2x), nv(det, 3)) + EQ + hot(mn(T1, 1) + un('lb')));
-  h += M(sb(mi('T'), mn(2, 0)) + EQ + fr(mi('W') + sb(mi('e'), mi('1x')), '<mi>&#916;</mi>') + EQ + fr(mn(W, 0) + X + nv(u1x), nv(det, 3)) + EQ + hot(mn(T2, 1) + un('lb')));
-  h += '<p class="note">e<sub>1</sub>, e<sub>2</sub>: unit vectors from the tip to each pivot. Positive T means the cylinder pulls: the rod end holds the load. Negative T means it pushes: the cap end holds the load. These forces have no safety factor.</p>';
+  // Triangle ratios: each cylinder is the long side of a right triangle, from the tip to its pivot
+  var dx1 = p[0].x - tip.x, dx2 = p[1].x - tip.x, dy1 = p[0].y - tip.y, dy2 = p[1].y - tip.y;
+  h += M('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)) + EQ + mn(dx1) + un('in') + GAP + '<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)) + EQ + mn(dy1) + un('in') + GAP + sb(mi('L'), mn(1, 0)) + EQ + mn(L[0], 2) + un('in'));
+  h += M(fr('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)), Li(1)) + EQ + hot(mn(u1x, 3)) + GAP + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)), Li(1)) + EQ + hot(mn(u1y, 3)));
+  h += M('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)) + EQ + mn(dx2) + un('in') + GAP + '<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)) + EQ + mn(dy2) + un('in') + GAP + sb(mi('L'), mn(2, 0)) + EQ + mn(L[1], 2) + un('in'));
+  h += M(fr('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)), Li(2)) + EQ + hot(mn(u2x, 3)) + GAP + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)), Li(2)) + EQ + hot(mn(u2y, 3)));
+  h += M(sb(mi('T'), mn(1, 0)) + fr('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)), Li(1)) + PL + sb(mi('T'), mn(2, 0)) + fr('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)), Li(2)) + EQ + mn(0, 0) + GAP + sb(mi('T'), mn(1, 0)) + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)), Li(1)) + PL + sb(mi('T'), mn(2, 0)) + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)), Li(2)) + EQ + mi('W') + EQ + mn(W, 0) + un('lb'));
+  h += M(sb(mi('T'), mn(1, 0)) + EQ + hot(mn(T1, 1) + un('lb')) + GAP + sb(mi('T'), mn(2, 0)) + EQ + hot(mn(T2, 1) + un('lb')));
+  h += '<p class="note">&#916;x = pivot x - tip x, &#916;y = H - tip y (from the tip to each pivot). A cylinder force splits like the sides of its triangle: horizontal part T &#916;x/L, vertical part T &#916;y/L. The two equations are the horizontal and vertical balance at the tip; solve them by substitution. Positive T means the cylinder pulls: the rod end holds the load. Negative T means it pushes: the cap end holds the load. These forces have no safety factor.</p>';
   // Gripper
   var GG = gripGeo(), gs = gripExt(S.grip), Fn = gripForce();
   h += '<h3>Gripper: one linear actuator, parallel jaws</h3>';
@@ -3014,6 +3034,8 @@ function eqHTML(){
   h += '<p class="note">w<sub>j</sub> = jaw opening, s<sub>a</sub> = actuator extension from closed, S<sub>a</sub> = actuator stroke. The rack and pinion moves both jaws by s<sub>a</sub>, so the opening changes by 2s<sub>a</sub>. Each jaw squeezes with half the actuator force. Open width must exceed the object width + 2 x (camera error + deadband) + 0.5 in. ' + (P.descent === 'Stepped' ? 'Stepped descent: each cylinder moves at most ' + P.stepL.toFixed(2) + ' in before switching, so the tip comes down nearly straight.' : 'Direct descent: one cylinder runs fully before the other, so the tip swings sideways on the way down.') + '</p>';
   // Hydraulics
   var Ab = Abore(), Aa = Aann(), T = [T1, T2];
+  if (!P.showAnswers) h += '<h3>Pressures and speeds</h3><p class="note">Hidden. Calculate the areas, pressures and speeds with the Equation Card first. Then, to check them, select Show answers in Settings, View.</p>';
+  else {
   h += '<h3>Pressure in the end that holds the load (no safety factor)</h3>';
   h += M(sb(mi('A'), mi('c')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + sp(mi('D'), 2) + EQ + mn(0.785, 3) + X + sp(mn(P.bore, 2), 2) + EQ + mn(Ab) + un('in&#178;'));
   h += M(sb(mi('A'), mi('r')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + pr(sp(mi('D'), 2) + MI + sp(mi('d'), 2))) + M(EQ + mn(0.785, 3) + X + pr(sp(mn(P.bore, 2), 2) + MI + sp(mn(P.rod, 3), 2)) + EQ + mn(Aa) + un('in&#178;'));
@@ -3032,6 +3054,7 @@ function eqHTML(){
     h += M(sb(mi('v'), mn(act + 1, 0)) + EQ + fr(mi('Q'), sb(mi('A'), mi(ext ? 'c' : 'r'))) + pr(mn(1, 0) + PL + '<mi>&#949;</mi>')) + M(EQ + fr(mn(Qs), mn(A_)) + X + pr(mn(1, 0) + PL + nv(P.flowErr / 100)) + EQ + hot(mn(va) + un('in/s')));
     h += M(fr('<mi>d</mi>' + Li(act + 1), '<mi>d</mi><mi>t</mi>') + EQ + mo(ext ? '+' : '-') + sb(mi('v'), mn(act + 1, 0)) + GAP + fr('<mi>d</mi>' + Li(2 - act), '<mi>d</mi><mi>t</mi>') + EQ + mn(0, 0));
     h += '<p class="note">Cylinder ' + (act + 1) + (ext ? ' extends' : ' retracts') + '. Valves in series: only one cylinder gets pump flow.' + (S.over === act ? ' The load is overrunning, so it moves faster than pump flow alone.' : '') + '</p>';
+  }
   }
   // Control
   if (A.wp && A.Lt) {
