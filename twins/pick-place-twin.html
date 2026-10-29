@@ -92,6 +92,7 @@ table.read{ width:100%; border-collapse:collapse; font-variant-numeric:tabular-n
 table.read td{ padding:3px 0; border-bottom:1px solid var(--line); vertical-align:top; }
 table.read td:last-child{ text-align:right; padding-left:8px; overflow-wrap:anywhere; }
 table.read tr.key td{ font-weight:600; }
+#legend .legnote{ max-width:230px; margin-top:4px; font-size:11px; line-height:1.3; color:var(--muted); }
 table.read tr.hl td{ background:#ffe08a; color:#1c2530; transition:background .3s; }
 .lil-gui .controller.twinflash{ animation:twinflash 2.5s ease-out; }
 @keyframes twinflash{ 0%,60%{ background:#ffe08a; box-shadow:inset 3px 0 0 #b77e06; } 100%{ background:transparent; box-shadow:none; } }
@@ -172,6 +173,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div id="legendTitle">Cylinder force per lb of load</div>
       <div class="bar" id="legendBar"></div>
       <div class="ends"><span id="legLo">0.5</span><span id="legHi">4+</span></div>
+      <div class="legnote">Shaded: where the tip can go. The lowest tip height is the gripper length + 0.5 in, so the fingers stay above the ground.</div>
     </div>
   </main>
   <aside class="panel">
@@ -1511,13 +1513,13 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 
 <script id="core">
 // ---------- Core model (no DOM). Units: in, lb, psi, gpm, s ----------
-var LAB = { binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
+var LAB = { rig:'lab', binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
   objW:20, gripW:5, objH:5, gripLen:5, shape:'Ball',
   deadband:0.25, latency:120, noise:0.06, camHz:15, flowErr:8,
   camMast:18, camArm:16, camAuto:true, camTilt:35, camFov:60,
   gStroke:4, wMin:0.5, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:100, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.4 };
-var TRACTOR = { binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
+var TRACTOR = { rig:'tractor', binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
   objW:60, gripW:80, objH:14, gripLen:12, shape:'Bale',
   deadband:1.0, latency:120, noise:0.25, camHz:15, flowErr:8,
   camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:60,
@@ -1673,6 +1675,8 @@ var sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(40, 120, 
 var COL = { frame:0x8a929c, barrel:0xc9ced4, rod:0xeef1f4, joint:0x39ff88, eff:0xff8a1f, valve:0x2f6fd6,
   ball:0x3f7d3a, bale:0xd9b65a, tray:0x55606b };
 var mat = {
+  tractor:new THREE.MeshStandardMaterial({ color:0xc9651c, metalness:0.25, roughness:0.55 }),
+  tire:new THREE.MeshStandardMaterial({ color:0x2a2e33, metalness:0.05, roughness:0.9 }),
   frame:new THREE.MeshStandardMaterial({ color:COL.frame, metalness:0.5, roughness:0.55 }),
   barrel:new THREE.MeshStandardMaterial({ color:COL.barrel, metalness:0.3, roughness:0.4 }),
   rod:new THREE.MeshStandardMaterial({ color:COL.rod, metalness:0.45, roughness:0.2 }),
@@ -1846,17 +1850,48 @@ function buildAxes(){
   world.add(axesGroup);
 }
 function faceCamera(m){ m.lookAt(oak.position); }
+// ---------- Tractor (tractor start only): a compact tractor with a 3-point hitch, in front of the arm ----------
+var HITCH_Y = 18;   // height of the lower hitch links at the frame, in
+function rod3(a, b, r, m){
+  var d = new V3().subVectors(b, a), L = d.length(), g = new THREE.CylinderGeometry(r, r, L, 10), c = new THREE.Mesh(g, m);
+  c.position.copy(a).addScaledVector(d, 0.5); c.quaternion.setFromUnitVectors(new V3(0, 1, 0), d.normalize()); return c;
+}
+function wheel(rad, wid, x, z){
+  var w = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, wid, 28), mat.tire); w.rotation.z = Math.PI / 2; w.position.set(x, rad, z);
+  var hub = new THREE.Mesh(new THREE.CylinderGeometry(rad * 0.45, rad * 0.45, wid + 0.4, 20), mat.tractor); hub.rotation.z = Math.PI / 2; hub.position.set(x, rad, z);
+  world.add(w); world.add(hub);
+}
+function buildTractor(legX, zl, sz){
+  var tw = 44, rr = 22, fr = 13, wb = 63, zr = zl - 20 - sz;   // track, rear and front wheel radius, wheelbase, rear axle z (20 in behind the axle to the lift points)
+  wheel(rr, 11, -tw / 2, zr); wheel(rr, 11, tw / 2, zr);
+  wheel(fr, 7, -tw / 2 + 3, zr - wb); wheel(fr, 7, tw / 2 - 3, zr - wb);
+  var body = box(20, 22, wb + 6, mat.tractor); body.position.set(0, rr + 6, zr - wb / 2 - 4); world.add(body);
+  var hood = box(18, 14, wb - 18, mat.tractor); hood.position.set(0, rr + 22, zr - wb / 2 - 10); world.add(hood);
+  [-1, 1].forEach(function(s){
+    var fender = box(13, 2, 2 * rr, mat.tractor); fender.position.set(s * tw / 2, 2 * rr + 2, zr); world.add(fender);
+    world.add(rod3(new V3(s * 14, rr + 14, zr + 4), new V3(s * 14, rr + 66, zr + 4), 1.1, mat.frame));          // ROPS
+    world.add(rod3(new V3(s * 10, rr - 4, zr), new V3(s * legX, HITCH_Y, zl), 1.0, mat.frame));                 // lower hitch link
+  });
+  world.add(rod3(new V3(-14, rr + 66, zr + 4), new V3(14, rr + 66, zr + 4), 1.1, mat.frame));
+  world.add(rod3(new V3(0, rr + 18, zr + 2), new V3(0, HITCH_Y + 30, zl), 0.9, mat.frame));                     // top link
+  var seat = box(14, 3, 12, mat.tire); seat.position.set(0, rr + 20, zr + 2); world.add(seat);
+  var tb = box(2 * legX + sz, sz, sz, mat.frame); tb.position.set(0, HITCH_Y, zl); world.add(tb);              // toolbar on the lower links
+  var H = P.barH, mast = box(sz, H - HITCH_Y, sz, mat.frame); mast.position.set(0, (H + HITCH_Y) / 2, zl); world.add(mast);   // center mast for the top link
+}
+
 function buildWorld(){
   clearGroup(world); mapMesh = null; coils = []; pivotMarkers = []; solids = []; collSolids = [];
   zone = pickZone();
   updateOak();
-  var d = P.spacing, H = P.barH, sz = barSz(), legX = Math.max(d / 2 + Lmax() * 0.15 + 4, 8), top = barTop();
+  var d = P.spacing, H = P.barH, sz = barSz(), legX = Math.max(d / 2 + Lmax() * 0.15 + 4, 8, P.binOn ? P.pickW / 2 + 14 : 0), top = barTop();
   var gp = barGap(), bar = box(2 * legX + 4, sz, sz, mat.frame); bar.position.set(0, H + sz / 2 + gp, 0); world.add(bar); solids.push(bar); collSolids.push({ m:bar, name:'bar' });
+  var onTractor = P.rig === 'tractor', side = onTractor ? -1 : legSide(), legBot = onTractor ? HITCH_Y : 0;
   [-1, 1].forEach(function(s){
-    var zl = legZ() * legSide(), leg = box(sz, H + sz + gp, sz, mat.frame); leg.position.set(s * legX, (H + sz + gp) / 2, zl); world.add(leg); solids.push(leg); collSolids.push({ m:leg, name:'leg' });
+    var zl = legZ() * side, lh = H + sz + gp - legBot, leg = box(sz, lh, sz, mat.frame); leg.position.set(s * legX, legBot + lh / 2, zl); world.add(leg); solids.push(leg); collSolids.push({ m:leg, name:'leg' });
     var beam = box(sz, sz, Math.abs(zl), mat.frame); beam.position.set(s * legX, H + sz / 2 + gp, zl / 2); world.add(beam); solids.push(beam); collSolids.push({ m:beam, name:'leg beam' });
-    var fd = Math.max(H * 0.7, P.camArm * 1.4), foot = box(sz * 1.4, sz * 0.5, fd, mat.frame); foot.position.set(s * legX, sz * 0.25, zl + legSide() * (fd / 2 - sz / 2)); world.add(foot); collSolids.push({ m:foot, name:'foot' });
+    if (!onTractor) { var fd = Math.max(H * 0.7, P.camArm * 1.4), foot = box(sz * 1.4, sz * 0.5, fd, mat.frame); foot.position.set(s * legX, sz * 0.25, zl + legSide() * (fd / 2 - sz / 2)); world.add(foot); collSolids.push({ m:foot, name:'foot' }); }
   });
+  if (onTractor) buildTractor(legX, legZ() * side, sz);
   var onTop = Math.abs(P.camArm) < sz;
   pivots().forEach(function(p, i){
     var br = box(sz * 0.8, gp + 1, Math.max(sz * 2.2, 2 * cylZ() + 2), mat.frame); br.position.set(p.x, H + gp / 2 - 0.5, 0); world.add(br); solids.push(br);
@@ -2761,6 +2796,7 @@ fV.add(P, 'showView').name('Camera view cone');
 fV.add(P, 'showFoot').name('Camera frame on floor');
 var viewFns = {
   fitFoot:function(){
+    if (cam.fov !== 40) { cam.fov = 40; cam.updateProjectionMatrix(); }
     updateOak();
     var K = intr(), R = camR(), t = oak.position.clone();
     var pts = [[0, 0], [K.W, 0], [K.W, K.H], [0, K.H]].map(function(q){ return pixToFloor(q[0], q[1], K, R, t); }).filter(Boolean);
@@ -2768,10 +2804,12 @@ var viewFns = {
     var bx = new THREE.Box3().setFromPoints(pts), c = bx.getCenter(new V3()), sz = bx.getSize(new V3()).length();
     controls.target.copy(c); cam.position.set(c.x + sz * 0.55, c.y + sz * 0.95, c.z + sz * 0.95); controls.update();
   },
-  fitRig:function(){ fitView(); }
+  fitRig:function(){ fitView(); },
+  front:function(){ frontView(); }
 };
 fV.add(viewFns, 'fitFoot').name('Fit view to camera frame');
 fV.add(viewFns, 'fitRig').name('Fit view to rig');
+fV.add(viewFns, 'front').name('Front view (as Figure 1)');
 fV.add(P, 'showTrail').name('Tip trail');
 fK.close(); fV.close();
 // Settings order: the four folders that hold the student's design come first and are marked required
@@ -2794,7 +2832,7 @@ reachUI();
 var LIVE = { cbOn:1, cbSet:1, cbPilot:1, leak:1, flow:1, flowErr:1, deadband:1, latency:1, noise:1, camHz:1, showTrail:1, actForce:1, actSpeed:1, mu:1, descent:1, stepL:1, pixNoise:1, dispNoise:1, baseline:1 };
 gui.onFinishChange(function(e){
   if (!e.property || LIVE[e.property]) return;
-  if (e.property === 'lab' || e.property === 'tractor' || e.property === 'fitFoot' || e.property === 'fitRig') return;
+  if (e.property === 'lab' || e.property === 'tractor' || e.property === 'fitFoot' || e.property === 'fitRig' || e.property === 'front') return;
   if (e.property === 'showMap') { if (mapMesh) mapMesh.visible = P.showMap; $('#legend').style.display = P.showMap ? '' : 'none'; reachUI(); return; }
   if (e.property === 'showView') { if (viewCone) viewCone.visible = P.showView; return; }
   if (e.property === 'showFoot') { if (footGroup) footGroup.visible = P.showFoot; return; }
@@ -2819,7 +2857,16 @@ window.addEventListener('message', function(e){
   try {
     if (m.preset && presets[m.preset]) presets[m.preset]();
     if (m.set) { Object.assign(P, m.set); dropX = null; applyParams(!!m.resetView, false); }
+    if (m.objects) { clearObjects(); m.objects.forEach(function(x){ addObject(x, 0); }); }
+    if (m.release) { S.gripCmd = 0; }
+    if (m.carry) {   // put an object in the gripper at the present tip position
+      clearObjects(); var tp = tipNow(); addObject(tp.x, 0); var o = S.objs[S.objs.length - 1];
+      if (o) { o.y = tp.y - P.gripLen; S.held = o; S.holdDy = P.gripLen; S.contact = o; S.gripCmd = 1;
+        var G = gripGeo(); S.grip = Math.max(0, Math.min(1, (G.wMax - 2 * halfX()) / (G.wMax - G.wMin))); updateDyn(); say('The object is in the gripper.', ''); }
+    }
     if (m.worst) $('#worstBtn').onclick();
+    if (m.view === 'front') frontView();
+    if (m.inset === false) { var ie = $('#inset'); if (ie) ie.style.display = 'none'; }
     if (m.tip && reachable(m.tip[0], m.tip[1])) { cancelAuto(); S.L = ik(m.tip[0], m.tip[1]); }
     if (m.readout) { HL.label = m.readout; HL.until = performance.now() + 3200; HL.scrolled = false; }
     if (m.field) flashField(m.field);
@@ -2855,6 +2902,7 @@ function applyParams(resetView, keepPose){
   } catch (err) { say('Setup error: ' + err.message, 'bad'); }
 }
 function fitView(){
+  if (cam.fov !== 40) { cam.fov = 40; cam.updateProjectionMatrix(); }
   var xr = P.spacing / 2 + Lmax(), H = P.barH;
   controls.target.set(0, H * 0.5, -P.camArm * 0.3);
   cam.position.set(xr * 1.35, H * 1.35 + P.camMast * 0.5, xr * 2.3 + P.camArm * 0.5);
@@ -2864,6 +2912,16 @@ function fitView(){
   controls.update();
 }
 
+// Front view, looking along the row from behind the tractor, as in Figure 1 of the assignment: x to the right, y up
+function frontView(){
+  var d = P.binOn ? binDrop() : null, xr = P.spacing / 2 + Lmax();
+  var xa = -Math.max(P.pickW / 2 + 20, P.spacing / 2 + 8), xb = d ? P.binIn + P.binW + 8 : Math.min(xr, P.pickW / 2 + 8);
+  var top = barTop() + Math.max(0, P.camMast) + 4, xc = (xa + xb) / 2;
+  cam.fov = 12; cam.updateProjectionMatrix();  // a narrow lens looks almost flat, like the drawing
+  var hw = (xb - xa) / 2 * 1.08, hh = top / 2 * 1.1, vf = cam.fov * Math.PI / 360, asp = cam.aspect || 1;
+  var dist = Math.max(hw / (Math.tan(vf) * asp), hh / Math.tan(vf));
+  controls.target.set(xc, top / 2, 0); cam.position.set(xc, top / 2, dist); controls.update();
+}
 // ---------- Readouts ----------
 function f1(v){ return v.toFixed(1); }
 function f2(v){ return v.toFixed(2); }
@@ -2880,7 +2938,7 @@ function updateReadouts(){
     var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i, Fh >= 0 ? 'rod' : 'cap');
     if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' end' + (P.showAnswers ? '; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi' : '')]);
     else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + (P.showAnswers ? ph.toFixed(0) + ' psi ' : '') + 'held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
-    rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + (P.showAnswers ? ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%' : '') + ')']);
+    rows.push(['Cylinder ' + (i + 1) + ' force at this tip position', (S.held ? '' : Math.abs(F).toFixed(0) + ' lb with the empty gripper, ') + Math.abs(Fo).toFixed(0) + ' lb with the object (' + (Fo >= 0 ? 'pull' : 'push') + (P.showAnswers ? ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%' : '') + ')']);
   }
   for (var pc = 0; pc < 2; pc++) {
     if (!t || !P.showAnswers) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
@@ -2911,8 +2969,8 @@ function updateReadouts(){
     }
     if (P.showAnswers) rows.push(['Counterbalance guide', '1.3 x largest holding pressure of each end: cylinder 1 rod end ' + (1.3 * wp.holdRod[0]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[0]).toFixed(0) + ' psi; cylinder 2 rod end ' + (1.3 * wp.holdRod[1]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[1]).toFixed(0) + ' psi']);
   }
-  rows.push(['Load on tip now', W.toFixed(0) + ' lb']);
-  rows.push(['Max object weight here', Math.max(0, maxTipLoad(tip.x, tip.y) - P.gripW).toFixed(0) + ' lb']);
+  rows.push(['Load on the tip now', W.toFixed(0) + ' lb' + (S.held ? ' (gripper ' + P.gripW + ' lb + object ' + P.objW + ' lb)' : ' (gripper only, no object)')]);
+  rows.push(['Heaviest object at this tip position', Math.max(0, maxTipLoad(tip.x, tip.y) - P.gripW).toFixed(0) + ' lb (cylinders at the relief pressure, no safety factor)']);
   if (zone) {
     rows.push(['Pick zone width at pick height', f1(zone.width) + ' in', 1]);
     rows.push(['Worst cylinder force on the pick line', zone.worst.toFixed(0) + ' lb at x = ' + f1(zone.worstX)]);

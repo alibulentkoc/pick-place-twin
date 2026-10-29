@@ -51,6 +51,9 @@ table.calc th, table.calc td{ text-align:left; vertical-align:top; padding:.35re
 table.calc th{ border-bottom:2px solid var(--line); font-weight:700; }
 table.calc td:first-child{ color:var(--muted); }
 .result{ font-weight:700; }
+figure{ margin:1rem 0; }
+figure img{ width:100%; height:auto; border:1px solid var(--line); background:#fff; }
+figcaption{ font-size:.9rem; color:var(--muted); margin-top:.3rem; }
 button.lk{ font:inherit; color:inherit; text-align:left; padding:0 .15rem; margin:0; border:0; border-radius:2px;
   background:transparent; border-bottom:2px dotted var(--markline); cursor:pointer; }
 button.lk:hover, button.lk:focus-visible, button.lk.on{ background:var(--mark); outline:none; }
@@ -73,16 +76,20 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>Point at a value that has a dotted line. The twin shows where it comes from: the settings field and the Readouts line flash in yellow. Select the value to move the tip to the point that the value is about.</p>
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
-    <nav aria-label="Sections"><a href="#inputs">Inputs</a><a href="#twin">Twin values</a><a href="#cyl">Cylinder card</a><a href="#supply">Supply card</a><a href="#hoses">Hose table</a></nav>
-    <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><span id="status" role="status">Loading the twin...</span></div>
+    <nav aria-label="Sections"><a href="#figure">Figure 1</a><a href="#inputs">Inputs</a><a href="#twin">Twin values</a><a href="#cyl">Cylinder card</a><a href="#supply">Supply card</a><a href="#hoses">Hose table</a></nav>
+    <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
+<h2 id="figure">Figure 1 and the twin</h2>
+<p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. Select y_g or y_d below to move the twin tip to these points. At y_d the cantaloupe is in the gripper, above the bin.</p>
+<p>Three things are in the twin but not in Figure 1. The tractor and its 3-point hitch carry the frame; the frame is between the arm and the tractor, so the arm moves in front of it. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
+<figure><img src="fig_arm.png" alt="Figure 1: the Group 1 arm with all symbols, seen from behind the tractor"><figcaption>Figure 1. Names and symbols of the main dimensions, drawn with the Group 1 values (H = 72 in, s = 16 in, bin at 46.5 in).</figcaption></figure>
 <h2 id="inputs">Inputs</h2>
 <p>Group 1 picks cantaloupe (4 lb, 6 in diameter) with a Kubota L3301. The twin on the right has these values. Point at a yellow value to see where it is in the twin. Select it to move the twin there.</p>
 <table class="calc"><caption>Table V-in. Inputs and the first formulas</caption><thead><tr><th>Item</th><th>Calculation</th><th>Result</th></tr></thead><tbody>
 <tr><td>Load at the tip (F1)</td><td>4 lb fruit + 25 lb end effector</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Weight (lb)&quot;}'>W = 29 lb</button></td></tr>
 <tr><td>Fruit radius (F2)</td><td>6 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Height (in)&quot;}'>r = 3 in</button></td></tr>
-<tr><td>Grasp height (F3)</td><td>r + g = 3 in + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick height (tip)&quot;, &quot;tip&quot;: [-24, 15], &quot;field&quot;: &quot;Gripper length&quot;}'>y_g = 15 in</button></td></tr>
-<tr><td>Drop height (F4)</td><td>h_rim + c + r + g = 36 + 4 + 3 + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;field&quot;: &quot;Bin rim height (in)&quot;}'>y_d = 55 in</button></td></tr>
-<tr><td>Drop distance (F5)</td><td>x_b + w_b / 2 = 46.5 in + 16 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>x_d = 54.5 in</button></td></tr>
+<tr><td>Grasp height (F3)</td><td>r + g = 3 in + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick height (tip)&quot;, &quot;tip&quot;: [-24, 15], &quot;ground&quot;: true, &quot;field&quot;: &quot;Gripper length&quot;}'>y_g = 15 in</button></td></tr>
+<tr><td>Drop height (F4)</td><td>h_rim + c + r + g = 36 + 4 + 3 + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;carry&quot;: true, &quot;field&quot;: &quot;Bin rim height (in)&quot;}'>y_d = 55 in</button></td></tr>
+<tr><td>Drop distance (F5)</td><td>x_b + w_b / 2 = 46.5 in + 16 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;carry&quot;: true, &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>x_d = 54.5 in</button></td></tr>
 <tr><td>Pressure limit (F7)</td><td>0.8 x 2,347 psi</td><td>p_allow = 1,878 psi</td></tr>
 <tr><td>Bar height</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bar height&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>H = 72 in</button></td></tr>
 <tr><td>Pivot spacing</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>s = 16 in</button></td></tr>
@@ -145,7 +152,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029e" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029h" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
@@ -153,7 +160,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
   var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false, "gStroke": 5, "wMin": 1, "showView": false, "showFoot": false};
   var fr = document.getElementById('tw'), st = document.getElementById('status'), ready = false, answersOn = false, hov = null, active = null;
   function send(m){ if (!ready) return; m.to = 'twin'; fr.contentWindow.postMessage(m, '*'); }
-  function load(){ answersOn = false; send({ preset:'tractor', set:G1, resetView:true, say:'Group 1 values loaded.' }); st.textContent = 'The twin has the Group 1 values.'; }
+  function load(){ answersOn = false; send({ preset:'tractor', set:G1, resetView:true, release:true, objects:[-24], tip:[-24, 15], view:'front', inset:false, say:'Group 1 values loaded. Front view, as Figure 1.' }); st.textContent = 'The twin has the Group 1 values.'; }
   window.addEventListener('message', function(e){
     if (e.source !== fr.contentWindow || !e.data || e.data.from !== 'twin') return;
     if (e.data.ready && !ready){ ready = true; load(); }
@@ -162,6 +169,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
   fr.addEventListener('load', function(){ setTimeout(function(){ if (!ready){ ready = true; load(); } }, 300); });
   setTimeout(function(){ if (!ready) st.textContent = 'The twin did not load. Reload the page.'; }, 15000);
   document.getElementById('reset').addEventListener('click', load);
+  document.getElementById('front').addEventListener('click', function(){ send({ view:'front' }); });
   function opts(b){ try { return JSON.parse(b.getAttribute('data-tw')); } catch (err) { return {}; } }
   function show(b){
     var o = opts(b), m = {};
@@ -175,6 +183,8 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
     if (o.answers && !answersOn){ m.set = { showAnswers:true }; answersOn = true; }
     if (o.worst) m.worst = true;
     if (o.tip) m.tip = o.tip;
+    if (o.carry || o.worst) m.carry = true;
+    if (o.ground) { m.release = true; m.objects = [o.tip ? o.tip[0] : -24]; }
     if (o.readout) m.readout = o.readout;
     if (o.field) m.field = o.field;
     send(m);
