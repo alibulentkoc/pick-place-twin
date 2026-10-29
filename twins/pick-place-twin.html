@@ -58,16 +58,6 @@ body{ margin:0; height:100%; background:var(--panel); color:var(--ink);
 h1{ font-size:19px; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
 .panel header p{ margin:0; color:var(--muted); }
 section{ padding:12px 18px 14px; border-top:1px solid var(--line); }
-section.toolbar{ position:sticky; top:0; z-index:5; background:var(--panel); border-bottom:1px solid var(--line); }
-.row.tight{ margin-top:0; }
-h2 .num, summary .num{ display:inline-flex; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff; font-size:12px; align-items:center; justify-content:center; margin-right:6px; vertical-align:1px; }
-.tag{ display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:10px; margin-left:6px; vertical-align:2px; letter-spacing:0.02em; }
-.tag.req{ background:var(--accent); color:#fff; }
-.tag.opt{ background:transparent; color:var(--muted); border:1px solid var(--line); }
-details.sec > summary{ font-size:15px; font-weight:600; cursor:pointer; padding:2px 0; }
-details.sec[open] > summary{ margin-bottom:8px; }
-details.sub{ margin-top:10px; } details.sub > summary{ font-size:13px; color:var(--muted); cursor:pointer; }
-ol.steps{ margin:6px 0 8px 18px; padding:0; font-size:13px; } ol.steps li{ margin:2px 0; }
 h2{ font-size:14px; font-weight:600; margin:0 0 8px; }
 .seg{ display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
 .seg button{ flex:1; border:0; background:transparent; color:var(--ink); padding:7px 6px; font:inherit; cursor:pointer; }
@@ -169,51 +159,8 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <p>Digital twin of the semester project rig. Two cylinders hang from a bar, joined at one tip. Moving one cylinder at a time places the tip anywhere in the shaded zone.</p>
     </header>
 
-    <section class="toolbar">
-      <div class="row tight">
-        <button class="btn" id="pauseBtn">Pause (Space)</button>
-        <label class="small" style="margin:0">Speed
-          <select id="spd"><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option></select>
-        </label>
-        <button class="btn" id="resetBtn">Reset rig</button>
-      </div>
-      <div class="status" id="status">Steps 1 to 3 are required for the design project. Step 4 is optional.</div>
-    </section>
-
     <section>
-      <h2><span class="num">1</span> Start from a preset <span class="tag req">Required</span></h2>
-      <div class="row">
-        <button class="btn primary" id="presetTractor">Load tractor start</button>
-        <button class="btn" id="presetLab">Load lab rig</button>
-      </div>
-      <p class="small">Design project: load the tractor start, then change it to your design in step 2.</p>
-    </section>
-
-    <section>
-      <h2><span class="num">2</span> Enter your design <span class="tag req">Required</span></h2>
-      <p class="small">Your design values are in Settings at the bottom of this panel. Fill in the five folders marked Required:</p>
-      <ol class="steps">
-        <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke.</li>
-        <li><strong>Cylinders and hydraulics:</strong> bore, rod, pressure, flow.</li>
-        <li><strong>Load:</strong> fruit shape and height (diameter), fruit weight and end effector weight (gripper weight). The gripper length is in Arm geometry.</li>
-        <li><strong>Bin and pick width:</strong> pick width, bin rim height, inner rim distance, bin width and rim clearance.</li>
-        <li><strong>Counterbalance valves:</strong> fitted, setting in psi (or the ratio) and pilot ratio.</li>
-      </ol>
-      <button class="btn" id="openDesign">Open my design settings</button>
-    </section>
-
-    <section>
-      <h2><span class="num">3</span> Check your design <span class="tag req">Required</span></h2>
-      <div class="row">
-        <button class="btn primary" id="worstBtn">Show worst point</button>
-        <button class="btn" id="reachBtn" aria-pressed="true">Reach region: on</button>
-      </div>
-      <p class="small">Show worst point moves the tip to the worst point of the full work path: pick, lift, carry and drop. Then read the Readouts below: pick width reached, drop point and rim clearance, both cylinder forces and pressures at the worst point, and the counterbalance guide.</p>
-    </section>
-
-    <section>
-      <details class="sec">
-        <summary><span class="num">4</span> Run the arm <span class="tag opt">Optional</span></summary>
+      <h2>Control</h2>
       <div class="seg" role="group" aria-label="Control mode">
         <button id="mJog" aria-pressed="true">Manual</button>
         <button id="mAuto" aria-pressed="false">Camera auto</button>
@@ -261,10 +208,9 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="row">
         <button class="btn" id="gripBtn">Close gripper (G)</button>
         <button class="btn" id="homeBtn">Home (H)</button>
+        <button class="btn" id="worstBtn">Show worst point</button>
         <button class="btn" id="clearBtn">Clear objects</button>
       </div>
-      <details class="sub">
-        <summary>Place an object or the drop spot by coordinates</summary>
       <div class="placer">
         <div class="inputs">
           <label>Object x <input id="ox" type="number" step="0.5" value="5"></label>
@@ -285,13 +231,18 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
           </div>
         </div>
       </div>
-      </details>
-      </details>
+      <div class="row">
+        <button class="btn" id="pauseBtn">Pause (Space)</button>
+        <label class="small" style="margin:0">Speed
+          <select id="spd"><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option></select>
+        </label>
+        <button class="btn" id="resetBtn">Reset rig</button>
+      </div>
+      <div class="status" id="status"></div>
     </section>
 
     <section>
-      <details class="sec">
-      <summary>Hydraulic circuit (live) <span class="tag opt">Optional</span></summary>
+      <h2>Hydraulic circuit</h2>
 <svg id="circ" viewBox="0 0 340 366" role="img" aria-label="Live hydraulic circuit drawn with the cylinders as mounted on the rig: two cylinders hanging from the bar and joined at the tip, two tandem-center solenoid valves in series, flow control, relief valve and pump">
 <defs><marker id="ah" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" class="ahead"/></marker></defs>
 <path class="ln" id="c0A" d=""/><path class="ln" id="c0B" d=""/><path class="ln" id="c1A" d=""/><path class="ln" id="c1B" d=""/>
@@ -338,33 +289,27 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="ckey"><span class="k kp"></span>Pressure flow <span class="k kr"></span>Return flow <span class="k ko"></span>No flow</div>
       <p class="small">The cylinders are drawn as mounted on the rig and move with it. Press and hold a solenoid coil (the small boxes at each valve end) to shift that valve.</p>
       <div class="pump" id="pump"></div>
-      </details>
     </section>
 
     <section>
-      <details class="sec">
-      <summary>Electronics (live) <span class="tag opt">Optional</span></summary>
+      <h2>Electronics</h2>
 <svg id="elec" viewBox="0 0 340 404" role="img" aria-label="Live electronics wiring: OAK camera to ESP32 over the network, ESP32 GPIO pins to a 4-channel relay module, relays switching 24 V to the four valve solenoids through an E-stop"><rect class="eblk" x="10" y="8" width="100" height="26" rx="3"/><text x="60" y="25" text-anchor="middle" class="m">OAK 4 Pro AF</text><path id="enet" class="ew dashw" d="M60,34 V54"/><text x="66" y="44">UDP over Ethernet (PoE+) and Wi-Fi:</text><text x="66" y="54">targets and tip feedback</text><rect class="eblk" x="10" y="54" width="96" height="296" rx="3"/><text x="18" y="72" class="m b">ESP32</text><text x="100" y="99" text-anchor="end">GPIO 16</text><circle class="pin" cx="106" cy="96" r="2"/><path id="eg0" class="ew" d="M106,96 H150"/><text x="100" y="123" text-anchor="end">GPIO 17</text><circle class="pin" cx="106" cy="120" r="2"/><path id="eg1" class="ew" d="M106,120 H150"/><text x="100" y="147" text-anchor="end">GPIO 18</text><circle class="pin" cx="106" cy="144" r="2"/><path id="eg2" class="ew" d="M106,144 H150"/><text x="100" y="171" text-anchor="end">GPIO 19</text><circle class="pin" cx="106" cy="168" r="2"/><path id="eg3" class="ew" d="M106,168 H150"/><text x="100" y="193" text-anchor="end">5V, GND</text><circle class="pin" cx="106" cy="190" r="2"/><path class="ew" d="M106,190 H134 V176 H150"/><rect class="eblk" x="150" y="80" width="70" height="104" rx="3"/><text x="185" y="75" text-anchor="middle">4-ch relay module</text><text x="156" y="99">IN1</text><circle id="el0" class="led" cx="178" cy="96" r="3.5"/><rect class="rcoil" x="190" y="90" width="16" height="12"/><path class="ew dashw" d="M206,96 H232"/><line id="es0" class="blade" x1="236" y1="96" x2="253" y2="87"/><circle class="pin" cx="256" cy="96" r="1.8"/><path id="ec0" class="ew" d="M256,96 H270 M304,96 H320"/><rect id="ek0" class="sol" x="270" y="90" width="34" height="12"/><path class="sym" d="M270,102 L304,90"/><text x="287" y="87" text-anchor="middle" class="tiny">V1 extend</text><text x="156" y="123">IN2</text><circle id="el1" class="led" cx="178" cy="120" r="3.5"/><rect class="rcoil" x="190" y="114" width="16" height="12"/><path class="ew dashw" d="M206,120 H232"/><line id="es1" class="blade" x1="236" y1="120" x2="253" y2="111"/><circle class="pin" cx="256" cy="120" r="1.8"/><path id="ec1" class="ew" d="M256,120 H270 M304,120 H320"/><rect id="ek1" class="sol" x="270" y="114" width="34" height="12"/><path class="sym" d="M270,126 L304,114"/><text x="287" y="111" text-anchor="middle" class="tiny">V1 retract</text><text x="156" y="147">IN3</text><circle id="el2" class="led" cx="178" cy="144" r="3.5"/><rect class="rcoil" x="190" y="138" width="16" height="12"/><path class="ew dashw" d="M206,144 H232"/><line id="es2" class="blade" x1="236" y1="144" x2="253" y2="135"/><circle class="pin" cx="256" cy="144" r="1.8"/><path id="ec2" class="ew" d="M256,144 H270 M304,144 H320"/><rect id="ek2" class="sol" x="270" y="138" width="34" height="12"/><path class="sym" d="M270,150 L304,138"/><text x="287" y="135" text-anchor="middle" class="tiny">V2 extend</text><text x="156" y="171">IN4</text><circle id="el3" class="led" cx="178" cy="168" r="3.5"/><rect class="rcoil" x="190" y="162" width="16" height="12"/><path class="ew dashw" d="M206,168 H232"/><line id="es3" class="blade" x1="236" y1="168" x2="253" y2="159"/><circle class="pin" cx="256" cy="168" r="1.8"/><path id="ec3" class="ew" d="M256,168 H270 M304,168 H320"/><rect id="ek3" class="sol" x="270" y="162" width="34" height="12"/><path class="sym" d="M270,174 L304,162"/><text x="287" y="159" text-anchor="middle" class="tiny">V2 retract</text><path id="ebus" class="ew" d="M236,86 V200"/><path id="e0v" class="ew" d="M320,86 V262 H262"/><text x="326" y="140" class="tiny" transform="rotate(90 326 140)">0 V</text><g id="estop" class="estop"><rect class="mush" x="208" y="205" width="12" height="16" rx="3"/><line class="sym" x1="220" y1="213" x2="226" y2="213"/><line id="ebar" class="blade" x1="230" y1="213" x2="242" y2="213"/><circle class="pin" cx="236" cy="200" r="1.8"/><circle class="pin" cx="236" cy="226" r="1.8"/><path class="sym" d="M236,200 V208 M236,218 V226"/><text x="204" y="216" text-anchor="end">E-stop</text><text id="etxt" x="248" y="216" class="tiny">closed</text></g><path id="epsu" class="ew" d="M236,226 V242"/><rect class="eblk" x="200" y="242" width="62" height="34" rx="3"/><text x="231" y="257" text-anchor="middle" class="m">24 VDC</text><text x="231" y="270" text-anchor="middle" class="tiny">supply</text><text x="18" y="226" class="tiny">Power: USB 5 V</text><text x="18" y="237" class="tiny">or a 24 V buck</text><text x="18" y="248" class="tiny">converter</text><text x="100" y="301" text-anchor="end">ADC 34</text><circle class="pin" cx="106" cy="298" r="2"/><path id="eadc" class="ew dashw" d="M106,298 H150"/><text x="100" y="315" text-anchor="end">GPIO 25</text><circle class="pin" cx="106" cy="312" r="2"/><path id="eg4" class="ew" d="M106,312 H150"/><text x="100" y="333" text-anchor="end">GPIO 26</text><circle class="pin" cx="106" cy="330" r="2"/><path id="eg5" class="ew" d="M106,330 H150"/><rect class="eblk" x="150" y="292" width="76" height="48" rx="3"/><text x="188" y="311" text-anchor="middle" class="m">H-bridge</text><text x="188" y="324" text-anchor="middle" class="tiny">close / open</text><text x="188" y="334" text-anchor="middle" class="tiny">+ current sense</text><path id="ehp" class="ew" d="M231,276 V284 H200 V292"/><text x="236" y="288" class="tiny">24 V, not via E-stop</text><path id="eh0" class="ew" d="M226,308 H262"/><path id="eh1" class="ew" d="M226,326 H262"/><rect id="ea" class="sol" x="262" y="298" width="66" height="40"/><text x="295" y="312" text-anchor="middle" class="tiny">Gripper linear</text><text x="295" y="322" text-anchor="middle" class="tiny">actuator</text><text id="egtxt" x="295" y="333" text-anchor="middle" class="tiny">open</text><text x="10" y="364" class="tiny">Pin numbers are examples. GPIO 21 and 22 stay free for I2C sensors.</text><text x="10" y="375" class="tiny">Each solenoid needs a flyback diode if the relay module has none.</text><text x="10" y="386" class="tiny">The gripper actuator is not on the E-stop. Its lead screw is</text><text x="10" y="397" class="tiny">self-locking, so it keeps holding the object.</text></svg>
       <div class="ckey"><span class="k kp"></span>Energized <span class="k ko"></span>Off</div>
       <p class="small">GPIO pins drive the relay inputs. Each relay switches 24 V to one solenoid coil. Two more pins drive the gripper actuator through an H-bridge, and its current sense goes to an analog input. Click the E-stop (or press E) to cut coil power: both valves spring to center.</p>
-      </details>
     </section>
 
     <section>
-      <h2>Readouts <span class="tag req">Required</span></h2>
+      <h2>Readouts</h2>
       <table class="read"><tbody id="readBody"></tbody></table>
     </section>
 
     <section>
-      <details class="sec">
-      <summary>Results of runs <span class="tag opt">Optional</span></summary>
+      <h2>Results</h2>
       <table class="read"><tbody id="resBody"></tbody></table>
-      </details>
     </section>
 
     <section>
-      <h2 id="settingsHead">Settings</h2>
-      <p class="small">Folders marked Required hold your design values. The others are optional.</p>
+      <h2>Parameters</h2>
       <div id="gui-host"></div>
     </section>
   </aside>
@@ -1500,19 +1445,19 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 
 <script id="core">
 // ---------- Core model (no DOM). Units: in, lb, psi, gpm, s ----------
-var LAB = { binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
+var LAB = { spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
   objW:20, gripW:5, objH:5, gripLen:5, shape:'Ball',
   deadband:0.25, latency:120, noise:0.06, camHz:15, flowErr:8,
   camMast:18, camArm:16, camAuto:true, camTilt:35, camFov:60,
   gStroke:4, wMin:0.5, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:100, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.4 };
-var TRACTOR = { binOn:true, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
+var TRACTOR = { spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
   objW:60, gripW:80, objH:14, gripLen:12, shape:'Bale',
   deadband:1.0, latency:120, noise:0.25, camHz:15, flowErr:8,
   camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:60,
   gStroke:12, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:450, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.8 };
-var P = Object.assign({}, LAB, { binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
+var P = Object.assign({}, LAB, { showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
 
 function Lmax(){ return P.Lmin + P.stroke; }
 function Abore(){ return 0.7854 * P.bore * P.bore; }
@@ -1592,45 +1537,6 @@ if (typeof module !== 'undefined') module.exports = { P:P, LAB:LAB, TRACTOR:TRAC
 
 <script>
 (function(){
-// Bin, drop point and work path. The work path is every reachable tip position from the pick line
-// (grasp height, across the pick width) up to the drop height and across to the drop point.
-function binDrop(){
-  if (!P.binOn) return null;
-  return { x:P.binIn + P.binW / 2, y:P.binRim + P.binClear + P.objH / 2 + P.gripLen };
-}
-function workPath(){
-  var d = binDrop(), y0 = pickY(), half = P.pickW / 2;
-  var key = JSON.stringify([P.spacing, P.barH, P.Lmin, P.stroke, P.bore, P.rod, P.objW, P.gripW, P.objH, P.gripLen, P.binOn, P.pickW, P.binRim, P.binIn, P.binW, P.binClear]);
-  if (workPath.key === key) return workPath.v;
-  var xa = -half, xb = d ? Math.max(half, d.x) : half, yb = d ? Math.max(y0, d.y) : y0, W = P.objW + P.gripW;
-  var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0] };
-  for (var x = xa; x <= xb + 1e-9; x += 0.5) for (var y = y0; y <= yb + 1e-9; y += 0.5) {
-    if (!reachable(x, y)) continue; var f = forcesPerLb(x, y); if (!f) continue; v.n++;
-    for (var c = 0; c < 2; c++) {
-      var F = f[c] * W, A = F > 0 ? Aann() : Abore();
-      if (!v.cyl[c] || Math.abs(F) > Math.abs(v.cyl[c].F)) v.cyl[c] = { F:F, x:x, y:y };
-      v.hold[c] = Math.max(v.hold[c], Math.abs(F) / A);
-      if (!v.worst || Math.abs(F) > v.worst.Fmax) v.worst = { x:x, y:y, Fmax:Math.abs(F) };
-    }
-  }
-  if (v.worst) { var fw = forcesPerLb(v.worst.x, v.worst.y); v.worst.F = [fw[0] * W, fw[1] * W]; }
-  workPath.key = key; workPath.v = v; return v;
-}
-function binChecks(){
-  var d = binDrop(); if (!d) return null;
-  // While the fruit passes over the inner rim, its lowest point above the rim wall must be the clearance above the rim.
-  // A round fruit at horizontal offset dx from the wall has its surface sqrt(r^2 - dx^2) below its center; a bale is flat.
-  var reach = reachable(d.x, d.y), rim = reach, r = P.objH / 2, need = 0, worstX = null;
-  for (var x = P.binIn - r; x <= P.binIn + r + 1e-9 && rim; x += 0.25) {
-    var dx = P.binIn - x, drop = P.shape === 'Ball' ? Math.sqrt(Math.max(0, r * r - dx * dx)) : r;
-    var y = P.binRim + P.binClear + P.gripLen + drop;
-    if (!reachable(x, y)) { rim = false; worstX = x; need = y; }
-  }
-  return { d:d, reach:reach, rim:rim, failX:worstX, failY:need };
-}
-// Counterbalance setting: a value in psi if given, otherwise the ratio times the highest holding pressure in the work path
-function cbHoldPsi(k){ var w = workPath(); return (w && w.hold[k]) || 1; }
-function cbSetting(k){ return P.cbPsi > 0 ? P.cbPsi : P.cbSet * cbHoldPsi(k); }
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
 var css = function(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); };
@@ -1861,18 +1767,8 @@ function buildWorld(){
     var tw = 2 * halfX() + 2;
     tray = { x:zone.a + tw / 2, w:tw, h:Math.max(0.75, P.objH * 0.12) };
     if (dropX !== null) { if (dropOk(dropX)) tray.x = dropX; else { dropX = null; dropMsg = true; } }
-    var bd = binDrop();
-    if (bd && dropOk(bd.x)) { tray.x = bd.x; tray.w = Math.max(2, P.binW - 1); }
     trayMesh = box(tray.w, tray.h, P.objH + 3, mat.tray); trayMesh.position.set(tray.x, tray.h / 2, 0); world.add(trayMesh);
   } else tray = null;
-  if (P.binOn) {
-    var bd2 = binDrop(), bc = binChecks(), dep = P.objH + 6;
-    [P.binIn, P.binIn + P.binW].forEach(function(xw){ var w = box(0.5, P.binRim, dep, mat.tray); w.position.set(xw, P.binRim / 2, 0); world.add(w); });
-    var fl = box(P.binW, 0.4, dep, mat.tray); fl.position.set(P.binIn + P.binW / 2, 0.2, 0); world.add(fl);
-    var dm = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.6, P.objH * 0.08), 16, 12), new THREE.MeshBasicMaterial({ color: bc && bc.rim ? 0x1f8a5b : 0xc0392b }));
-    dm.position.set(bd2.x, bd2.y, 0); world.add(dm);
-    [-P.pickW / 2, P.pickW / 2].forEach(function(xp){ var m = box(0.3, 0.12, 8, new THREE.MeshBasicMaterial({ color:0xd9661a })); m.position.set(xp, 0.08, 0); world.add(m); });
-  }
   buildAxes();
   buildMap();
   buildFoot();
@@ -2214,34 +2110,18 @@ function canMove(i, dir){ var m = moveCheck(i, dir, 0.1); if (m) A.lastBlock = m
 function step(dt){
   S.t += dt;
   if (estop) S.v = [0, 0];
-  S.stall = -1; S.over = -1; S.blocked = ''; S.cbLower = -1; if (!S.drift) S.drift = [0, 0];
+  S.stall = -1; S.over = -1; S.blocked = '';
   S.starved = S.v[0] !== 0 && S.v[1] !== 0;
   var i = S.v[0] !== 0 ? 0 : (S.v[1] !== 0 ? 1 : -1), tc = fk(S.L[0], S.L[1]);
   if (i >= 0 && tc) {
     var dir = S.v[i], f = forcesPerLb(tc.x, tc.y), F = f ? f[i] * tipLoad() : 0;
     var v = (dir > 0 ? P.flow * 3.85 / Abore() : P.flow * 3.85 / Aann()) * (1 + P.flowErr / 100);
-    var cr = Math.abs(F) / capFor(F), assist = (dir > 0 && F > 0) || (dir < 0 && F < 0);
-    if (assist) {
-      // load helps the motion: without a counterbalance valve it overruns; with one, the valve meters the return flow
-      if (!P.cbOn) { if (cr > 0.02) S.over = i; v *= 1 + Math.min(0.5, 5 * cr); }
-      else S.cbLower = i;
-    }
+    var cr = Math.abs(F) / capFor(F);
+    if ((dir > 0 && F > 0) || (dir < 0 && F < 0)) { if (cr > 0.02) S.over = i; v *= 1 + Math.min(0.5, 5 * cr); }
     var m = moveCheck(i, dir, v * dt);
     if (m === 'stall') S.stall = i;
     else if (m) S.blocked = m;
     else S.L[i] += dir * v * dt;
-  }
-  // valves centered: load holding through the counterbalance valve, or slow drift through valve leakage without one
-  S.drifting = -1;
-  for (var k = 0; k < 2; k++) {
-    if (S.v[k] !== 0) { S.drift[k] = 0; continue; }   // drift is counted since the cylinder last moved
-    if (!tc) continue;
-    var fk2 = forcesPerLb(tc.x, tc.y); if (!fk2) continue;
-    var Fk = fk2[k] * tipLoad(); if (Math.abs(Fk) < 1) continue;
-    var dk = Fk > 0 ? 1 : -1, Ak = Fk > 0 ? Aann() : Abore(), pk = Math.abs(Fk) / Ak, rate = 0;
-    if (!P.cbOn) rate = P.leak * Math.min(2, pk / 1000) / 60 / Ak;                      // valve spool leakage, in/s
-    else if (pk > cbSetting(k)) rate = 0.5 * P.flow * 3.85 / Ak;          // setting too low: valve cracks open
-    if (rate > 0) { var mk = moveCheck(k, dk, rate * dt); if (!mk) { S.L[k] += dk * rate * dt; S.drift[k] += rate * dt; if (S.drift[k] > 0.05) S.drifting = k; } }
   }
   updateGripper(dt);
   var tip = tipNow();
@@ -2553,9 +2433,8 @@ $('#gripBtn').onclick = toggleGrip;
 $('#homeBtn').onclick = goHome;
 $('#worstBtn').onclick = function(){
   if (!zone) { say('No pick zone at this pick height.', 'bad'); return; }
-  cancelAuto(); var wp = workPath();
-  if (wp && wp.worst) { S.L = ik(wp.worst.x, wp.worst.y); say('Tip moved to the worst point of the work path (pick, lift, carry and drop). Read the forces "with object" and the pressures below.', ''); }
-  else { S.L = ik(zone.worstX, pickY()); say('Tip moved to the worst point on the pick line. Set the pick width and the bin to check the full work path.', 'warn'); }
+  cancelAuto(); S.L = ik(zone.worstX, pickY());
+  say('Tip moved to the worst point in the pick zone (no hydraulics). Read the forces "with object" below.', '');
 };
 $('#clearBtn').onclick = function(){ cancelAuto(); clearObjects(); say('Objects cleared.', ''); };
 $('#pauseBtn').onclick = togglePause;
@@ -2650,19 +2529,6 @@ fQ.add(P, 'dispNoise', 0, 1, 0.01).name('Disparity noise (px)');
 fQ.add(P, 'baseline', 1, 12, 0.1).name('Stereo baseline (in)');
 fQ.add(P, 'imgRes', ['640 x 480', '1280 x 960', '4000 x 3000', '8000 x 6000']).name('Detection image (px)');
 fQ.close();
-var fCB = gui.addFolder('Counterbalance valves');
-fCB.add(P, 'cbOn').name('Fitted on both cylinders');
-fCB.add(P, 'cbSet', 0.8, 2, 0.05).name('Setting / highest load pressure');
-fCB.add(P, 'cbPsi', 0, 3000, 5).name('Setting (psi), 0 = use ratio');
-fCB.add(P, 'cbPilot', 1, 10, 0.5).name('Pilot ratio (x:1)');
-fCB.add(P, 'leak', 0, 20, 0.5).name('Valve leakage at 1000 psi (in3/min)');
-var fB = gui.addFolder('Bin and pick width');
-fB.add(P, 'binOn').name('Show the bin');
-fB.add(P, 'pickW', 4, 120, 1).name('Pick width (in)');
-fB.add(P, 'binRim', 4, 72, 0.5).name('Bin rim height (in)');
-fB.add(P, 'binIn', 0, 120, 0.5).name('Bin inner rim distance (in)');
-fB.add(P, 'binW', 4, 48, 0.5).name('Bin width (in)');
-fB.add(P, 'binClear', 0, 12, 0.5).name('Rim clearance (in)');
 var fK = gui.addFolder('Controller');
 fK.add(P, 'deadband', 0.05, 3, 0.05).name('Deadband (in)');
 fK.add(P, 'latency', 0, 500, 10).name('Camera delay (ms)');
@@ -2690,28 +2556,11 @@ fV.add(viewFns, 'fitFoot').name('Fit view to camera frame');
 fV.add(viewFns, 'fitRig').name('Fit view to rig');
 fV.add(P, 'showTrail').name('Tip trail');
 fK.close(); fV.close();
-// Settings order: the four folders that hold the student's design come first and are marked required
-fG.title('Arm geometry (in): required'); fC.title('Cylinders and hydraulics: required'); fL.title('Load: required'); fB.title('Bin and pick width: required'); fCB.title('Counterbalance valves: required');
-fGr.title('Gripper details: optional'); fM.title('Camera mount: optional'); fQ.title('Camera pipeline: optional'); fK.title('Controller: optional'); fV.title('View: optional');
-[fG, fC, fL, fB, fCB, fGr, fM, fQ, fK, fV].forEach(function(f){ gui.$children.appendChild(f.domElement); });
-[fG, fC, fL, fB, fCB].forEach(function(f){ f.open(); }); [fGr, fM, fQ, fK, fV].forEach(function(f){ f.close(); });
-function reachUI(){ var b = document.getElementById('reachBtn'); if (!b) return; b.textContent = 'Reach region: ' + (P.showMap ? 'on' : 'off'); b.setAttribute('aria-pressed', P.showMap ? 'true' : 'false'); }
-document.getElementById('reachBtn').onclick = function(){
-  P.showMap = !P.showMap; if (mapMesh) mapMesh.visible = P.showMap; document.getElementById('legend').style.display = P.showMap ? '' : 'none';
-  gui.controllersRecursive().forEach(function(c){ if (c.property === 'showMap') c.updateDisplay(); }); reachUI();
-};
-document.getElementById('presetTractor').onclick = function(){ presets.tractor(); say('Tractor start loaded. Now enter your design in the Required settings folders (step 2).', ''); };
-document.getElementById('presetLab').onclick = function(){ presets.lab(); say('Lab rig loaded.', ''); };
-document.getElementById('openDesign').onclick = function(){
-  [fG, fC, fL, fB, fCB].forEach(function(f){ f.open(); });
-  var h = document.getElementById('settingsHead'); if (h) h.scrollIntoView({ behavior:'smooth', block:'start' });
-};
-reachUI();
-var LIVE = { cbOn:1, cbSet:1, cbPilot:1, leak:1, flow:1, flowErr:1, deadband:1, latency:1, noise:1, camHz:1, showTrail:1, actForce:1, actSpeed:1, mu:1, descent:1, stepL:1, pixNoise:1, dispNoise:1, baseline:1 };
+var LIVE = { flow:1, flowErr:1, deadband:1, latency:1, noise:1, camHz:1, showTrail:1, actForce:1, actSpeed:1, mu:1, descent:1, stepL:1, pixNoise:1, dispNoise:1, baseline:1 };
 gui.onFinishChange(function(e){
   if (!e.property || LIVE[e.property]) return;
   if (e.property === 'lab' || e.property === 'tractor' || e.property === 'fitFoot' || e.property === 'fitRig') return;
-  if (e.property === 'showMap') { if (mapMesh) mapMesh.visible = P.showMap; $('#legend').style.display = P.showMap ? '' : 'none'; reachUI(); return; }
+  if (e.property === 'showMap') { if (mapMesh) mapMesh.visible = P.showMap; $('#legend').style.display = P.showMap ? '' : 'none'; return; }
   if (e.property === 'showView') { if (viewCone) viewCone.visible = P.showView; return; }
   if (e.property === 'showFoot') { if (footGroup) footGroup.visible = P.showFoot; return; }
   applyParams(false, true);
@@ -2763,35 +2612,13 @@ function updateReadouts(){
   }
   for (i = 0; i < 2; i++) {
     var F = t ? t[i] * W : 0, Fo = t ? t[i] * Wo : 0;
-    var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i);
-    if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' side; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi']);
-    else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + ph.toFixed(0) + ' psi held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
     rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%)']);
-  }
-  for (var pc = 0; pc < 2; pc++) {
-    if (!t) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
-    rows.push(['Cylinder ' + (pc + 1) + ' pressure now', pp.toFixed(0) + ' psi in the ' + (Fp >= 0 ? 'rod end' : 'cap end') + ' (design, x2: ' + (2 * pp).toFixed(0) + ' psi)']);
-  }
-  var bc = binChecks();
-  if (bc) {
-    rows.push(['Drop point (bin)', 'x = ' + f1(bc.d.x) + ' in, tip at ' + f1(bc.d.y) + ' in: ' + (bc.reach ? 'reachable' : 'NOT reachable'), 1]);
-    rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
-  }
-  var wp = workPath();
-  if (wp && wp.worst) {
-    rows.push(['Worst point of the work path', 'x = ' + f1(wp.worst.x) + ', y = ' + f1(wp.worst.y) + ' in', 1]);
-    for (var wc = 0; wc < 2; wc++) {
-      var Fw = wp.worst.F[wc], Aw = Fw >= 0 ? Aann() : Abore(), pw = Math.abs(Fw) / Aw;
-      rows.push(['Cylinder ' + (wc + 1) + ' at the worst point', Math.abs(Fw).toFixed(1) + ' lb ' + (Fw >= 0 ? 'pull (rod end)' : 'push (cap end)') + '; ' + pw.toFixed(0) + ' psi; design (x2) ' + (2 * Math.abs(Fw)).toFixed(1) + ' lb, ' + (2 * pw).toFixed(0) + ' psi', 1]);
-    }
-    rows.push(['Counterbalance guide', '1.3 x maximum holding pressure: ' + (1.3 * wp.hold[0]).toFixed(0) + ' psi (cylinder 1), ' + (1.3 * wp.hold[1]).toFixed(0) + ' psi (cylinder 2)']);
   }
   rows.push(['Load on tip now', W.toFixed(0) + ' lb']);
   rows.push(['Max object weight here', Math.max(0, maxTipLoad(tip.x, tip.y) - P.gripW).toFixed(0) + ' lb']);
   if (zone) {
     rows.push(['Pick zone width at pick height', f1(zone.width) + ' in', 1]);
-    rows.push(['Worst cylinder force on the pick line', zone.worst.toFixed(0) + ' lb at x = ' + f1(zone.worstX)]);
-    rows.push(['Pick width reached', (zone.a <= -P.pickW / 2 + 1e-6 && zone.b >= P.pickW / 2 - 1e-6 ? 'yes' : 'NO') + ' (needs -' + f1(P.pickW / 2) + ' to +' + f1(P.pickW / 2) + ' in)', 1]);
+    rows.push(['Worst cylinder force in zone', zone.worst.toFixed(0) + ' lb at x = ' + f1(zone.worstX), 1]);
     rows.push(['Pick zone x range', f1(zone.a) + ' to ' + f1(zone.b) + ' in']);
     if (tray) rows.push(['Drop spot x', f1(tray.x) + ' in']);
   } else rows.push(['Pick zone width at pick height', 'none', 1]);
@@ -2834,10 +2661,7 @@ function updateReadouts(){
   else if (S.v[0] !== 0) pm = 'Pump flow goes to valve 1.';
   else if (S.v[1] !== 0) pm = 'Pump flow passes through the center of valve 1 to valve 2.';
   else pm = 'Both valves centered. Pump unloads to tank, cylinders held.';
-  if (S.over >= 0) pm += ' Overrunning load on cylinder ' + (S.over + 1) + ': the load pulls it faster than the pump fills it. Cavitation risk. Fit counterbalance valves (Settings).';
-  if (S.cbLower >= 0) pm += ' Counterbalance valve ' + (S.cbLower + 1) + ' meters the return flow: the load is lowered at pump speed, no runaway.';
-  if (S.drifting >= 0) pm += P.cbOn ? ' Counterbalance setting is below the load pressure on cylinder ' + (S.drifting + 1) + ': the valve opens and the load sinks.' : ' Valves centered, but the load is drifting on cylinder ' + (S.drifting + 1) + ' through spool leakage.';
-  if (P.cbOn) pm += ' Counterbalance valves fitted (setting ' + P.cbSet.toFixed(2) + ' x load pressure, pilot ' + P.cbPilot + ':1).';
+  if (S.over >= 0) pm += ' Overrunning load on cylinder ' + (S.over + 1) + ': the load pulls it faster than the pump fills it. Cavitation risk.';
   if (S.blocked && (S.v[0] || S.v[1])) pm += ' ' + S.blocked;
   if (estop) pm = 'E-stop pressed: coil power cut, valves centered, cylinders held. ' + pm;
   if (paused) pm = 'Paused. ' + pm;
