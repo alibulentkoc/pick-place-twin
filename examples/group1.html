@@ -145,12 +145,12 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029d" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029e" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
 (function(){
-  var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false};
+  var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false, "gStroke": 5, "wMin": 1, "showView": false, "showFoot": false};
   var fr = document.getElementById('tw'), st = document.getElementById('status'), ready = false, answersOn = false, hov = null, active = null;
   function send(m){ if (!ready) return; m.to = 'twin'; fr.contentWindow.postMessage(m, '*'); }
   function load(){ answersOn = false; send({ preset:'tractor', set:G1, resetView:true, say:'Group 1 values loaded.' }); st.textContent = 'The twin has the Group 1 values.'; }
