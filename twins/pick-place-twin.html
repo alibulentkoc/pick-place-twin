@@ -196,7 +196,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
         <li><strong>Arm geometry:</strong> pivot spacing, bar height, retracted length, stroke.</li>
         <li><strong>Cylinders and hydraulics:</strong> bore, rod, pressure, flow.</li>
         <li><strong>Load:</strong> fruit shape and height (diameter), fruit weight and end effector weight (gripper weight). The gripper length is in Arm geometry.</li>
-        <li><strong>Bin and pick width:</strong> select <em>Show the bin</em>, then enter the pick width, bin rim height, inner rim distance, bin width and rim clearance.</li>
+        <li><strong>Bin and pick width:</strong> pick width, bin rim height, inner rim distance, bin width and rim clearance.</li>
         <li><strong>Counterbalance valves:</strong> fitted, setting in psi (or the ratio) and pilot ratio.</li>
       </ol>
       <button class="btn" id="openDesign">Open my design settings</button>
@@ -244,7 +244,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
         </div>
         <div class="inputs">
           <label>x <input id="gx" type="number" step="0.5" value="4"></label>
-          <label>y <input id="gy" type="number" step="0.5" value="12"></label>
+          <label>z <input id="gy" type="number" step="0.5" value="12"></label>
           <button class="btn" id="goBtn">Go to point</button>
         </div>
         <p class="small">The camera reads the tip marker and the ESP32 opens one valve at a time. You can also click inside the shaded zone to send the tip there.</p>
@@ -268,7 +268,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="placer">
         <div class="inputs">
           <label>Object x <input id="ox" type="number" step="0.5" value="5"></label>
-          <label>z <input id="oz" type="number" step="0.5" value="0"></label>
+          <label>y <input id="oz" type="number" step="0.5" value="0"></label>
           <button class="btn" id="placeHere">Place object</button>
           <span class="small" style="margin:0">in</span>
         </div>
@@ -1506,13 +1506,13 @@ var LAB = { binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:
   camMast:18, camArm:16, camAuto:true, camTilt:35, camFov:60,
   gStroke:4, wMin:0.5, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:100, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.4 };
-var TRACTOR = { binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
+var TRACTOR = { binOn:true, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
   objW:60, gripW:80, objH:14, gripLen:12, shape:'Bale',
   deadband:1.0, latency:120, noise:0.25, camHz:15, flowErr:8,
   camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:60,
   gStroke:12, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:450, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.8 };
-var P = Object.assign({}, LAB, { showAnswers:false, binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
+var P = Object.assign({}, LAB, { binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
 
 function Lmax(){ return P.Lmin + P.stroke; }
 function Abore(){ return 0.7854 * P.bore * P.bore; }
@@ -1531,8 +1531,7 @@ function ik(x, y){
 }
 function inRange(L){ return L >= P.Lmin - 1e-6 && L <= Lmax() + 1e-6; }
 function reachable(x, y){
-  if (y > P.barH - 3) return false;  // the gripper body and the tip pin must stay below the bar
-  if (y < P.gripLen + 0.5 - 1e-6) return false;  // the empty fingers (0.4 in below the tip pin) must stay above the floor
+  if (y > P.barH - 0.5) return false;
   var L = ik(x, y);
   return inRange(L[0]) && inRange(L[1]);
 }
@@ -1545,7 +1544,7 @@ function forcesPerLb(x, y){
   if (Math.abs(det) < 1e-6) return null;
   return [-u2x / det, u1x / det];
 }
-// Capacity of cylinder i for a signed force F. Tension is held and lifted by the rod end.
+// Capacity of cylinder i for a signed force F. Tension is held and lifted on the rod side.
 function capFor(F){ return F >= 0 ? P.pressure * Aann() : P.pressure * Abore(); }
 function maxTipLoad(x, y){
   var t = forcesPerLb(x, y);
@@ -1604,16 +1603,13 @@ function workPath(){
   var key = JSON.stringify([P.spacing, P.barH, P.Lmin, P.stroke, P.bore, P.rod, P.objW, P.gripW, P.objH, P.gripLen, P.binOn, P.pickW, P.binRim, P.binIn, P.binW, P.binClear]);
   if (workPath.key === key) return workPath.v;
   var xa = -half, xb = d ? Math.max(half, d.x) : half, yb = d ? Math.max(y0, d.y) : y0, W = P.objW + P.gripW;
-  var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0], holdRod:[0, 0], holdCap:[0, 0], pull:[null, null], push:[null, null] };
+  var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0] };
   for (var x = xa; x <= xb + 1e-9; x += 0.5) for (var y = y0; y <= yb + 1e-9; y += 0.5) {
     if (!reachable(x, y)) continue; var f = forcesPerLb(x, y); if (!f) continue; v.n++;
     for (var c = 0; c < 2; c++) {
       var F = f[c] * W, A = F > 0 ? Aann() : Abore();
       if (!v.cyl[c] || Math.abs(F) > Math.abs(v.cyl[c].F)) v.cyl[c] = { F:F, x:x, y:y };
       v.hold[c] = Math.max(v.hold[c], Math.abs(F) / A);
-      // each end separately: a pull is held by the rod end, a push by the cap end
-      if (F > 0) { v.holdRod[c] = Math.max(v.holdRod[c], F / Aann()); if (!v.pull[c] || F > v.pull[c].F) v.pull[c] = { F:F, x:x, y:y }; }
-      else if (F < 0) { v.holdCap[c] = Math.max(v.holdCap[c], -F / Abore()); if (!v.push[c] || -F > v.push[c].F) v.push[c] = { F:-F, x:x, y:y }; }
       if (!v.worst || Math.abs(F) > v.worst.Fmax) v.worst = { x:x, y:y, Fmax:Math.abs(F) };
     }
   }
@@ -1633,10 +1629,8 @@ function binChecks(){
   return { d:d, reach:reach, rim:rim, failX:worstX, failY:need };
 }
 // Counterbalance setting: a value in psi if given, otherwise the ratio times the highest holding pressure in the work path
-// Holding pressure of one end of one cylinder: the largest in the work path. end = 'rod' (pull) or 'cap' (push).
-function cbHoldPsi(k, end){ var w = workPath(); if (!w) return 1; var h = end === 'rod' ? w.holdRod[k] : end === 'cap' ? w.holdCap[k] : w.hold[k]; return h || 1; }
-// Each port has its own valve (a dual counterbalance valve when the force changes sign in the work path).
-function cbSetting(k, end){ return P.cbPsi > 0 ? P.cbPsi : P.cbSet * cbHoldPsi(k, end); }
+function cbHoldPsi(k){ var w = workPath(); return (w && w.hold[k]) || 1; }
+function cbSetting(k){ return P.cbPsi > 0 ? P.cbPsi : P.cbSet * cbHoldPsi(k); }
 'use strict';
 var $ = function(s){ return document.querySelector(s); };
 var css = function(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); };
@@ -1713,20 +1707,7 @@ function clearGroup(g){
 
 // ---------- Geometry helpers ----------
 function barSz(){ return Math.max(1.5, P.bore * 1.2); }
-// Each cylinder sits on its own side of the arm plane, so the two barrels can never touch.
-function cylZ(){ return P.bore / 2 + 0.3 + 0.2; }
-// Half depth (across the arm plane) of everything that moves with the tip: cylinders, gripper and the held object.
-function sweepHalfDepth(){
-  var obj = P.shape === 'Bale' ? P.objH * 0.9 : P.objH / 2;
-  return Math.max(obj, cylZ() + P.bore / 2 + 0.3, 1.5);
-}
-// The legs stand off the arm plane, clear of the swept volume, so the arm can pass them.
-// They are on the side away from the camera, so they never block its view of the tip.
-function legZ(){ return sweepHalfDepth() + 3 + barSz() / 2; }
-function legSide(){ return P.camArm >= 0 ? 1 : -1; }
-// Gap from the pivot pins up to the bar bottom: a cylinder at pivot height must clear the bar.
-function barGap(){ return P.bore / 2 + 0.3 + 0.5; }
-function barTop(){ return P.barH + barGap() + barSz(); }
+function barTop(){ return P.barH + 0.6 + barSz(); }
 function camPose(){
   var pos = new V3(0, barTop() + P.camMast, -P.camArm), tgt;
   if (P.camAuto) {
@@ -1807,7 +1788,7 @@ function buildMap(){
 }
 
 // ---------- Static world ----------
-var zone = null, tray = null, coils = [], pivotMarkers = [], solids = [], collSolids = [], camBody = null, viewCone = null;
+var zone = null, tray = null, coils = [], pivotMarkers = [], solids = [], camBody = null, viewCone = null;
 var dropX = null, dropMsg = false, trayMesh = null, clickMode = 'object', axesGroup = null;
 function axisLabel(txt, color){
   var c = document.createElement('canvas'); c.width = c.height = 64;
@@ -1819,38 +1800,37 @@ function axisLabel(txt, color){
 function buildAxes(){
   axesGroup = new THREE.Group();
   var al = Math.max(12, (P.spacing / 2 + Lmax()) * 0.6), cols = ['#e5483a', '#2fb35a', '#3b7de0'];
-  // Display frame (same as the documents): x along the bar, y up, z across the arm plane
-  var dirs = [[al, 0, 0], [0, al, 0], [0, 0, al]];
+  // Display frame: x along the bar, y away from the viewer (toward the camera side), z up
+  var dirs = [[al, 0, 0], [0, 0, -al], [0, al, 0]];
   dirs.forEach(function(dv, i){
     var ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(0, 0, 0), new V3(dv[0], dv[1], dv[2])]), new THREE.LineBasicMaterial({ color:cols[i], depthTest:false, transparent:true }));
     ln.renderOrder = 10; axesGroup.add(ln);
   });
   var o = new THREE.Mesh(new THREE.SphereGeometry(al * 0.02, 12, 8), new THREE.MeshBasicMaterial({ color:0x888888, depthTest:false }));
   o.renderOrder = 10; axesGroup.add(o);
-  [['x', al, 0, 0], ['y', 0, al, 0], ['z', 0, 0, al]].forEach(function(a, i){
+  [['x', al, 0, 0], ['y', 0, 0, -al], ['z', 0, al, 0]].forEach(function(a, i){
     var sp = axisLabel(a[0], cols[i]); sp.position.set(a[1] * 1.08, a[2] * 1.08, a[3] * 1.08); sp.scale.set(al * 0.12, al * 0.12, 1); axesGroup.add(sp);
   });
   world.add(axesGroup);
 }
 function faceCamera(m){ m.lookAt(oak.position); }
 function buildWorld(){
-  clearGroup(world); mapMesh = null; coils = []; pivotMarkers = []; solids = []; collSolids = [];
+  clearGroup(world); mapMesh = null; coils = []; pivotMarkers = []; solids = [];
   zone = pickZone();
   updateOak();
   var d = P.spacing, H = P.barH, sz = barSz(), legX = Math.max(d / 2 + Lmax() * 0.15 + 4, 8), top = barTop();
-  var gp = barGap(), bar = box(2 * legX + 4, sz, sz, mat.frame); bar.position.set(0, H + sz / 2 + gp, 0); world.add(bar); solids.push(bar); collSolids.push({ m:bar, name:'bar' });
+  var bar = box(2 * legX + 4, sz, sz, mat.frame); bar.position.set(0, H + sz / 2 + 0.6, 0); world.add(bar); solids.push(bar);
   [-1, 1].forEach(function(s){
-    var zl = legZ() * legSide(), leg = box(sz, H + sz + gp, sz, mat.frame); leg.position.set(s * legX, (H + sz + gp) / 2, zl); world.add(leg); solids.push(leg); collSolids.push({ m:leg, name:'leg' });
-    var beam = box(sz, sz, Math.abs(zl), mat.frame); beam.position.set(s * legX, H + sz / 2 + gp, zl / 2); world.add(beam); solids.push(beam); collSolids.push({ m:beam, name:'leg beam' });
-    var fd = Math.max(H * 0.7, P.camArm * 1.4), foot = box(sz * 1.4, sz * 0.5, fd, mat.frame); foot.position.set(s * legX, sz * 0.25, zl + legSide() * (fd / 2 - sz / 2)); world.add(foot); collSolids.push({ m:foot, name:'foot' });
+    var leg = box(sz, H + sz + 0.6, sz, mat.frame); leg.position.set(s * legX, (H + sz + 0.6) / 2, 0); world.add(leg); solids.push(leg);
+    var foot = box(sz * 1.4, sz * 0.5, Math.max(H * 0.7, P.camArm * 1.4), mat.frame); foot.position.set(s * legX, sz * 0.25, -P.camArm * 0.2); world.add(foot);
   });
   var onTop = Math.abs(P.camArm) < sz;
   pivots().forEach(function(p, i){
-    var br = box(sz * 0.8, gp + 1, Math.max(sz * 2.2, 2 * cylZ() + 2), mat.frame); br.position.set(p.x, H + gp / 2 - 0.5, 0); world.add(br); solids.push(br);
+    var br = box(sz * 0.8, 1.6, sz * 2.2, mat.frame); br.position.set(p.x, H + 0.3, 0); world.add(br); solids.push(br);
     var j = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.5, P.bore * 0.35), 16, 12), mat.joint); j.position.set(p.x, H, 0); world.add(j);
     var m = marker(i, Math.max(2, sz * 1.2));
     if (onTop) m.position.set(p.x, top + 0.05, 0);
-    else m.position.set(p.x, H + barGap() + sz / 2, (P.camArm > 0 ? -1 : 1) * (sz / 2 + 0.06));
+    else m.position.set(p.x, H + 0.6 + sz / 2, (P.camArm > 0 ? -1 : 1) * (sz / 2 + 0.06));
     faceCamera(m); world.add(m); pivotMarkers.push(m);
   });
   [-1, 1].forEach(function(s, i){
@@ -1886,8 +1866,8 @@ function buildWorld(){
     trayMesh = box(tray.w, tray.h, P.objH + 3, mat.tray); trayMesh.position.set(tray.x, tray.h / 2, 0); world.add(trayMesh);
   } else tray = null;
   if (P.binOn) {
-    var bd2 = binDrop(), bc = binChecks(), dep = Math.min(P.objH + 6, 2 * (legZ() - barSz() / 2) - 1);
-    [P.binIn, P.binIn + P.binW].forEach(function(xw){ var w = box(0.5, P.binRim, dep, mat.tray); w.position.set(xw, P.binRim / 2, 0); world.add(w); collSolids.push({ m:w, name:'bin wall' }); });
+    var bd2 = binDrop(), bc = binChecks(), dep = P.objH + 6;
+    [P.binIn, P.binIn + P.binW].forEach(function(xw){ var w = box(0.5, P.binRim, dep, mat.tray); w.position.set(xw, P.binRim / 2, 0); world.add(w); });
     var fl = box(P.binW, 0.4, dep, mat.tray); fl.position.set(P.binIn + P.binW / 2, 0.2, 0); world.add(fl);
     var dm = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.6, P.objH * 0.08), 16, 12), new THREE.MeshBasicMaterial({ color: bc && bc.rim ? 0x1f8a5b : 0xc0392b }));
     dm.position.set(bd2.x, bd2.y, 0); world.add(dm);
@@ -2101,14 +2081,14 @@ function placeSeg(mesh, ax, ay, az, bx, by, bz){
 function updateDyn(){
   var tip = tipNow(), p = pivots(), barrelLen = Math.max(4, P.Lmin - 3);
   for (var i = 0; i < 2; i++) {
-    var z = (i === 0 ? 1 : -1) * cylZ(), dx = tip.x - p[i].x, dy = tip.y - p[i].y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+    var z = i === 0 ? 1.1 : -1.1, dx = tip.x - p[i].x, dy = tip.y - p[i].y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
     var bl = Math.min(barrelLen, L - 0.5), ex = p[i].x + ux * bl, ey = p[i].y + uy * bl;
     placeSeg(cyl[i].b, p[i].x, p[i].y, z, ex, ey, z);
     placeSeg(cyl[i].r, ex, ey, z, tip.x, tip.y, z);
   }
   tipJoint.position.set(tip.x, tip.y, 0);
   plate.position.set(tip.x, tip.y - 0.2, 0);
-  tipMarker.position.set(tip.x, tip.y + Math.max(1.2, P.objH * 0.3), (P.camArm > 0 ? -1 : 1) * (cylZ() + P.bore / 2 + 0.8));  // on the camera side of the nearer cylinder
+  tipMarker.position.set(tip.x, tip.y + Math.max(1.2, P.objH * 0.3), (P.camArm > 0 ? -1 : 1) * 1.4);
   faceCamera(tipMarker);
   var GG = gripGeo(), w = gripW(S.grip), pz = tip.y - PIV_DROP, by = tip.y;
   fingers.forEach(function(f, k){
@@ -2150,15 +2130,14 @@ function addObject(x, z){
   var m = makeObjMesh(); objGroup.add(m);
   S.objs.push({ x:x, y:P.objH / 2, z:z, mesh:m, done:false });
   updateDyn();
-  $('#ox').value = x.toFixed(1); $('#oz').value = (z === 0 ? 0 : z).toFixed(1);
-  if (Math.abs(z) > tolZ()) say('Object placed at x = ' + x.toFixed(1) + ', z = ' + z.toFixed(1) + ' in, off the arm plane. The arm moves only in the plane z = 0, so it cannot pick it.', 'warn');
+  $('#ox').value = x.toFixed(1); $('#oz').value = (z === 0 ? 0 : -z).toFixed(1);
+  if (Math.abs(z) > tolZ()) say('Object placed at x = ' + x.toFixed(1) + ', y = ' + (-z).toFixed(1) + ' in, off the arm plane. The arm moves only in the plane y = 0, so it cannot pick it.', 'warn');
   else if (!reachable(x, pickY())) say('Object placed at x = ' + x.toFixed(1) + ' in, outside the pick zone (' + zone.a.toFixed(1) + ' to ' + zone.b.toFixed(1) + ' in). The arm cannot pick it.', 'warn');
   else if (tray && Math.abs(x - tray.x) < tray.w / 2 + halfX()) say('Object placed at x = ' + x.toFixed(1) + ' in, on top of the drop spot. Move one of them.', 'warn');
   else say('Object placed at x = ' + x.toFixed(1) + ' in.', '');
 }
 function clearObjects(){ clearGroup(objGroup); S.objs = []; S.held = null; }
-function binInUse(){ var d = binDrop(); return !!(d && tray && Math.abs(tray.x - d.x) < 0.01 && reachable(d.x, d.y)); }
-function dropY(){ var d = binDrop(); return d && reachable(d.x, d.y) ? d.y : pickY() + Math.max(0.75, P.objH * 0.12) + 0.4; }
+function dropY(){ return pickY() + Math.max(0.75, P.objH * 0.12) + 0.4; }
 function dropOk(x){ return isFinite(x) && reachable(x, dropY()); }
 function rangeAt(y){
   var xr = P.spacing / 2 + Lmax(), best = null, cur = null;
@@ -2221,8 +2200,7 @@ function moveCheck(i, dir, dL){
   if (!t) return 'The cylinders cannot meet at these lengths.';
   if (!tc) return '';
   if (t.y < floorMin() - 1e-6 && t.y < tc.y) return 'The gripper would hit the floor.';
-  if (t.y > P.barH - 3 && t.y > tc.y) return 'The tip would hit the bar.';
-  if (binHit(t) && !binHit(tc)) return 'The gripper or the object would hit the bin wall.';
+  if (t.y > P.barH - 1 && t.y > tc.y) return 'The tip would hit the bar.';
   if (gripHits(t, S.grip) && !gripHits(tc, S.grip)) return 'The gripper would hit the object.';
   var f = forcesPerLb(tc.x, tc.y);
   if (f) {
@@ -2231,27 +2209,6 @@ function moveCheck(i, dir, dL){
     if (dir > 0 && F < 0 && -F > P.pressure * Abore()) return 'stall';
   }
   return '';
-}
-// True if the gripper or the held object at tip t overlaps a bin wall (x-y plane; the walls span the arm plane).
-function binHit(t){
-  if (!P.binOn) return false;
-  // plate and actuator at the tip; two fingers at the current opening, hanging gripLen below the tip pin
-  var G = gripGeo(), w = gripW(S.grip), fb = t.y - PIV_DROP - P.gripLen, parts = [[t.x - G.bw / 2, t.x + G.bw / 2, t.y - 0.6, t.y + 1.6]];
-  [-1, 1].forEach(function(sg){ var fx = t.x + sg * (w / 2 + FT); parts.push([fx - 0.25, fx + 0.25, fb, t.y - PIV_DROP]); });
-  if (S.held) { var hx = halfX(), cy = t.y - P.gripLen; parts.push([t.x - hx, t.x + hx, cy - P.objH / 2, cy + P.objH / 2]); }
-  for (var w = 0; w < 2; w++) {
-    var xw = w === 0 ? P.binIn : P.binIn + P.binW;
-    for (var k = 0; k < parts.length; k++) { var q = parts[k]; if (q[0] < xw + 0.3 && q[1] > xw - 0.3 && q[2] < P.binRim + 0.05) return true; }
-    // the cylinders: height of each cylinder line where it passes over the wall
-    var pv = pivots(), rb = P.bore / 2 + 0.3;
-    for (var c = 0; c < 2; c++) {
-      var x0 = pv[c].x, y0 = pv[c].y;
-      if ((xw - x0) * (xw - t.x) > 0) continue;
-      var yw = y0 + (t.y - y0) * (xw - x0) / ((t.x - x0) || 1e-9);
-      if (yw - rb < P.binRim + 0.05) return true;
-    }
-  }
-  return false;
 }
 function canMove(i, dir){ var m = moveCheck(i, dir, 0.1); if (m) A.lastBlock = m === 'stall' ? 'the load is too heavy for the relief setting.' : m; return m === ''; }
 function step(dt){
@@ -2283,7 +2240,7 @@ function step(dt){
     var Fk = fk2[k] * tipLoad(); if (Math.abs(Fk) < 1) continue;
     var dk = Fk > 0 ? 1 : -1, Ak = Fk > 0 ? Aann() : Abore(), pk = Math.abs(Fk) / Ak, rate = 0;
     if (!P.cbOn) rate = P.leak * Math.min(2, pk / 1000) / 60 / Ak;                      // valve spool leakage, in/s
-    else if (pk > cbSetting(k, Fk > 0 ? 'rod' : 'cap')) rate = 0.5 * P.flow * 3.85 / Ak;          // setting too low: valve cracks open
+    else if (pk > cbSetting(k)) rate = 0.5 * P.flow * 3.85 / Ak;          // setting too low: valve cracks open
     if (rate > 0) { var mk = moveCheck(k, dk, rate * dt); if (!mk) { S.L[k] += dk * rate * dt; S.drift[k] += rate * dt; if (S.drift[k] > 0.05) S.drifting = k; } }
   }
   updateGripper(dt);
@@ -2394,7 +2351,7 @@ function pickChecks(pc){
   out.push({ ok:true, txt:'Object seen by the camera' });
   out.push({ ok:pc.visFrac >= 0.6, txt:'Not hidden by the arm: ' + Math.round(pc.visFrac * 100) + '% visible, needs 60%', why:'the arm hides ' + Math.round((1 - pc.visFrac) * 100) + '% of the object from the camera.' });
   var e = pc.est, ty = e.y + P.gripLen;
-  out.push({ ok:Math.abs(e.z) <= tolZ(), txt:'On the arm plane: |z| = ' + Math.abs(e.z).toFixed(2) + ' in, limit ' + tolZ().toFixed(2), why:'the object is ' + Math.abs(e.z).toFixed(1) + ' in off the arm plane.' });
+  out.push({ ok:Math.abs(e.z) <= tolZ(), txt:'On the arm plane: |y| = ' + Math.abs(e.z).toFixed(2) + ' in, limit ' + tolZ().toFixed(2), why:'the object is ' + Math.abs(e.z).toFixed(1) + ' in off the arm plane.' });
   var reach = reachable(e.x, Math.max(P.gripLen + 0.05, ty));
   out.push({ ok:reach, txt:'Reachable at x = ' + e.x.toFixed(2) + ' in', why:'x = ' + e.x.toFixed(1) + ' in is outside the pick zone.' });
   var cap = reach ? maxTipLoad(e.x, Math.max(P.gripLen + 0.05, ty)) - P.gripW : 0;
@@ -2409,24 +2366,12 @@ function pickChecks(pc){
 var MOVING = { above:1, down:1, lift:1, tobin:1, retreat:1, home:1, 'goto':1 };
 var A = { mode:'jog', phase:'idle', wp:null, Lt:null, active:-1, dir:0, lastDir:[0, 0], rev:0, phaseT:0, nextTick:0,
   obj:null, all:false, cycleT0:0, stuckT:0, lostT:0, seq:null, reached:false };
-// Carry route to the bin: points every 2 in along x. Each point aims for the drop height,
-// but stays at or below the top of the reach region at that x. The tip follows the points in turn,
-// so the on/off valves never make one long move that can dip below the bin rim.
-function carryRoute(from, to){
-  var n = Math.max(1, Math.ceil(Math.abs(to.x - from.x) / 2)), out = [];
-  for (var k = 1; k <= n; k++) {
-    var x = from.x + (to.x - from.x) * k / n, r = reachAtX(x);
-    var y = r ? Math.max(pickY(), Math.min(to.y, r.hi - 0.3)) : to.y;
-    out.push({ x:x, y:k === n ? to.y : y });
-  }
-  return out;
-}
 function setWp(x, y){ A.wp = { x:x, y:y }; A.Lt = ik(x, y); A.active = -1; A.lastDir = [0, 0]; A.rev = 0; A.stuckT = 0; A.lostT = 0; A.reached = false; }
 function go(ph){ A.phase = ph; A.phaseT = S.t; if (MOVING[ph] && A.wp) logCmd(ph); }
 var cmdLog = [], cmdSeq = 0, fbSeq = 0;
 function logCmd(ph){
   cmdSeq++;
-  cmdLog.unshift('{"seq":' + cmdSeq + ', "t":' + S.t.toFixed(2) + ', "step":"' + ph + '", "x":' + A.wp.x.toFixed(2) + ', "y":' + A.wp.y.toFixed(2) + ', "L1":' + A.Lt[0].toFixed(2) + ', "L2":' + A.Lt[1].toFixed(2) + ', "deadband":' + P.deadband.toFixed(2) + '}');
+  cmdLog.unshift('{"seq":' + cmdSeq + ', "t":' + S.t.toFixed(2) + ', "step":"' + ph + '", "x":' + A.wp.x.toFixed(2) + ', "z":' + A.wp.y.toFixed(2) + ', "L1":' + A.Lt[0].toFixed(2) + ', "L2":' + A.Lt[1].toFixed(2) + ', "deadband":' + P.deadband.toFixed(2) + '}');
   if (cmdLog.length > 6) cmdLog.pop();
 }
 function cancelAuto(){ A.phase = 'idle'; A.wp = null; A.all = false; A.seq = null; S.v = [0, 0]; }
@@ -2440,15 +2385,11 @@ function controlTick(){
   A.lostT = 0;
   var m = measuredTip(), Lm = ik(m.x, m.y), e = [A.Lt[0] - Lm[0], A.Lt[1] - Lm[1]], db = P.deadband, cmd = [0, 0];
   A.Lm = Lm; A.e = e;
-  fbSeq++; A.fb = '{"seq":' + fbSeq + ', "t":' + S.t.toFixed(2) + ', "tip_x":' + m.x.toFixed(2) + ', "tip_y":' + m.y.toFixed(2) + ', "L1":' + Lm[0].toFixed(2) + ', "L2":' + Lm[1].toFixed(2) + '}';
-  var stepped = P.descent === 'Stepped' && (A.phase === 'above' || A.phase === 'down' || A.phase === 'lift' || A.phase === 'tobin' || A.phase === 'retreat' || A.phase === 'goto');
+  fbSeq++; A.fb = '{"seq":' + fbSeq + ', "t":' + S.t.toFixed(2) + ', "tip_x":' + m.x.toFixed(2) + ', "tip_z":' + m.y.toFixed(2) + ', "L1":' + Lm[0].toFixed(2) + ', "L2":' + Lm[1].toFixed(2) + '}';
+  var stepped = P.descent === 'Stepped' && (A.phase === 'down' || A.phase === 'lift' || A.phase === 'tobin' || A.phase === 'retreat' || A.phase === 'goto');
   if (A.active >= 0) {
     var i = A.active, s = Math.sign(e[i]);
-    // Near-parallel cylinders amplify a length step into a large tip step, so the step shrinks with the angle between them.
-    // sine of the angle between the two cylinders, from their directions at the measured tip
-    var pv2 = pivots(), La = ik(m.x, m.y), sinA = Math.abs(((pv2[0].x - m.x) * (pv2[1].y - m.y) - (pv2[0].y - m.y) * (pv2[1].x - m.x)) / (La[0] * La[1])) || 1;
-    var stepEff = Math.min(P.stepL, Math.max(0.03, 0.5 * sinA));   // the tip moves about stepEff / sinA, so about 0.5 in or less
-    var stepDone = stepped && Math.abs(Lm[i] - A.stepStart) >= stepEff;
+    var stepDone = stepped && Math.abs(Lm[i] - A.stepStart) >= P.stepL;
     if (!stepDone && Math.abs(e[i]) > db * 0.3 && s === A.dir && canMove(i, s)) cmd[i] = s;
     else { if (stepDone) A.prefer = 1 - i; A.active = -1; }
   }
@@ -2472,7 +2413,7 @@ function controlTick(){
   if (cmd[0] === 0 && cmd[1] === 0) A.stuckT += 1 / P.camHz; else A.stuckT = 0;
   if (A.stuckT > 1.0) { var hit = /hit the object/.test(A.lastBlock || ''); if (hit) R.hits++; abort((hit ? 'Gripper hit the object during the move. ' + (P.descent === 'Direct' ? 'Try Stepped descent or a wider opening.' : 'Try a wider opening or smaller steps.') : 'Cannot reach the target: ' + (A.lastBlock || 'a cylinder is at its limit.'))); }
 }
-function liftY(x){ var r = reachAtX(x); var top = r ? r.hi - 0.3 : pickY(); var want = binInUse() ? dropY() : pickY() + Math.max(4, P.objH * 0.8); return Math.max(pickY(), Math.min(want, top)); }
+function liftY(x){ var r = reachAtX(x); var top = r ? r.hi - 0.3 : pickY(); return Math.max(pickY(), Math.min(pickY() + Math.max(4, P.objH * 0.8), top)); }
 function nextObject(){
   var best = null;
   S.objs.forEach(function(o){ if (o.done || o === S.held) return; if (!best || Math.abs(o.x) < Math.abs(best.x)) best = o; });
@@ -2526,18 +2467,8 @@ function autoUpdate(){
         else { o.miss = (o.miss || 0) + 1; if (o.miss >= 2) o.done = true; say('Missed the grab. ' + (S.contact ? S.gripNote : 'The fingers closed without touching the object.'), 'warn'); S.gripCmd = 0; }
         setWp(A.tx, liftY(A.tx)); go('lift');
       } break;
-    case 'lift':
-      if (A.reached) {
-        if (!S.held) { A.route = null; S.v = [0, 0]; A.relObj = null; S.gripCmd = 0; go('release'); break; }   // missed grab: no trip to the bin
-        if (binInUse()) { tip = tipNow(); A.route = carryRoute(tip, { x:tray.x, y:dropY() }); var w0 = A.route.shift(); setWp(w0.x, w0.y); }
-        else { A.route = null; setWp(tray.x, Math.min(pickY() + tray.h + 0.4, liftY(tray.x))); }
-        go('tobin');
-      } break;
-    case 'tobin':
-      if (A.reached) {
-        if (A.route && A.route.length) { var wn = A.route.shift(); setWp(wn.x, wn.y); break; }
-        S.v = [0, 0]; A.relObj = S.held; S.gripCmd = 0; go('release');
-      } break;
+    case 'lift': if (A.reached) { setWp(tray.x, Math.min(pickY() + tray.h + 0.4, liftY(tray.x))); go('tobin'); } break;
+    case 'tobin': if (A.reached) { S.v = [0, 0]; A.relObj = S.held; S.gripCmd = 0; go('release'); } break;
     case 'release':
       if (A.relObj === undefined) A.relObj = S.held;
       if (S.grip <= 0.001 || S.t - A.phaseT > gripGeo().stroke / P.actSpeed + 1) {
@@ -2631,7 +2562,7 @@ $('#pauseBtn').onclick = togglePause;
 $('#spd').onchange = function(){ simSpeed = +this.value; };
 $('#resetBtn').onclick = function(){ dropX = null; R.hits = 0; R.tries = 0; R.ok = 0; R.lastCycle = R.lastGrab = R.lastTimed = R.lastGoto = null; applyParams(true, false); say('Rig reset.', ''); };
 $('#addObj').onclick = function(){ addObject(); };
-$('#placeHere').onclick = function(){ var x = parseFloat($('#ox').value); if (isFinite(x)) addObject(x, parseFloat($('#oz').value)); };
+$('#placeHere').onclick = function(){ var x = parseFloat($('#ox').value); if (isFinite(x)) addObject(x, -parseFloat($('#oz').value)); };
 $('#dropHere').onclick = function(){ setDrop(parseFloat($('#dx').value)); };
 $('#ckObj').onclick = function(){ setClick('object'); };
 $('#ckDrop').onclick = function(){ setClick('drop'); };
@@ -2688,7 +2619,7 @@ fG.add(P, 'spacing', 6, 120, 0.5).name('Pivot spacing');
 fG.add(P, 'barH', 12, 120, 0.5).name('Bar height');
 fG.add(P, 'Lmin', 6, 100, 0.25).name('Retracted length');
 fG.add(P, 'stroke', 2, 60, 0.25).name('Stroke');
-fG.add(P, 'gripLen', 2, 48, 0.25).name('Gripper length');
+fG.add(P, 'gripLen', 2, 24, 0.25).name('Gripper length');
 var fC = gui.addFolder('Cylinder and hydraulics');
 fC.add(P, 'bore', 0.75, 6, 0.25).name('Bore (in)');
 fC.add(P, 'rod', 0.375, 4, 0.125).name('Rod (in)');
@@ -2697,8 +2628,8 @@ fC.add(P, 'flow', 0.1, 20, 0.1).name('Flow setting (gpm)');
 fC.add(P, 'flowErr', -20, 20, 1).name('Actual flow error (%)');
 var fL = gui.addFolder('Object');
 fL.add(P, 'shape', ['Ball', 'Bale']).name('Shape');
-fL.add(P, 'objH', 2, 36, 0.5).name('Height (in)');
-fL.add(P, 'objW', 0, 1000, 1).name('Weight (lb)');
+fL.add(P, 'objH', 2, 24, 0.5).name('Height (in)');
+fL.add(P, 'objW', 0, 400, 1).name('Weight (lb)');
 fL.add(P, 'gripW', 0, 300, 1).name('Gripper weight (lb)');
 var fGr = gui.addFolder('Gripper (electric actuator)');
 fGr.add(P, 'gStroke', 0.5, 16, 0.25).name('Actuator stroke (in)');
@@ -2740,7 +2671,6 @@ fK.add(P, 'camHz', 5, 60, 1).name('Camera rate (Hz)');
 fK.add(P, 'descent', ['Stepped', 'Direct']).name('Descent near objects');
 fK.add(P, 'stepL', 0.1, 2, 0.05).name('Step per cylinder (in)');
 var fV = gui.addFolder('View');
-fV.add(P, 'showAnswers').name('Show answers: pressures and speeds');
 fV.add(P, 'showMap').name('Workspace map');
 fV.add(P, 'mapMode', ['Force per lb of load', 'Lift capacity']).name('Map shows');
 fV.add(P, 'showView').name('Camera view cone');
@@ -2826,46 +2756,35 @@ function f2(v){ return v.toFixed(2); }
 function updateReadouts(){
   var tip = tipNow(), t = forcesPerLb(tip.x, tip.y), W = tipLoad(), Wo = P.gripW + P.objW;
   var rows = [];
-  rows.push(['Tip position x, y', f1(tip.x) + ', ' + f1(tip.y) + ' in']);
+  rows.push(['Tip position x, z', f1(tip.x) + ', ' + f1(tip.y) + ' in']);
   for (var i = 0; i < 2; i++) {
     var used = (S.L[i] - P.Lmin) / P.stroke * 100;
     rows.push(['Cylinder ' + (i + 1) + ' length', f1(S.L[i]) + ' in (' + Math.round(used) + '% stroke)']);
   }
   for (i = 0; i < 2; i++) {
     var F = t ? t[i] * W : 0, Fo = t ? t[i] * Wo : 0;
-    var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i, Fh >= 0 ? 'rod' : 'cap');
-    if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' end' + (P.showAnswers ? '; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi' : '')]);
-    else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + (P.showAnswers ? ph.toFixed(0) + ' psi ' : '') + 'held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
-    rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + (P.showAnswers ? ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%' : '') + ')']);
+    var Fh = F, Ah = Fh > 0 ? Aann() : Abore(), ph = Math.abs(Fh) / Ah, setp = cbSetting(i);
+    if (P.cbOn) rows.push(['Counterbalance ' + (i + 1), 'set ' + setp.toFixed(0) + ' psi on the ' + (Fh >= 0 ? 'rod' : 'cap') + ' side; holding ' + ph.toFixed(0) + ' psi now; to lower, pilot needs ' + Math.max(0, (setp - ph) / P.cbPilot).toFixed(0) + ' psi']);
+    else rows.push(['Load holding ' + (i + 1), 'no counterbalance valve: ' + ph.toFixed(0) + ' psi held by the spool, drift since it last moved ' + (S.drift ? S.drift[i] : 0).toFixed(2) + ' in']);
+    rows.push(['Cylinder ' + (i + 1) + ' force', Math.abs(F).toFixed(0) + ' lb now, ' + Math.abs(Fo).toFixed(0) + ' lb with object (' + (Fo >= 0 ? 'pull' : 'push') + ', ' + Math.round(Math.abs(Fo) / capFor(Fo) * 100) + '%)']);
   }
   for (var pc = 0; pc < 2; pc++) {
-    if (!t || !P.showAnswers) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
+    if (!t) break; var Fp = t[pc] * Wo, Ap = Fp >= 0 ? Aann() : Abore(), pp = Math.abs(Fp) / Ap;
     rows.push(['Cylinder ' + (pc + 1) + ' pressure now', pp.toFixed(0) + ' psi in the ' + (Fp >= 0 ? 'rod end' : 'cap end') + ' (design, x2: ' + (2 * pp).toFixed(0) + ' psi)']);
   }
   var bc = binChecks();
   if (bc) {
     rows.push(['Drop point (bin)', 'x = ' + f1(bc.d.x) + ' in, tip at ' + f1(bc.d.y) + ' in: ' + (bc.reach ? 'reachable' : 'NOT reachable'), 1]);
-    rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : bc.failX === null ? 'NOT OK: the drop point is not reachable. Move the bin or change the geometry.' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
-  }
-  if (bc && bc.reach) {
-    var xf = -P.pickW / 2, yf = pickY();
-    if (reachable(xf, yf)) {
-      var Lf = ik(xf, yf), Ld = ik(bc.d.x, bc.d.y), sg = function(v){ return (v >= 0 ? '+' : '') + v.toFixed(2); };
-      rows.push(['Length change, far pick point to drop point', 'from (' + f1(xf) + ', ' + f1(yf) + ') to (' + f1(bc.d.x) + ', ' + f1(bc.d.y) + ') in: cylinder 1 ' + sg(Ld[0] - Lf[0]) + ' in, cylinder 2 ' + sg(Ld[1] - Lf[1]) + ' in (+ extends, - retracts)', 1]);
-    }
+    rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
   }
   var wp = workPath();
   if (wp && wp.worst) {
     rows.push(['Worst point of the work path', 'x = ' + f1(wp.worst.x) + ', y = ' + f1(wp.worst.y) + ' in', 1]);
     for (var wc = 0; wc < 2; wc++) {
       var Fw = wp.worst.F[wc], Aw = Fw >= 0 ? Aann() : Abore(), pw = Math.abs(Fw) / Aw;
-      rows.push(['Cylinder ' + (wc + 1) + ' at the worst point', Math.abs(Fw).toFixed(1) + ' lb ' + (Fw >= 0 ? 'pull (rod end)' : 'push (cap end)') + (P.showAnswers ? '; ' + pw.toFixed(0) + ' psi; design (x2) ' + (2 * Math.abs(Fw)).toFixed(1) + ' lb, ' + (2 * pw).toFixed(0) + ' psi' : ''), 1]);
+      rows.push(['Cylinder ' + (wc + 1) + ' at the worst point', Math.abs(Fw).toFixed(1) + ' lb ' + (Fw >= 0 ? 'pull (rod end)' : 'push (cap end)') + '; ' + pw.toFixed(0) + ' psi; design (x2) ' + (2 * Math.abs(Fw)).toFixed(1) + ' lb, ' + (2 * pw).toFixed(0) + ' psi', 1]);
     }
-    for (var sc = 0; sc < 2; sc++) {
-      var pu = wp.pull[sc], ps = wp.push[sc], both = pu && ps;
-      rows.push(['Cylinder ' + (sc + 1) + ' in the work path', (pu ? 'largest pull ' + pu.F.toFixed(1) + ' lb (rod end) at (' + f1(pu.x) + ', ' + f1(pu.y) + ')' : 'never pulls') + '; ' + (ps ? 'largest push ' + ps.F.toFixed(1) + ' lb (cap end) at (' + f1(ps.x) + ', ' + f1(ps.y) + ')' : 'never pushes') + (both ? '. The force changes sign: put a counterbalance valve on both ports (dual valve).' : '. One counterbalance valve, on the ' + (pu ? 'rod' : 'cap') + ' end.'), 1]);
-    }
-    if (P.showAnswers) rows.push(['Counterbalance guide', '1.3 x largest holding pressure of each end: cylinder 1 rod end ' + (1.3 * wp.holdRod[0]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[0]).toFixed(0) + ' psi; cylinder 2 rod end ' + (1.3 * wp.holdRod[1]).toFixed(0) + ' psi, cap end ' + (1.3 * wp.holdCap[1]).toFixed(0) + ' psi']);
+    rows.push(['Counterbalance guide', '1.3 x maximum holding pressure: ' + (1.3 * wp.hold[0]).toFixed(0) + ' psi (cylinder 1), ' + (1.3 * wp.hold[1]).toFixed(0) + ' psi (cylinder 2)']);
   }
   rows.push(['Load on tip now', W.toFixed(0) + ' lb']);
   rows.push(['Max object weight here', Math.max(0, maxTipLoad(tip.x, tip.y) - P.gripW).toFixed(0) + ' lb']);
@@ -2882,7 +2801,7 @@ function updateReadouts(){
   rows.push(['Actuator extension / stroke', f2(gripExt(S.grip)) + ' / ' + f2(GG.stroke) + ' in, ' + f1(GG.stroke / P.actSpeed) + ' s full travel']);
   rows.push(['Gripper base width', f2(GG.bw) + ' in']);
   rows.push(['Gripper', S.held ? 'holding, ' + f1(S.gripFn || 0) + ' lb per finger' : S.contact ? 'closed on object, not holding' : S.gMove > 0 ? 'closing' : S.gMove < 0 ? 'opening' : (S.grip >= 1 ? 'closed' : S.grip <= 0 ? 'open' : 'stopped')]);
-  if (P.showAnswers) rows.push(['Calculated speed, extend / retract', f2(speedNominal(1)) + ' / ' + f2(speedNominal(-1)) + ' in/s']);
+  rows.push(['Calculated speed, extend / retract', f2(speedNominal(1)) + ' / ' + f2(speedNominal(-1)) + ' in/s']);
   rows.push(['Camera tilt from vertical', Math.round(camTiltNow()) + ' deg']);
   rows.push(['Camera sees pivot markers', (vis.piv[0] ? 1 : 0) + (vis.piv[1] ? 1 : 0) + ' of 2']);
   rows.push(['Camera sees tip marker', vis.tip ? 'yes' : 'no, ' + vis.why, vis.tip ? 0 : 1]);
@@ -2972,19 +2891,19 @@ function eqCam(){
   h += '<p class="note">Image ' + K.W + ' x ' + K.H + ' px (assumed). Box center is the object center, with ' + P.pixNoise.toFixed(1) + ' px detection noise.' + (pc.inImg ? '' : ' Outside the image.') + '</p>';
   h += '<h3>2. Depth from stereo</h3>';
   h += M(sb(mi('Z'), mi('surf')) + EQ + hot(mn(pc.Zm) + un('in')) + GAP + sb('<mi>&#963;</mi>', mi('Z')) + EQ + fr(sp(mi('Z'), 2) + sb('<mi>&#963;</mi>', mi('d')), sb(mi('f'), mi('x')) + mi('B')) + EQ + fr(sp(mn(pc.Zs, 1), 2) + X + mn(P.dispNoise), mn(K.fx, 0) + X + mn(P.baseline, 1)) + EQ + mn(pc.sigZ, 3) + un('in'));
-  h += M(sb(mi('Z'), mi('c')) + EQ + sb(mi('Z'), mi('surf')) + PL + fr(sb(mi('w'), mi('obj')), mn(2, 0)) + EQ + mn(pc.Zm) + PL + fr(mn(pc.wEst), mn(2, 0)) + EQ + hot(mn(pc.Zcen) + un('in')));
+  h += M(sb(mi('Z'), mi('c')) + EQ + sb(mi('Z'), mi('surf')) + PL + fr(mi('w'), mn(2, 0)) + EQ + mn(pc.Zm) + PL + fr(mn(pc.wEst), mn(2, 0)) + EQ + hot(mn(pc.Zcen) + un('in')));
   h += '<p class="note">Stereo depth reads the near surface, so half the object width is added to reach its center.</p>';
   h += '<h3>3. Pixel to camera coordinates</h3>';
   h += M(sb(mi('f'), mi('x')) + EQ + sb(mi('f'), mi('y')) + EQ + fr(mi('H') + '<mo>/</mo>' + mn(2, 0), mi('tan') + pr(mi('FOV') + '<mo>/</mo>' + mn(2, 0))) + EQ + mn(K.fx, 1) + un('px') + GAP + pr(sb(mi('c'), mi('x')) + CM + sb(mi('c'), mi('y'))) + EQ + pr(mn(K.cx, 0) + CM + mn(K.cy, 0)));
   h += M(sb(mi('X'), mi('c')) + EQ + fr(pr(mi('u') + MI + sb(mi('c'), mi('x'))) + sb(mi('Z'), mi('c')), sb(mi('f'), mi('x'))) + EQ + fr(pr(mn(pc.u, 0) + MI + mn(K.cx, 0)) + X + mn(pc.Zcen, 1), mn(K.fx, 1)) + EQ + hot(mn(pc.Xc) + un('in')));
   h += M(sb(mi('Y'), mi('c')) + EQ + fr(pr(mi('v') + MI + sb(mi('c'), mi('y'))) + sb(mi('Z'), mi('c')), sb(mi('f'), mi('y'))) + EQ + fr(pr(mn(pc.v, 0) + MI + mn(K.cy, 0)) + X + mn(pc.Zcen, 1), mn(K.fy, 1)) + EQ + hot(mn(pc.Yc) + un('in')));
   h += '<h3>4. Camera to rig coordinates</h3>';
-  h += M(vec3(mi('x'), mi('y'), mi('z')) + EQ + sb(mi('R'), mi('c')) + vec3(sb(mi('X'), mi('c')), sb(mi('Y'), mi('c')), sb(mi('Z'), mi('c'))) + PL + sb(mi('t'), mi('c')));
-  var Rd = [pc.R[0], pc.R[1], pc.R[2]];   // rig frame: x along the bar, y up, z across the arm plane
-  h += M(EQ + mat3(Rd) + vec3(mn(pc.Xc), mn(pc.Yc), mn(pc.Zcen)) + PL + vec3(mn(pc.t.x), mn(pc.t.y), mn(pc.t.z)) + EQ + hot(vec3(mn(pc.est.x), mn(pc.est.y), mn(pc.est.z))));
-  h += '<p class="note">R<sub>c</sub> (rotation) comes from the camera tilt and aim, t<sub>c</sub> (offset) from the post height and arm length. Rig axes: x along the bar, y up, z across the arm plane. The OAK 4 IMU measures the tilt directly (' + camTiltNow().toFixed(1) + ' deg from vertical here), a check on R. True center (' + pc.tru.x.toFixed(2) + ', ' + pc.tru.y.toFixed(2) + ', ' + (pc.tru.z === 0 ? 0 : pc.tru.z).toFixed(2) + ') in. Estimate error ' + pc.err.toFixed(2) + ' in.</p>';
+  h += M(vec3(mi('x'), mi('y'), mi('z')) + EQ + mi('R') + vec3(sb(mi('X'), mi('c')), sb(mi('Y'), mi('c')), sb(mi('Z'), mi('c'))) + PL + mi('t'));
+  var Rd = [pc.R[0], pc.R[2].map(function(q){ return -q; }), pc.R[1]];
+  h += M(EQ + mat3(Rd) + vec3(mn(pc.Xc), mn(pc.Yc), mn(pc.Zcen)) + PL + vec3(mn(pc.t.x), mn(-pc.t.z), mn(pc.t.y)) + EQ + hot(vec3(mn(pc.est.x), mn(-pc.est.z), mn(pc.est.y))));
+  h += '<p class="note">R comes from the camera tilt and aim, t from the post height and arm length. The OAK 4 IMU measures the tilt directly (' + camTiltNow().toFixed(1) + ' deg from vertical here), a check on R. True center (' + pc.tru.x.toFixed(2) + ', ' + (pc.tru.z === 0 ? 0 : -pc.tru.z).toFixed(2) + ', ' + pc.tru.y.toFixed(2) + ') in. Estimate error ' + pc.err.toFixed(2) + ' in.</p>';
   h += '<h3>5. Object size</h3>';
-  h += M(sb(mi('w'), mi('obj')) + EQ + fr(sb(mi('w'), mi('px')) + sb(mi('Z'), mi('c')), sb(mi('f'), mi('x'))) + EQ + hot(mn(pc.wEst) + un('in')) + GAP + mtx('true ' + pc.wTrue.toFixed(2) + ' in'));
+  h += M(mi('w') + EQ + fr(sb(mi('w'), mi('px')) + sb(mi('Z'), mi('c')), sb(mi('f'), mi('x'))) + EQ + hot(mn(pc.wEst) + un('in')) + GAP + mtx('true ' + pc.wTrue.toFixed(2) + ' in'));
   h += '<h3>6. Pick checks before any command</h3>';
   pickChecks(pc).forEach(function(c){ h += '<p class="chk ' + (c.ok ? 'yes' : 'no') + '">' + (c.ok ? '[x] ' : '[ ] ') + c.txt + '</p>'; });
   h += '<p class="note">If any check fails, the controller refuses the pick and sends nothing to the ESP32.</p>';
@@ -3008,40 +2927,35 @@ function eqHTML(){
   var tip = tipNow(), d = P.spacing, H = P.barH, L = S.L, p = pivots(), h = '';
   // Kinematics
   h += '<h3>Tip position from cylinder lengths</h3>';
-  h += M(mi('x') + EQ + fr(sp(Li(1), 2) + MI + sp(Li(2), 2), mn(2, 0) + mi('s')) + EQ + fr(sp(mn(L[0], 2), 2) + MI + sp(mn(L[1], 2), 2), mn(2, 0) + X + mn(d, 1)) + EQ + hot(mn(tip.x) + un('in')));
-  h += M(mi('y') + EQ + mi('H') + MI + sq(sp(Li(1), 2) + MI + sp(pr(mi('x') + PL + fr(mi('s'), mn(2, 0))), 2))) + M(EQ + mn(H, 1) + MI + sq(sp(mn(L[0], 2), 2) + MI + sp(pr(mn(tip.x) + PL + mn(d / 2, 2)), 2)) + EQ + hot(mn(tip.y) + un('in')));
+  h += M(mi('x') + EQ + fr(sp(Li(1), 2) + MI + sp(Li(2), 2), mn(2, 0) + mi('d')) + EQ + fr(sp(mn(L[0], 2), 2) + MI + sp(mn(L[1], 2), 2), mn(2, 0) + X + mn(d, 1)) + EQ + hot(mn(tip.x) + un('in')));
+  h += M(mi('z') + EQ + mi('H') + MI + sq(sp(Li(1), 2) + MI + sp(pr(mi('x') + PL + fr(mi('d'), mn(2, 0))), 2))) + M(EQ + mn(H, 1) + MI + sq(sp(mn(L[0], 2), 2) + MI + sp(pr(mn(tip.x) + PL + mn(d / 2, 2)), 2)) + EQ + hot(mn(tip.y) + un('in')));
   // Statics
   var u1x = (p[0].x - tip.x) / L[0], u1y = (p[0].y - tip.y) / L[0], u2x = (p[1].x - tip.x) / L[1], u2y = (p[1].y - tip.y) / L[1];
   var det = u1x * u2y - u1y * u2x, W = tipLoad(), T1 = Math.abs(det) > 1e-9 ? -W * u2x / det : 0, T2 = Math.abs(det) > 1e-9 ? W * u1x / det : 0;
   h += '<h3>Cylinder forces from the load</h3>';
-  // Triangle ratios: each cylinder is the long side of a right triangle, from the tip to its pivot
-  var dx1 = p[0].x - tip.x, dx2 = p[1].x - tip.x, dy1 = p[0].y - tip.y, dy2 = p[1].y - tip.y;
-  h += M('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)) + EQ + mn(dx1) + un('in') + GAP + '<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)) + EQ + mn(dy1) + un('in') + GAP + sb(mi('L'), mn(1, 0)) + EQ + mn(L[0], 2) + un('in'));
-  h += M(fr('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)), Li(1)) + EQ + hot(mn(u1x, 3)) + GAP + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)), Li(1)) + EQ + hot(mn(u1y, 3)));
-  h += M('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)) + EQ + mn(dx2) + un('in') + GAP + '<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)) + EQ + mn(dy2) + un('in') + GAP + sb(mi('L'), mn(2, 0)) + EQ + mn(L[1], 2) + un('in'));
-  h += M(fr('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)), Li(2)) + EQ + hot(mn(u2x, 3)) + GAP + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)), Li(2)) + EQ + hot(mn(u2y, 3)));
-  h += M(sb(mi('T'), mn(1, 0)) + fr('<mi>&#916;</mi>' + sb(mi('x'), mn(1, 0)), Li(1)) + PL + sb(mi('T'), mn(2, 0)) + fr('<mi>&#916;</mi>' + sb(mi('x'), mn(2, 0)), Li(2)) + EQ + mn(0, 0) + GAP + sb(mi('T'), mn(1, 0)) + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(1, 0)), Li(1)) + PL + sb(mi('T'), mn(2, 0)) + fr('<mi>&#916;</mi>' + sb(mi('y'), mn(2, 0)), Li(2)) + EQ + mi('W') + EQ + mn(W, 0) + un('lb'));
-  h += M(sb(mi('T'), mn(1, 0)) + EQ + hot(mn(T1, 1) + un('lb')) + GAP + sb(mi('T'), mn(2, 0)) + EQ + hot(mn(T2, 1) + un('lb')));
-  h += '<p class="note">&#916;x = pivot x - tip x, &#916;y = H - tip y (from the tip to each pivot). A cylinder force splits like the sides of its triangle: horizontal part T &#916;x/L, vertical part T &#916;y/L. The two equations are the horizontal and vertical balance at the tip; solve them by substitution. Positive T means the cylinder pulls: the rod end holds the load. Negative T means it pushes: the cap end holds the load. These forces have no safety factor.</p>';
+  h += M(sb(mi('u'), mn(1, 0)) + EQ + pr(mn(u1x) + CM + mn(u1y)) + GAP + sb(mi('u'), mn(2, 0)) + EQ + pr(mn(u2x) + CM + mn(u2y)));
+  h += M(sb(mi('T'), mn(1, 0)) + sb(mi('u'), mn(1, 0)) + PL + sb(mi('T'), mn(2, 0)) + sb(mi('u'), mn(2, 0)) + EQ + pr(mn(0, 0) + CM + mi('W')) + GAP + mi('W') + EQ + mn(W, 0) + un('lb'));
+  h += M(mi('det') + EQ + sb(mi('u'), mi('1x')) + sb(mi('u'), mi('2z')) + MI + sb(mi('u'), mi('1z')) + sb(mi('u'), mi('2x')) + EQ + mn(det, 3));
+  h += M(sb(mi('T'), mn(1, 0)) + EQ + fr(MI + mi('W') + sb(mi('u'), mi('2x')), mi('det')) + EQ + fr(MI + mn(W, 0) + X + nv(u2x), nv(det, 3)) + EQ + hot(mn(T1, 1) + un('lb')));
+  h += M(sb(mi('T'), mn(2, 0)) + EQ + fr(mi('W') + sb(mi('u'), mi('1x')), mi('det')) + EQ + fr(mn(W, 0) + X + nv(u1x), nv(det, 3)) + EQ + hot(mn(T2, 1) + un('lb')));
+  h += '<p class="note">Positive T means the load pulls the rod out, so the rod side of the piston holds it.</p>';
   // Gripper
   var GG = gripGeo(), gs = gripExt(S.grip), Fn = gripForce();
   h += '<h3>Gripper: one linear actuator, parallel jaws</h3>';
-  h += M(sb(mi('w'), mi('j')) + EQ + sb(mi('w'), mi('j,min')) + PL + mn(2, 0) + sb(mi('s'), mi('a')) + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(gs) + EQ + hot(mn(gripW(S.grip)) + un('in')));
-  h += M(sb(mi('w'), mi('j,max')) + EQ + sb(mi('w'), mi('j,min')) + PL + mn(2, 0) + sb(mi('S'), mi('a')) + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(GG.stroke) + EQ + mn(GG.wMax) + un('in'));
+  h += M(mi('w') + EQ + sb(mi('w'), mi('min')) + PL + mn(2, 0) + mi('s') + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(gs) + EQ + hot(mn(gripW(S.grip)) + un('in')));
+  h += M(sb(mi('w'), mi('max')) + EQ + sb(mi('w'), mi('min')) + PL + mn(2, 0) + mi('S') + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(GG.stroke) + EQ + mn(GG.wMax) + un('in'));
   h += M(sb(mi('F'), mi('n')) + EQ + fr(sb(mi('F'), mi('a')), mn(2, 0)) + EQ + fr(mn(P.actForce, 0), mn(2, 0)) + EQ + hot(mn(Fn, 1) + un('lb per jaw')));
   var haveF = 2 * P.mu * Fn;
-  h += M(mn(2, 0) + '<mi>&#956;</mi>' + sb(mi('F'), mi('n')) + EQ + mn(2, 0) + X + mn(P.mu) + X + mn(Fn, 1) + EQ + hot(mn(haveF, 1) + un('lb')) + mo(haveF >= P.objW ? '&#8805;' : '&lt;') + sb(mi('W'), mi('fruit')) + EQ + mn(P.objW, 0) + un(haveF >= P.objW ? 'lb: holds' : 'lb: slips'));
-  h += '<p class="note">w<sub>j</sub> = jaw opening, s<sub>a</sub> = actuator extension from closed, S<sub>a</sub> = actuator stroke. The rack and pinion moves both jaws by s<sub>a</sub>, so the opening changes by 2s<sub>a</sub>. Each jaw squeezes with half the actuator force. Open width must exceed the object width + 2 x (camera error + deadband) + 0.5 in. ' + (P.descent === 'Stepped' ? 'Stepped descent: each cylinder moves at most ' + P.stepL.toFixed(2) + ' in before switching, so the tip comes down nearly straight.' : 'Direct descent: one cylinder runs fully before the other, so the tip swings sideways on the way down.') + '</p>';
+  h += M(mn(2, 0) + '<mi>&#956;</mi>' + sb(mi('F'), mi('n')) + EQ + mn(2, 0) + X + mn(P.mu) + X + mn(Fn, 1) + EQ + hot(mn(haveF, 1) + un('lb')) + mo(haveF >= P.objW ? '&#8805;' : '&lt;') + sb(mi('W'), mi('obj')) + EQ + mn(P.objW, 0) + un(haveF >= P.objW ? 'lb: holds' : 'lb: slips'));
+  h += '<p class="note">s = actuator extension from closed, S = actuator stroke. The rack and pinion moves both jaws by s, so the opening changes by 2s. Each jaw squeezes with half the actuator force. Open width must exceed the object width + 2 x (camera error + deadband) + 0.5 in. ' + (P.descent === 'Stepped' ? 'Stepped descent: each cylinder moves at most ' + P.stepL.toFixed(2) + ' in before switching, so the tip comes down nearly straight.' : 'Direct descent: one cylinder runs fully before the other, so the tip swings sideways on the way down.') + '</p>';
   // Hydraulics
   var Ab = Abore(), Aa = Aann(), T = [T1, T2];
-  if (!P.showAnswers) h += '<h3>Pressures and speeds</h3><p class="note">Hidden. Calculate the areas, pressures and speeds with the Equation Card first. Then, to check them, select Show answers in Settings, View.</p>';
-  else {
-  h += '<h3>Pressure in the end that holds the load (no safety factor)</h3>';
-  h += M(sb(mi('A'), mi('c')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + sp(mi('D'), 2) + EQ + mn(0.785, 3) + X + sp(mn(P.bore, 2), 2) + EQ + mn(Ab) + un('in&#178;'));
-  h += M(sb(mi('A'), mi('r')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + pr(sp(mi('D'), 2) + MI + sp(mi('d'), 2))) + M(EQ + mn(0.785, 3) + X + pr(sp(mn(P.bore, 2), 2) + MI + sp(mn(P.rod, 3), 2)) + EQ + mn(Aa) + un('in&#178;'));
+  h += '<h3>Pressure needed in each cylinder</h3>';
+  h += M(sb(mi('A'), mi('cap')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + sp(mi('D'), 2) + EQ + mn(0.785, 3) + X + sp(mn(P.bore, 2), 2) + EQ + mn(Ab) + un('in&#178;'));
+  h += M(sb(mi('A'), mi('rod')) + EQ + fr('<mi>&#960;</mi>', mn(4, 0)) + pr(sp(mi('D'), 2) + MI + sp(sb(mi('d'), mi('r')), 2))) + M(EQ + mn(0.785, 3) + X + pr(sp(mn(P.bore, 2), 2) + MI + sp(mn(P.rod, 3), 2)) + EQ + mn(Aa) + un('in&#178;'));
   for (var i = 0; i < 2; i++) {
     var Ai = T[i] >= 0 ? Aa : Ab, pi = Math.abs(T[i]) / Ai, ok = pi <= P.pressure;
-    h += M(sb(mi('p'), mi('h,' + (i + 1))) + EQ + fr(ab(sb(mi('T'), mn(i + 1, 0))), sb(mi('A'), mi(T[i] >= 0 ? 'r' : 'c'))) + EQ + fr(mn(Math.abs(T[i]), 1), mn(Ai)) + EQ + hot(mn(pi, 0) + un('psi')) + (ok ? '<mo>&#8804;</mo>' : '<mo>&gt;</mo>') + mn(P.pressure, 0) + un('psi') + EQ + sb(mi('p'), mi('relief')) + (ok ? '' : un(': stalls')));
+    h += M(sb(mi('p'), mn(i + 1, 0)) + EQ + fr(ab(sb(mi('T'), mn(i + 1, 0))), sb(mi('A'), mi(T[i] >= 0 ? 'rod' : 'cap'))) + EQ + fr(mn(Math.abs(T[i]), 1), mn(Ai)) + EQ + hot(mn(pi, 0) + un('psi')) + (ok ? '<mo>&#8804;</mo>' : '<mo>&gt;</mo>') + mn(P.pressure, 0) + un('psi relief' + (ok ? '' : ': stalls')));
   }
   // Motion
   var act = S.v[0] !== 0 ? 0 : (S.v[1] !== 0 ? 1 : -1);
@@ -3049,22 +2963,20 @@ function eqHTML(){
   if (act < 0) h += M(fr('<mi>d</mi>' + Li(1), '<mi>d</mi><mi>t</mi>') + EQ + fr('<mi>d</mi>' + Li(2), '<mi>d</mi><mi>t</mi>') + EQ + mn(0, 0)) + '<p class="note">Both valves centered. Ports blocked, cylinders held.</p>';
   else if (S.stall >= 0) h += '<p class="note">Cylinder ' + (S.stall + 1) + ' is stalled: the pressure it needs is above the relief setting, so pump flow goes over the relief valve.</p>';
   else {
-    var ext = S.v[act] > 0, A_ = ext ? Ab : Aa, Qs = P.flow * 231 / 60, vn = Qs / A_, va = vn * (1 + P.flowErr / 100);
-    h += M(mi('Q') + EQ + mn(P.flow, 1) + un('gal/min') + X + fr(mn(231, 0) + un('in&#179;/gal'), mn(60, 0) + un('s/min')) + EQ + mn(Qs) + un('in&#179;/s'));
-    h += M(sb(mi('v'), mn(act + 1, 0)) + EQ + fr(mi('Q'), sb(mi('A'), mi(ext ? 'c' : 'r'))) + pr(mn(1, 0) + PL + '<mi>&#949;</mi>')) + M(EQ + fr(mn(Qs), mn(A_)) + X + pr(mn(1, 0) + PL + nv(P.flowErr / 100)) + EQ + hot(mn(va) + un('in/s')));
+    var ext = S.v[act] > 0, A_ = ext ? Ab : Aa, vn = 3.85 * P.flow / A_, va = vn * (1 + P.flowErr / 100);
+    h += M(sb(mi('v'), mn(act + 1, 0)) + EQ + fr(mn(3.85) + mi('Q'), sb(mi('A'), mi(ext ? 'cap' : 'rod'))) + pr(mn(1, 0) + PL + '<mi>&#949;</mi>')) + M(EQ + fr(mn(3.85) + X + mn(P.flow, 1), mn(A_)) + X + pr(mn(1, 0) + PL + nv(P.flowErr / 100)) + EQ + hot(mn(va) + un('in/s')));
     h += M(fr('<mi>d</mi>' + Li(act + 1), '<mi>d</mi><mi>t</mi>') + EQ + mo(ext ? '+' : '-') + sb(mi('v'), mn(act + 1, 0)) + GAP + fr('<mi>d</mi>' + Li(2 - act), '<mi>d</mi><mi>t</mi>') + EQ + mn(0, 0));
     h += '<p class="note">Cylinder ' + (act + 1) + (ext ? ' extends' : ' retracts') + '. Valves in series: only one cylinder gets pump flow.' + (S.over === act ? ' The load is overrunning, so it moves faster than pump flow alone.' : '') + '</p>';
-  }
   }
   // Control
   if (A.wp && A.Lt) {
     var wx = A.wp.x, wy = A.wp.y, e = A.e || [A.Lt[0] - L[0], A.Lt[1] - L[1]], Lm = A.Lm || L, db = P.deadband;
     h += '<h3>Camera feedback control</h3>';
-    h += M(sp(Li(1), '*') + EQ + sq(sp(pr(mi('x*') + PL + fr(mi('s'), mn(2, 0))), 2) + PL + sp(pr(mi('H') + MI + mi('y*')), 2))) + M(EQ + sq(sp(pr(mn(wx) + PL + mn(d / 2, 2)), 2) + PL + sp(pr(mn(H, 1) + MI + mn(wy)), 2)) + EQ + mn(A.Lt[0]) + un('in'));
-    h += M(sp(Li(2), '*') + EQ + sq(sp(pr(mi('x*') + MI + fr(mi('s'), mn(2, 0))), 2) + PL + sp(pr(mi('H') + MI + mi('y*')), 2))) + M(EQ + sq(sp(pr(mn(wx) + MI + mn(d / 2, 2)), 2) + PL + sp(pr(mn(H, 1) + MI + mn(wy)), 2)) + EQ + mn(A.Lt[1]) + un('in'));
+    h += M(sp(Li(1), '*') + EQ + sq(sp(pr(mi('x*') + PL + fr(mi('d'), mn(2, 0))), 2) + PL + sp(pr(mi('H') + MI + mi('z*')), 2))) + M(EQ + sq(sp(pr(mn(wx) + PL + mn(d / 2, 2)), 2) + PL + sp(pr(mn(H, 1) + MI + mn(wy)), 2)) + EQ + mn(A.Lt[0]) + un('in'));
+    h += M(sp(Li(2), '*') + EQ + sq(sp(pr(mi('x*') + MI + fr(mi('d'), mn(2, 0))), 2) + PL + sp(pr(mi('H') + MI + mi('z*')), 2))) + M(EQ + sq(sp(pr(mn(wx) + MI + mn(d / 2, 2)), 2) + PL + sp(pr(mn(H, 1) + MI + mn(wy)), 2)) + EQ + mn(A.Lt[1]) + un('in'));
     for (var k = 0; k < 2; k++) {
       var open = Math.abs(e[k]) > db;
-      h += M('<mi>&#916;</mi>' + sb(mi('L'), mn(k + 1, 0)) + EQ + sp(Li(k + 1), '*') + MI + sb(mi('L'), mn(k + 1, 0) + mi(',meas')) + EQ + mn(A.Lt[k]) + MI + mn(Lm[k]) + EQ + hot(mn(e[k]))) + M(ab('<mi>&#916;</mi>' + sb(mi('L'), mn(k + 1, 0))) + mo(open ? '&gt;' : '&#8804;') + '<mi>&#948;</mi>' + EQ + mn(db) + un(open ? 'in: valve may open' : 'in: on target'));
+      h += M(sb(mi('e'), mn(k + 1, 0)) + EQ + sp(Li(k + 1), '*') + MI + sb(mi('L'), mn(k + 1, 0) + mi(',meas')) + EQ + mn(A.Lt[k]) + MI + mn(Lm[k]) + EQ + hot(mn(e[k]))) + M(ab(sb(mi('e'), mn(k + 1, 0))) + mo(open ? '&gt;' : '&#8804;') + '<mi>&#948;</mi>' + EQ + mn(db) + un(open ? 'in: valve may open' : 'in: on target'));
     }
     h += '<p class="note">The ESP32 opens the valve with the larger error first. Measured lengths come from the camera, ' + P.latency + ' ms late, with noise.</p>';
   } else if (A.phase === 'timed' && A.seq && A.seq[0]) {

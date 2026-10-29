@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Example project, Group 1: cantaloupe harvesting arm</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<style>
+:root{
+  --ink:#1c2430; --muted:#566170; --paper:#f7f9fa; --panel:#ffffff; --line:#d5dbe1;
+  --pressure:#c4372b; --return:#2c5fb0; --oil:#b77e06; --mark:#ffe08a; --markline:#b77e06;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e4e9ee; --muted:#a3adb8; --paper:#12171d; --panel:#1a2129; --line:#2e3742;
+    --pressure:#ef6b5f; --return:#76a3ec; --oil:#e2b245; --mark:#5a4612; --markline:#e2b245;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e4e9ee; --muted:#a3adb8; --paper:#12171d; --panel:#1a2129; --line:#2e3742;
+  --pressure:#ef6b5f; --return:#76a3ec; --oil:#e2b245; --mark:#5a4612; --markline:#e2b245;
+  color-scheme:dark;
+}
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+html,body{ height:100%; }
+body{ margin:0; background:var(--paper); color:var(--ink);
+  font:16px/1.55 "Atkinson Hyperlegible","Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+.wrap{ display:grid; grid-template-columns:minmax(360px,38%) 1fr; height:100%; }
+.report{ overflow-y:auto; padding:1.4rem 1.6rem 3rem; border-right:1px solid var(--line); background:var(--panel); }
+.twin{ position:relative; min-height:0; }
+.twin iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+h1,h2{ font-family:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif; font-weight:600; line-height:1.15; }
+h1{ font-size:1.9rem; margin:0 0 .3rem; }
+h2{ font-size:1.35rem; margin:2rem 0 .5rem; padding-top:.4rem; border-top:2px solid var(--line); }
+.sub{ color:var(--muted); margin:0 0 1rem; }
+p{ max-width:70ch; }
+.how{ border-left:4px solid var(--markline); padding:.5rem .9rem; background:var(--paper); margin:1rem 0; }
+.how p{ margin:.3rem 0; }
+nav{ display:flex; flex-wrap:wrap; gap:.4rem 1rem; margin:.6rem 0 0; font-size:.95rem; }
+nav a{ color:var(--return); }
+.bar{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin:.8rem 0 0; }
+.bar button{ font:inherit; font-size:.95rem; padding:.35rem .8rem; border:1px solid var(--line); border-radius:4px; background:var(--panel); color:var(--ink); cursor:pointer; }
+.bar button:hover{ border-color:var(--markline); }
+#status{ color:var(--muted); font-size:.9rem; }
+table.calc{ width:100%; border-collapse:collapse; margin:.4rem 0 1rem; font-size:.93rem; font-variant-numeric:tabular-nums; }
+table.calc caption{ text-align:left; font-weight:700; padding:.2rem 0 .4rem; }
+table.calc th, table.calc td{ text-align:left; vertical-align:top; padding:.35rem .4rem; border-bottom:1px solid var(--line); }
+table.calc th{ border-bottom:2px solid var(--line); font-weight:700; }
+table.calc td:first-child{ color:var(--muted); }
+.result{ font-weight:700; }
+button.lk{ font:inherit; color:inherit; text-align:left; padding:0 .15rem; margin:0; border:0; border-radius:2px;
+  background:transparent; border-bottom:2px dotted var(--markline); cursor:pointer; }
+button.lk:hover, button.lk:focus-visible, button.lk.on{ background:var(--mark); outline:none; }
+button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
+@media (max-width: 900px){
+  .wrap{ grid-template-columns:1fr; grid-template-rows:58vh auto; height:auto; }
+  .twin{ order:-1; position:sticky; top:0; height:58vh; z-index:2; border-bottom:2px solid var(--line); }
+  .report{ overflow:visible; border-right:0; }
+}
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main class="report">
+    <h1>Example project, Group 1: cantaloupe harvesting arm</h1>
+    <p class="sub">AGM 4060 Mechanical and Hydraulic Systems, Fall 2026. Student copy. No group has Group 1.</p>
+    <div class="how">
+      <p><strong>How to use this page.</strong> The live twin on this page has the values of Group 1.</p>
+      <p>Point at a value that has a dotted line. The twin shows where it comes from: the settings field and the Readouts line flash in yellow. Select the value to move the tip to the point that the value is about.</p>
+      <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
+    </div>
+    <nav aria-label="Sections"><a href="#inputs">Inputs</a><a href="#twin">Twin values</a><a href="#cyl">Cylinder card</a><a href="#supply">Supply card</a><a href="#hoses">Hose table</a></nav>
+    <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><span id="status" role="status">Loading the twin...</span></div>
+<h2 id="inputs">Inputs</h2>
+<p>Group 1 picks cantaloupe (4 lb, 6 in diameter) with a Kubota L3301. The twin on the right has these values. Point at a yellow value to see where it is in the twin. Select it to move the twin there.</p>
+<table class="calc"><caption>Table V-in. Inputs and the first formulas</caption><thead><tr><th>Item</th><th>Calculation</th><th>Result</th></tr></thead><tbody>
+<tr><td>Load at the tip (F1)</td><td>4 lb fruit + 25 lb end effector</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Weight (lb)&quot;}'>W = 29 lb</button></td></tr>
+<tr><td>Fruit radius (F2)</td><td>6 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Height (in)&quot;}'>r = 3 in</button></td></tr>
+<tr><td>Grasp height (F3)</td><td>r + g = 3 in + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick height (tip)&quot;, &quot;tip&quot;: [-24, 15], &quot;field&quot;: &quot;Gripper length&quot;}'>y_g = 15 in</button></td></tr>
+<tr><td>Drop height (F4)</td><td>h_rim + c + r + g = 36 + 4 + 3 + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;field&quot;: &quot;Bin rim height (in)&quot;}'>y_d = 55 in</button></td></tr>
+<tr><td>Drop distance (F5)</td><td>x_b + w_b / 2 = 46.5 in + 16 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>x_d = 54.5 in</button></td></tr>
+<tr><td>Pressure limit (F7)</td><td>0.8 x 2,347 psi</td><td>p_allow = 1,878 psi</td></tr>
+<tr><td>Bar height</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bar height&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>H = 72 in</button></td></tr>
+<tr><td>Pivot spacing</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>s = 16 in</button></td></tr>
+<tr><td>Stroke and retracted length</td><td>catalog cylinder, Bailey 288411</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Stroke&quot;, &quot;readout&quot;: &quot;Pick zone x range&quot;}'>S = 30 in, L_min = 40.25 in</button></td></tr>
+</tbody></table>
+<h2 id="twin">Where the twin values come from</h2>
+<p>We read each value in Readouts, the table under the 3D view of the twin. We used the lines "at the worst point" and "in the work path". The lines "Cylinder 1 force" and "Cylinder 2 force" are for the present tip position only.</p>
+<table class="calc"><caption>Table V0. Twin values and where we read them</caption><thead><tr><th>Value</th><th>What we did in the twin</th><th>Readout line and value</th></tr></thead><tbody>
+<tr><td>Pick width</td><td>Arm geometry: Bar height 72, Pivot spacing 16, Retracted length 40.25, Stroke 30. Bin and pick width: Pick width 48.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick width reached&quot;, &quot;field&quot;: &quot;Pick width (in)&quot;, &quot;tip&quot;: [-24, 15]}'>Pick width reached: yes (-24.0 to +24.0 in)</button></td></tr>
+<tr><td>Drop point</td><td>Selected Show the bin. Bin rim height 36, Bin width 16, Rim clearance 4.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;field&quot;: &quot;Show the bin&quot;, &quot;tip&quot;: [54.5, 55]}'>Drop point (bin): x = 54.5 in, tip at 55.0 in, reachable</button></td></tr>
+<tr><td>Bin position</td><td>Increased Bin inner rim distance in 0.5 in steps from 45 in.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Rim clearance over the inner rim&quot;, &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>Rim clearance over the inner rim: OK at 46.5 in (NOT OK at 46.0 in)</button></td></tr>
+<tr><td>Worst point</td><td>Pushed Show worst point.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Worst point of the work path&quot;, &quot;worst&quot;: true}'>Worst point of the work path: x = 54.5, y = 55.0 in</button></td></tr>
+<tr><td>Forces at the worst point</td><td>No change.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;worst&quot;: true}'>Cylinder 1: 321.1 lb push (cap end). Cylinder 2: 329.9 lb pull (rod end).</button></td></tr>
+<tr><td>Largest pull and push, cylinder 1</td><td>No change.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;, &quot;tip&quot;: [-24, 35]}'>pull 63.2 lb (rod end) at (-24.0, 35.0); push 321.1 lb (cap end) at (54.5, 55.0)</button></td></tr>
+<tr><td>Largest pull and push, cylinder 2</td><td>No change.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;, &quot;tip&quot;: [-24, 35]}'>pull 329.9 lb (rod end) at (54.5, 55.0); push 38.3 lb (cap end) at (-24.0, 35.0)</button></td></tr>
+<tr><td>Length change</td><td>No change.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [-24, 15]}'>cylinder 1 +5.57 in, cylinder 2 -15.86 in</button></td></tr>
+<tr><td>Checks</td><td>After our calculations: Settings, View, selected Show answers. Cylinders and hydraulics: Bore 2, Rod 1.25, Pressure 2347, Flow setting 6.3.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true, &quot;field&quot;: &quot;Show answers: pressures and speeds&quot;}'>Counterbalance guide: 43, 133, 224 and 16 psi</button></td></tr>
+</tbody></table>
+<h2 id="cyl">Cylinder card</h2>
+<table class="calc card"><caption>Table V1. Group 1 Cylinder card</caption><thead><tr><th>Row</th><th>What to do</th><th>Cylinder 1</th><th>Cylinder 2</th></tr></thead><tbody>
+<tr><td>1</td><td>Largest force in the work path (twin)</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;, &quot;worst&quot;: true}'>T_1 = 321.1 lb, push</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;, &quot;worst&quot;: true}'>T_2 = 329.9 lb, pull</button></td></tr>
+<tr><td>2</td><td>End that holds the load</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;}'>both ends: cap end (push), rod end (pull)</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;}'>both ends: rod end (pull), cap end (push)</button></td></tr>
+<tr><td>3</td><td>F8: F = 2 |T|</td><td>2 x 321.1 lb = 642.2 lb</td><td>2 x 329.9 lb = 659.8 lb</td></tr>
+<tr><td>4</td><td>F9: A = F / p_allow</td><td>642.2 lb / 1,878 psi = 0.342 in&sup2;</td><td>659.8 lb / 1,878 psi = 0.351 in&sup2;</td></tr>
+<tr><td>5</td><td>Selected cylinder</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bore (in)&quot;}'>Bailey 288411: D = 2 in, d = 1.25 in</button></td><td>same</td></tr>
+<tr><td>6</td><td>F10, F11: areas</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rod (in)&quot;}'>A_c = &pi; (2 in)&sup2; / 4 = 3.142 in&sup2;; A_r = &pi; (4 - 1.5625) in&sup2; / 4 = 1.914 in&sup2;</button></td><td>same</td></tr>
+<tr><td>7</td><td>F12: p = F / A</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'>642.2 lb / 3.142 in&sup2; = 204 psi. PASS</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'>659.8 lb / 1.914 in&sup2; = 345 psi. PASS</button></td></tr>
+<tr><td>8</td><td>S, L_min, L_dead</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Retracted length&quot;}'>30 in, 40.25 in, 10.25 in</button></td><td>same</td></tr>
+<tr><td>9</td><td>F13: buckling</td><td>P_cr = 6,948 lb; catalog 5,330 lb. PASS: 642.2 lb &le; 5,330 lb</td><td>F = 76.6 lb. PASS</td></tr>
+<tr><td>10</td><td>F14: counterbalance valves</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true}'>cap 102.2 psi x 1.3 = 133 psi; rod 33.0 psi x 1.3 = 43 psi; set 435 psi</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true}'>rod 172.4 psi x 1.3 = 224 psi; cap 12.2 psi x 1.3 = 16 psi; set 435 psi</button></td></tr>
+<tr><td>11</td><td>&Delta;L, far pick point to drop point (twin)</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [-24, 15]}'>+5.57 in (extends)</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [54.5, 55]}'>-15.86 in (retracts)</button></td></tr>
+<tr><td>12</td><td>F15, F16: speeds</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Calculated speed&quot;, &quot;answers&quot;: true, &quot;field&quot;: &quot;Flow setting (gpm)&quot;}'>Q = 6.3 gal/min x 231 in&sup3;/gal / 60 s/min = 24.26 in&sup3;/s; v_ext = 7.72 in/s; v_ret = 12.67 in/s</button></td><td>same</td></tr>
+<tr><td>13</td><td>F17: t = &Delta;L / v_ext + &Delta;L / v_ret</td><td>0.72 s + 0.44 s = 1.16 s</td><td>2.05 s + 1.25 s = 3.30 s</td></tr>
+<tr><td>14</td><td>F19: Q_cap = Q A_c / A_r</td><td>39.8 in&sup3;/s (Option A); 46.8 in&sup3;/s (Option B)</td><td>same</td></tr>
+</tbody></table>
+<p class="result">Cycle time (F18): 1.16 s + 3.30 s + 2 s = 6.46 s. PASS: 6.46 s &le; 8 s.</p>
+<h2 id="supply">Supply card</h2>
+<p>These values come from calculations, not from the twin.</p>
+<table class="calc"><caption>Table V2. Group 1 Supply card</caption><thead><tr><th>Row</th><th>What to do</th><th>Value</th></tr></thead><tbody>
+<tr><td>1</td><td>F21: oil volume V</td><td>(5.57 in + 15.86 in) x (3.142 in&sup2; + 1.914 in&sup2;) = 108.4 in&sup3;</td></tr>
+<tr><td>2</td><td>F22: Q_min</td><td>108.4 in&sup3; / (8 s - 2 s) = 18.07 in&sup3;/s = 4.69 gpm</td></tr>
+<tr><td>3</td><td>Option A: SCV flow rate</td><td>6.3 gpm. PASS: 6.3 gpm &ge; 4.69 gpm</td></tr>
+<tr><td>4</td><td>F23: minimum D_p</td><td>1,084 in&sup3;/min / (540 rev/min x 0.95) = 2.11 in&sup3;/rev</td></tr>
+<tr><td>5</td><td>F24: selected pump</td><td>Bailey 253558, 3.41 in&sup3;/rev; catalog 7.4 gpm = 28.49 in&sup3;/s</td></tr>
+<tr><td>6</td><td>Relief valve setting</td><td>1,000 psi</td></tr>
+<tr><td>7</td><td>F25: input power</td><td>1,000 psi x 28.49 in&sup3;/s / 0.85 = 33,520 in-lbf/s = 5.08 hp. PASS: 5.08 hp &lt; 27.7 hp</td></tr>
+<tr><td>8</td><td>F26: PTO torque</td><td>&omega; = 56.55 rad/s; &tau; = 593 in-lbf</td></tr>
+<tr><td>9</td><td>F27: reservoir</td><td>7.4 gal to 22 gal; selected 10 gal</td></tr>
+<tr><td>10</td><td>Filter</td><td>10 micron, rated for 15 gpm (largest return flow 12.1 gpm)</td></tr>
+</tbody></table>
+<h2 id="hoses">Hose table</h2>
+<p>F28: d_hose = &radic;(4 Q / (&pi; v_max)). We size each hose for Option B, which has the larger flow rate.</p>
+<table class="calc"><caption>Table V3. Group 1 Hose table</caption><thead><tr><th>Line</th><th>Q, in&sup3;/s</th><th>v_max, in/s</th><th>d_hose, in</th><th>Dash size</th></tr></thead><tbody>
+<tr><td>Pressure line</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
+<tr><td>Cap-end hoses</td><td>46.8</td><td>180</td><td>0.575</td><td>-10</td></tr>
+<tr><td>Rod-end hoses</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
+<tr><td>Return line</td><td>46.8</td><td>120</td><td>0.705</td><td>-12</td></tr>
+<tr><td>Suction line</td><td>28.49</td><td>48</td><td>0.869</td><td>-16</td></tr>
+</tbody></table>
+<p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
+  </main>
+  <section class="twin" aria-label="Live digital twin">
+    <iframe id="tw" src="../twins/pick-place-twin.html" title="Lab and tractor twin with the Group 1 values"></iframe>
+  </section>
+</div>
+<script>
+(function(){
+  var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false};
+  var fr = document.getElementById('tw'), st = document.getElementById('status'), ready = false, answersOn = false, hov = null, active = null;
+  function send(m){ if (!ready) return; m.to = 'twin'; fr.contentWindow.postMessage(m, '*'); }
+  function load(){ answersOn = false; send({ preset:'tractor', set:G1, resetView:true, say:'Group 1 values loaded.' }); st.textContent = 'The twin has the Group 1 values.'; }
+  window.addEventListener('message', function(e){
+    if (e.source !== fr.contentWindow || !e.data || e.data.from !== 'twin') return;
+    if (e.data.ready && !ready){ ready = true; load(); }
+  });
+  setTimeout(function(){ if (!ready) st.textContent = 'The twin did not load. Reload the page.'; }, 15000);
+  document.getElementById('reset').addEventListener('click', load);
+  function opts(b){ try { return JSON.parse(b.getAttribute('data-tw')); } catch (err) { return {}; } }
+  function show(b){
+    var o = opts(b), m = {};
+    if (o.answers && !answersOn){ m.set = { showAnswers:true }; answersOn = true; }
+    if (o.readout) m.readout = o.readout;
+    if (o.field) m.field = o.field;
+    send(m);
+  }
+  function act(b){
+    var o = opts(b), m = {};
+    if (o.answers && !answersOn){ m.set = { showAnswers:true }; answersOn = true; }
+    if (o.worst) m.worst = true;
+    if (o.tip) m.tip = o.tip;
+    if (o.readout) m.readout = o.readout;
+    if (o.field) m.field = o.field;
+    send(m);
+    if (active) active.classList.remove('on');
+    active = b; b.classList.add('on');
+    st.textContent = 'Shown in the twin: ' + (o.readout || o.field || 'the value');
+  }
+  document.querySelectorAll('button.lk').forEach(function(b){
+    b.addEventListener('mouseenter', function(){ clearTimeout(hov); hov = setTimeout(function(){ show(b); }, 220); });
+    b.addEventListener('mouseleave', function(){ clearTimeout(hov); });
+    b.addEventListener('focus', function(){ show(b); });
+    b.addEventListener('click', function(){ act(b); });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Hydraulic pick-and-place digital twin
 
-A browser-based digital twin of a two-cylinder hydraulic pick-and-place arm, for AGM 4060 Mechanical and Hydraulic Systems at Clemson University.
+A browser-based digital twin of a two-cylinder hydraulic pick-and-place arm, for AGM 4060 Fluid Power Systems at Clemson University.
 
 - **Lab and tractor twin** (`twins/pick-place-twin.html`): the course rig on the Eaton HTS-2 trainer, and the design project: a harvesting arm on a tractor.
 
