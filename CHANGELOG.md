@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-29
+
+- Worked example page (examples/group1.html): the Group 1 example report next to the live twin. Pointing at a value flashes its settings field and its Readouts line in the twin.
+- The twin can now take values and commands from a page that embeds it. Long readout values now wrap.
+- The readouts no longer stop when the drop point is out of reach. Rim clearance now says that the drop point is not reachable.
+- The extend and retract speeds are hidden until Show answers is selected.
+- Weight, Height and Gripper length accept larger values (up to 1,000 lb, 36 in and 48 in).
+
 ## 2026-10-25
 
 - Numbered panel with Required and Optional steps.
