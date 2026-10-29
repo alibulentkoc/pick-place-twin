@@ -51,6 +51,8 @@ table.calc th, table.calc td{ text-align:left; vertical-align:top; padding:.35re
 table.calc th{ border-bottom:2px solid var(--line); font-weight:700; }
 table.calc td:first-child{ color:var(--muted); }
 .result{ font-weight:700; }
+h3{ font-family:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif; font-weight:600; font-size:1.1rem; margin:1.2rem 0 .3rem; }
+.small{ font-size:.9rem; color:var(--muted); }
 figure{ margin:1rem 0; }
 figure img{ width:100%; height:auto; border:1px solid var(--line); background:#fff; }
 figcaption{ font-size:.9rem; color:var(--muted); margin-top:.3rem; }
@@ -76,12 +78,74 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>Point at a value that has a dotted line. The twin shows where it comes from: the settings field and the Readouts line flash in yellow. Select the value to move the tip to the point that the value is about.</p>
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
-    <nav aria-label="Sections"><a href="#figure">Figure 1</a><a href="#inputs">Inputs</a><a href="#twin">Twin values</a><a href="#cyl">Cylinder card</a><a href="#supply">Supply card</a><a href="#hoses">Hose table</a></nav>
+    <nav aria-label="Sections"><a href="#figure">Figure 1</a><a href="#settings">Design settings</a><a href="#trials">How we chose the frame</a><a href="#pickplace">Pick and place</a><a href="#inputs">Inputs</a><a href="#twin">Twin values</a><a href="#cyl">Cylinder card</a><a href="#supply">Supply card</a><a href="#hoses">Hose table</a></nav>
     <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
 <h2 id="figure">Figure 1 and the twin</h2>
 <p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. Select y_g or y_d below to move the twin tip to these points. At y_d the cantaloupe is in the gripper, above the bin.</p>
 <p>Three things are in the twin but not in Figure 1. The tractor and its 3-point hitch carry the frame; the frame is between the arm and the tractor, so the arm moves in front of it. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
 <figure><img src="fig_arm.png" alt="Figure 1: the Group 1 arm with all symbols, seen from behind the tractor"><figcaption>Figure 1. Names and symbols of the main dimensions, drawn with the Group 1 values (H = 72 in, s = 16 in, bin at 46.5 in).</figcaption></figure>
+<h2 id="settings">Design settings in the twin, folder by folder</h2>
+<p>These are all the values that we entered in Settings, at the bottom of the twin panel. Point at a value to see its field in the twin. The last column tells where the value comes from.</p>
+<h3>Arm geometry (required)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;}'>16 in</button></td><td>Selected by trials (Table V-trial below). The pick width needs 48 in and the drop point must be reachable.</td></tr>
+<tr><td>Bar height</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bar height&quot;}'>72 in</button></td><td>Tractor start value. A taller bar (80 in) gave smaller forces, but the tip could not reach the ends of the pick width.</td></tr>
+<tr><td>Retracted length</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Retracted length&quot;}'>40.25 in</button></td><td>Catalog: Bailey 288411, 2 x 30 in cylinder (L_min = S + L_dead = 30 in + 10.25 in).</td></tr>
+<tr><td>Stroke</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Stroke&quot;}'>30 in</button></td><td>Catalog. A 24 in stroke could not reach the pick width or the drop point (Table V-trial).</td></tr>
+<tr><td>Gripper length</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Gripper length&quot;}'>12 in</button></td><td>Grip length g from Table 1 of the assignment: 9 in end effector body + 3 in fruit radius.</td></tr>
+</tbody></table>
+<h3>Cylinders and hydraulics (required)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Bore (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bore (in)&quot;}'>2 in</button></td><td>Catalog cylinder. The smallest common bore; the pressure is far below the limit (Cylinder card row 7).</td></tr>
+<tr><td>Rod (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rod (in)&quot;}'>1.25 in</button></td><td>Catalog cylinder.</td></tr>
+<tr><td>Pressure (psi)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pressure (psi)&quot;}'>2,347 psi</button></td><td>Relief valve pressure of the Kubota L3301 (tractor data card). The twin input steps by 50 psi, so it shows 2,350.</td></tr>
+<tr><td>Flow setting (gpm)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Flow setting (gpm)&quot;}'>6.3 gpm</button></td><td>SCV flow rate of the Kubota L3301 (tractor data card).</td></tr>
+</tbody></table>
+<h3>Load (required)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Shape</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Shape&quot;}'>Ball</button></td><td>A cantaloupe is round.</td></tr>
+<tr><td>Height (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Height (in)&quot;}'>6 in</button></td><td>Fruit diameter from Table 1.</td></tr>
+<tr><td>Weight (lb)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Weight (lb)&quot;}'>4 lb</button></td><td>Fruit weight from Table 1.</td></tr>
+<tr><td>Gripper weight (lb)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Gripper weight (lb)&quot;}'>25 lb</button></td><td>End effector weight (Values to assume).</td></tr>
+</tbody></table>
+<h3>Bin and pick width (required)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Show the bin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Show the bin&quot;}'>selected</button></td><td>Turns on the bin, the drop point and the rim clearance check.</td></tr>
+<tr><td>Pick width (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pick width (in)&quot;}'>48 in</button></td><td>Table 1.</td></tr>
+<tr><td>Bin rim height (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin rim height (in)&quot;}'>36 in</button></td><td>Table 1.</td></tr>
+<tr><td>Bin inner rim distance (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>46.5 in</button></td><td>The nearest position with Rim clearance = OK (46.0 in is NOT OK).</td></tr>
+<tr><td>Bin width (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin width (in)&quot;}'>16 in</button></td><td>Values to assume.</td></tr>
+<tr><td>Rim clearance (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rim clearance (in)&quot;}'>4 in</button></td><td>Requirement 2.</td></tr>
+</tbody></table>
+<h3>Counterbalance valves (required)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Fitted on both cylinders</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Fitted on both cylinders&quot;}'>selected</button></td><td>Both cylinders change from pull to push in the work path (Cylinder card row 2).</td></tr>
+<tr><td>Setting (psi), 0 = use ratio</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Setting (psi), 0 = use ratio&quot;}'>435 psi</button></td><td>The catalog minimum; 1.3 x holding pressure is lower (Cylinder card row 10).</td></tr>
+<tr><td>Pilot ratio (x:1)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pilot ratio (x:1)&quot;}'>4</button></td><td>Catalog valve, 4:1.</td></tr>
+</tbody></table>
+<h3>Gripper details and camera (optional)</h3>
+<table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
+<tr><td>Actuator stroke (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Actuator stroke (in)&quot;}'>6.5 in</button></td><td>The jaws open 1 in + 2 x 6.5 in = 14 in: wide enough for a 6 in fruit and the camera error, narrow enough for the 16 in bin.</td></tr>
+<tr><td>Closed width (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Closed width (in)&quot;}'>1 in</button></td><td>Tractor start value.</td></tr>
+<tr><td>Field of view</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Field of view&quot;}'>90 deg</button></td><td>Wide enough that the camera sees the tip at the drop point. With 60 deg the camera lost the tip there.</td></tr>
+<tr><td>Deadband (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Deadband (in)&quot;}'>0.5 in</button></td><td>The controller stops within 0.5 in of the target.</td></tr>
+</tbody></table>
+<h2 id="trials">How we chose the frame</h2>
+<p>We started from the tractor start values and changed one value at a time. Select a row: the twin takes those values, so you can see the result yourself. The last row is our design.</p>
+<table class="calc"><caption>Table V-trial. Trials in the twin</caption><thead><tr><th>Trial</th><th>s, H, L_min, S, x_b (in)</th><th>Pick width reached</th><th>Drop point</th><th>Rim clearance</th><th>Decision</th></tr></thead><tbody>
+<tr><td>1. Tractor start</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 60, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>60, 72, 40, 30, 45</button></td><td>NO (-10.6 to 10.6 in)</td><td>NOT reachable</td><td>-</td><td>Pivots too far apart: the tip cannot reach the ends of the pick width.</td></tr>
+<tr><td>2. Smaller pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 30, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>30, 72, 40, 30, 45</button></td><td>yes (-25.6 to 25.6 in)</td><td>NOT reachable</td><td>-</td><td>Pick width OK. The drop point is still out of reach.</td></tr>
+<tr><td>3. Smaller pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40, 30, 45</button></td><td>yes (-32.6 to 32.6 in)</td><td>reachable</td><td>NOT OK at 45 in</td><td>Both reach checks pass. Move the bin out.</td></tr>
+<tr><td>4. Bin out</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40, 30, 46.5</button></td><td>yes</td><td>reachable</td><td>OK at 46.5 in</td><td>First design that passes. Forces 321.1 lb push, 329.9 lb pull.</td></tr>
+<tr><td>5. Shorter stroke</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 34.25, &quot;stroke&quot;: 24, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 34.25, 24, 46.5</button></td><td>NO (-4.0 to 4.0 in)</td><td>NOT reachable</td><td>-</td><td>A 24 in cylinder does not reach. Keep 30 in.</td></tr>
+<tr><td>6. Taller bar</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 80, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 80, 40.25, 30, 46.5</button></td><td>NO (-18.6 to 18.6 in)</td><td>reachable</td><td>OK</td><td>Forces 30% smaller, but the pick width fails. Keep 72 in.</td></tr>
+<tr><td>7. Catalog cylinder (design)</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40.25, 30, 46.5</button></td><td>yes (-33.1 to 33.0 in)</td><td>reachable</td><td>OK at 46.5 in</td><td>Our design: same forces, 321.1 lb and 329.9 lb.</td></tr>
+</tbody></table>
+<p class="small">After trial 6, select trial 7 or "Load the Group 1 values again" to go back to the design.</p>
+<h2 id="pickplace">Pick and place</h2>
+<p>Select the button: the twin puts three cantaloupes at random places in the pick width (at least 14 in apart) and moves each one to the bin. It shows the path: up from the fruit, along the top of the reach band, over the bin rim, and down to the drop point. Watch the status line in the twin for each step.</p>
+<p>The demonstration moves the tip along a safe path. It does not show the valve timing. For the cycle time, use F17 and F18 (Cylinder card row 13): 6.46 s.</p>
+<div class="bar"><button type="button" id="demo">Place 3 fruits at random and pick them</button><button type="button" id="stop">Stop</button></div>
 <h2 id="inputs">Inputs</h2>
 <p>Group 1 picks cantaloupe (4 lb, 6 in diameter) with a Kubota L3301. The twin on the right has these values. Point at a yellow value to see where it is in the twin. Select it to move the twin there.</p>
 <table class="calc"><caption>Table V-in. Inputs and the first formulas</caption><thead><tr><th>Item</th><th>Calculation</th><th>Result</th></tr></thead><tbody>
@@ -152,12 +216,12 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029i" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029j" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
 (function(){
-  var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false, "gStroke": 5, "wMin": 1, "showView": false, "showFoot": false};
+  var G1 = {"spacing": 16, "barH": 72, "Lmin": 40.25, "stroke": 30, "gripLen": 12, "bore": 2, "rod": 1.25, "pressure": 2347, "flow": 6.3, "shape": "Ball", "objH": 6, "objW": 4, "gripW": 25, "binOn": true, "pickW": 48, "binRim": 36, "binIn": 46.5, "binW": 16, "binClear": 4, "showAnswers": false, "gStroke": 6.5, "wMin": 1, "showView": false, "showFoot": false, "cbOn": true, "cbPsi": 435, "cbPilot": 4, "camFov": 90, "deadband": 0.5};
   var fr = document.getElementById('tw'), st = document.getElementById('status'), ready = false, answersOn = false, hov = null, active = null;
   function send(m){ if (!ready) return; m.to = 'twin'; fr.contentWindow.postMessage(m, '*'); }
   function load(){ answersOn = false; send({ preset:'tractor', set:G1, resetView:true, release:true, objects:[-24], tip:[-24, 15], view:'front', inset:false, say:'Group 1 values loaded. Front view, as Figure 1.' }); st.textContent = 'The twin has the Group 1 values.'; }
@@ -170,6 +234,9 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
   setTimeout(function(){ if (!ready) st.textContent = 'The twin did not load. Reload the page.'; }, 15000);
   document.getElementById('reset').addEventListener('click', load);
   document.getElementById('front').addEventListener('click', function(){ send({ view:'front' }); });
+  function randomXs(n, half, gap){ for (var tries = 0; tries < 200; tries++){ var xs = []; for (var i = 0; i < n; i++) xs.push(Math.round((-half + 4 + Math.random() * (2 * half - 8)) * 2) / 2); xs.sort(function(a, b){ return a - b; }); var ok = true; for (var j = 1; j < n; j++) if (xs[j] - xs[j - 1] < gap) ok = false; if (ok) return xs; } return [-half + 4, 0, half - 4]; }
+  var db = document.getElementById('demo'); if (db) db.addEventListener('click', function(){ var xs = randomXs(3, G1.pickW / 2, 14); send({ set:{ showView:false }, view:'front', demo:xs }); st.textContent = 'Picking fruits at x = ' + xs.join(', ') + ' in.'; });
+  var sb = document.getElementById('stop'); if (sb) sb.addEventListener('click', function(){ send({ stop:true }); });
   function opts(b){ try { return JSON.parse(b.getAttribute('data-tw')); } catch (err) { return {}; } }
   function show(b){
     var o = opts(b), m = {};
@@ -181,6 +248,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
   function act(b){
     var o = opts(b), m = {};
     if (o.answers && !answersOn){ m.set = { showAnswers:true }; answersOn = true; }
+    if (o.setv) { m.set = Object.assign({}, o.setv); m.release = true; m.objects = []; }
     if (o.worst) m.worst = true;
     if (o.tip) m.tip = o.tip;
     if (o.carry || o.worst) m.carry = true;
