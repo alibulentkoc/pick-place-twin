@@ -2688,7 +2688,7 @@ fG.add(P, 'spacing', 6, 120, 0.5).name('Pivot spacing');
 fG.add(P, 'barH', 12, 120, 0.5).name('Bar height');
 fG.add(P, 'Lmin', 6, 100, 0.25).name('Retracted length');
 fG.add(P, 'stroke', 2, 60, 0.25).name('Stroke');
-fG.add(P, 'gripLen', 2, 24, 0.25).name('Gripper length');
+fG.add(P, 'gripLen', 2, 48, 0.25).name('Gripper length');
 var fC = gui.addFolder('Cylinder and hydraulics');
 fC.add(P, 'bore', 0.75, 6, 0.25).name('Bore (in)');
 fC.add(P, 'rod', 0.375, 4, 0.125).name('Rod (in)');
@@ -2697,8 +2697,8 @@ fC.add(P, 'flow', 0.1, 20, 0.1).name('Flow setting (gpm)');
 fC.add(P, 'flowErr', -20, 20, 1).name('Actual flow error (%)');
 var fL = gui.addFolder('Object');
 fL.add(P, 'shape', ['Ball', 'Bale']).name('Shape');
-fL.add(P, 'objH', 2, 24, 0.5).name('Height (in)');
-fL.add(P, 'objW', 0, 400, 1).name('Weight (lb)');
+fL.add(P, 'objH', 2, 36, 0.5).name('Height (in)');
+fL.add(P, 'objW', 0, 1000, 1).name('Weight (lb)');
 fL.add(P, 'gripW', 0, 300, 1).name('Gripper weight (lb)');
 var fGr = gui.addFolder('Gripper (electric actuator)');
 fGr.add(P, 'gStroke', 0.5, 16, 0.25).name('Actuator stroke (in)');
@@ -2845,7 +2845,7 @@ function updateReadouts(){
   var bc = binChecks();
   if (bc) {
     rows.push(['Drop point (bin)', 'x = ' + f1(bc.d.x) + ' in, tip at ' + f1(bc.d.y) + ' in: ' + (bc.reach ? 'reachable' : 'NOT reachable'), 1]);
-    rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
+    rows.push(['Rim clearance over the inner rim', bc.rim ? 'OK (' + f1(P.binClear) + ' in)' : bc.failX === null ? 'NOT OK: the drop point is not reachable. Move the bin or change the geometry.' : 'NOT OK: at x = ' + f1(bc.failX) + ' in the tip must reach ' + f1(bc.failY) + ' in. Move the bin out or change the geometry.', 1]);
   }
   if (bc && bc.reach) {
     var xf = -P.pickW / 2, yf = pickY();
@@ -2882,7 +2882,7 @@ function updateReadouts(){
   rows.push(['Actuator extension / stroke', f2(gripExt(S.grip)) + ' / ' + f2(GG.stroke) + ' in, ' + f1(GG.stroke / P.actSpeed) + ' s full travel']);
   rows.push(['Gripper base width', f2(GG.bw) + ' in']);
   rows.push(['Gripper', S.held ? 'holding, ' + f1(S.gripFn || 0) + ' lb per finger' : S.contact ? 'closed on object, not holding' : S.gMove > 0 ? 'closing' : S.gMove < 0 ? 'opening' : (S.grip >= 1 ? 'closed' : S.grip <= 0 ? 'open' : 'stopped')]);
-  rows.push(['Calculated speed, extend / retract', f2(speedNominal(1)) + ' / ' + f2(speedNominal(-1)) + ' in/s']);
+  if (P.showAnswers) rows.push(['Calculated speed, extend / retract', f2(speedNominal(1)) + ' / ' + f2(speedNominal(-1)) + ' in/s']);
   rows.push(['Camera tilt from vertical', Math.round(camTiltNow()) + ' deg']);
   rows.push(['Camera sees pivot markers', (vis.piv[0] ? 1 : 0) + (vis.piv[1] ? 1 : 0) + ' of 2']);
   rows.push(['Camera sees tip marker', vis.tip ? 'yes' : 'no, ' + vis.why, vis.tip ? 0 : 1]);
