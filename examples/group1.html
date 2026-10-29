@@ -145,7 +145,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029d" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
@@ -158,6 +158,8 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
     if (e.source !== fr.contentWindow || !e.data || e.data.from !== 'twin') return;
     if (e.data.ready && !ready){ ready = true; load(); }
   });
+  // Fallback: the iframe load event comes after the twin has set up its message handler.
+  fr.addEventListener('load', function(){ setTimeout(function(){ if (!ready){ ready = true; load(); } }, 300); });
   setTimeout(function(){ if (!ready) st.textContent = 'The twin did not load. Reload the page.'; }, 15000);
   document.getElementById('reset').addEventListener('click', load);
   function opts(b){ try { return JSON.parse(b.getAttribute('data-tw')); } catch (err) { return {}; } }
