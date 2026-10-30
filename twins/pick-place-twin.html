@@ -2214,7 +2214,7 @@ function findHome(){
   for (var k = 0; k < xs.length; k++) {
     var r = reachAtX(xs[k]); if (!r) continue;
     var lo = Math.max(r.lo, P.gripLen + 0.1); if (lo > r.hi) continue;
-    var y = Math.min(r.hi - 0.3, pickY() + 4); if (y < lo) y = (lo + r.hi) / 2;
+    var y = Math.min(r.hi - 1.5, pickY() + Math.max(4, P.objH + 2)); if (y < lo) y = (lo + r.hi) / 2;   // the open fingers clear the top of an object on the ground
     return { x:xs[k], y:y };
   }
   var xr = P.spacing / 2 + Lmax();
@@ -2494,7 +2494,11 @@ function liftY(x){ var r = reachAtX(x); var top = r ? r.hi - 0.3 : pickY(); var 
 // Back from the bin: travel high (as on the way to the bin), then go down to home. A direct move can dip into the bin wall.
 function routeHome(){
   var hm = findHome(); if (!hm) return false;
-  if (binInUse()) { A.route = carryRoute(tipNow(), { x:hm.x, y:dropY() }); A.route.push({ x:hm.x, y:hm.y }); var w0 = A.route.shift(); setWp(w0.x, w0.y); }
+  if (binInUse() && tipNow().x > P.binIn - 12) {
+    var t0 = tipNow(), n = Math.max(1, Math.ceil(Math.abs(hm.x - t0.x) / 2)); A.route = [];
+    for (var k = 1; k <= n; k++) { var x = t0.x + (hm.x - t0.x) * k / n, r = reachAtX(x); A.route.push({ x:x, y:r ? Math.max(pickY(), Math.min(dropY(), r.hi - 2)) : hm.y }); }   // 2 in below the reach limit: away from the stroke ends
+    A.route.push({ x:hm.x, y:hm.y }); var w0 = A.route.shift(); setWp(w0.x, w0.y);
+  }
   else { A.route = null; setWp(hm.x, hm.y); }
   go('home'); return true;
 }
@@ -2536,7 +2540,8 @@ function autoUpdate(){
           if (A.all) { A.phase = 'idle'; startCycle(); } else cancelAuto();
           return;
         }
-        A.tx = pc.est.x; A.ty = Math.max(P.gripLen + 0.05, pc.est.y + P.gripLen);
+        // Aim a little below the grasp height: the controller stops anywhere within the deadband, and the fingers must close below the widest point of the object
+        A.tx = pc.est.x; A.ty = Math.max(floorMin() + 0.05, P.gripLen + 0.05, pc.est.y + P.gripLen - 0.8 * P.deadband);
         setWp(A.tx, liftY(A.tx)); go('above');
       } break;
     case 'above': if (A.reached && S.grip <= 0.001) { setWp(A.tx, A.ty); go('down'); } break;
@@ -2572,6 +2577,7 @@ function autoUpdate(){
           if (h.justPlaced) { R.ok++; say('Placed in the tray.', 'ok'); } else say('Dropped outside the tray.', 'warn');
         }
         R.lastCycle = S.t - A.cycleT0;
+        if (binInUse()) S.gripCmd = 1;   // close the empty gripper, so that the open fingers clear the bin rim on the way back
         var tr = tipNow(), rr = reachAtX(tr.x), ry = rr ? Math.min(rr.hi - 0.3, tr.y + Math.max(3, P.objH * 0.6)) : tr.y;
         if (ry > tr.y + 0.3) { setWp(tr.x, ry); go('retreat'); }
         else { if (!routeHome()) go('idle'); }
@@ -2825,6 +2831,7 @@ var HL = { label:null, until:0, scrolled:false };
 var DEMO = null;
 function demoTop(x){ var r = reachAtX(x); return r ? Math.max(pickY(), Math.min(r.hi - 0.5, binInUse() ? dropY() : pickY() + 8)) : pickY(); }
 function demoStart(xs){
+  if (document.activeElement && document.activeElement !== document.body && document.activeElement.blur) document.activeElement.blur();   // finish any value that is being typed first
   cancelAuto(); clearObjects(); S.gripCmd = 0; S.grip = 0;
   xs.forEach(function(x){ addObject(x, 0); });
   var steps = [], d = binInUse() ? { x:tray.x, y:dropY() } : null;
@@ -2842,6 +2849,10 @@ function demoStart(xs){
 }
 function demoTick(dt){
   if (!DEMO) return;
+  if (DEMO.hold && S.held !== DEMO.hold) {   // a settings change released the fruit: take it again
+    if (S.objs.indexOf(DEMO.hold) < 0) { say('Demonstration stopped: a setting changed. Select the button again.', 'warn'); DEMO = null; return; }
+    var tp0 = tipNow(); S.held = DEMO.hold; S.holdDy = P.gripLen; S.contact = DEMO.hold; S.gripCmd = 1; DEMO.hold.x = tp0.x; DEMO.hold.y = tp0.y - P.gripLen;
+  }
   if (DEMO.wait > 0) { DEMO.wait -= dt; return; }
   if (DEMO.path.length) {
     var tip = tipNow(), w = DEMO.path[0], dx = w.x - tip.x, dy = w.y - tip.y, dist = Math.hypot(dx, dy), stepL = 14 * dt * simSpeed;   // tip speed approximately 14 in/s
@@ -2854,8 +2865,8 @@ function demoTick(dt){
   if (st.note) say(st.note, '');
   if (st.go) DEMO.path = [st.go];
   if (st.route) { var r = carryRoute(tipNow(), st.route); DEMO.path = r; }
-  if (st.grip) { var o = st.grip, G = gripGeo(); S.gripFn = gripForce(); S.held = o; S.holdDy = P.gripLen; S.contact = o; S.gripCmd = 1; S.grip = Math.max(0, Math.min(1, (G.wMax - 2 * halfX()) / (G.wMax - G.wMin))); }
-  if (st.release) { if (S.held) S.held.z = (DEMO.placed % 3 - 1) * 4; S.gripCmd = 0; DEMO.placed++; }   // side by side in the bin
+  if (st.grip) { var o = st.grip, G = gripGeo(); DEMO.hold = o; S.gripFn = gripForce(); S.held = o; S.holdDy = P.gripLen; S.contact = o; S.gripCmd = 1; S.grip = Math.max(0, Math.min(1, (G.wMax - 2 * halfX()) / (G.wMax - G.wMin))); }
+  if (st.release) { DEMO.hold = null; if (S.held) S.held.z = (DEMO.placed % 3 - 1) * 4; S.gripCmd = 0; DEMO.placed++; }   // side by side in the bin
   if (st.wait) DEMO.wait = st.wait;
 }
 var demoLast = performance.now();
@@ -2865,9 +2876,10 @@ function flashField(name){
   if (!cs.length) return;
   var c = cs[0], f = c.parent;
   while (f) { if (f.open) f.open(); f = f.parent; }
-  var el = c.domElement; el.classList.remove('twinflash'); void el.offsetWidth; el.classList.add('twinflash');
+  document.querySelectorAll('.lil-gui .controller.twinflash').forEach(function(e){ e.classList.remove('twinflash'); });
+  var el = c.domElement; void el.offsetWidth; el.classList.add('twinflash');
   el.scrollIntoView({ block:'center', behavior:'smooth' });
-  clearTimeout(flashField.t); flashField.t = setTimeout(function(){ el.classList.remove('twinflash'); }, 2600);
+  setTimeout(function(){ el.classList.remove('twinflash'); }, 2600);
 }
 window.addEventListener('message', function(e){
   if (window.parent === window || e.source !== window.parent) return;

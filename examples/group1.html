@@ -85,7 +85,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>Three things are in the twin but not in Figure 1. The tractor and its 3-point hitch carry the frame; the frame is between the arm and the tractor, so the arm moves in front of it. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
 <figure><img src="fig_arm.png" alt="Figure 1: the Group 1 arm with all symbols, seen from behind the tractor"><figcaption>Figure 1. Names and symbols of the main dimensions, drawn with the Group 1 values (H = 72 in, s = 16 in, bin at 46.5 in).</figcaption></figure>
 <h2 id="settings">Design settings in the twin, folder by folder</h2>
-<p>These are all the values that we entered in Settings, at the bottom of the twin panel. Point at a value to see its field in the twin. The last column tells where the value comes from.</p>
+<p>These are all the values that we entered in Settings, at the bottom of the twin panel. We kept the tractor start value of every other field. Point at a value to see its field in the twin. The last column tells where the value comes from. Table 16 of the assignment gives the same list for your own design.</p>
 <h3>Arm geometry (required)</h3>
 <table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
 <tr><td>Pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;}'>16 in</button></td><td>Selected by trials (Table V-trial below). The pick width needs 48 in and the drop point must be reachable.</td></tr>
@@ -145,6 +145,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <h2 id="pickplace">Pick and place</h2>
 <p>Select the button: the twin puts three cantaloupes at random places in the pick width (at least 14 in apart) and moves each one to the bin. It shows the path: up from the fruit, along the top of the reach band, over the bin rim, and down to the drop point. Watch the status line in the twin for each step.</p>
 <p>The demonstration moves the tip along a safe path. It does not show the valve timing. For the cycle time, use F17 and F18 (Cylinder card row 13): 6.46 s.</p>
+<p>The twin also has its own automatic mode (panel step 4, Run the arm: Camera auto, then Pick all). That mode uses the camera and the valve control, as the real rig does. It is optional for your project. It can stop with a message such as "Hunting around the target"; the message tells you which setting to change.</p>
 <div class="bar"><button type="button" id="demo">Place 3 fruits at random and pick them</button><button type="button" id="stop">Stop</button></div>
 <h2 id="inputs">Inputs</h2>
 <p>Group 1 picks cantaloupe (4 lb, 6 in diameter) with a Kubota L3301. The twin on the right has these values. Point at a yellow value to see where it is in the twin. Select it to move the twin there.</p>
@@ -216,7 +217,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029j" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029k" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
@@ -239,8 +240,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
   var sb = document.getElementById('stop'); if (sb) sb.addEventListener('click', function(){ send({ stop:true }); });
   function opts(b){ try { return JSON.parse(b.getAttribute('data-tw')); } catch (err) { return {}; } }
   function show(b){
-    var o = opts(b), m = {};
-    if (o.answers && !answersOn){ m.set = { showAnswers:true }; answersOn = true; }
+    var o = opts(b), m = {};   // pointing only highlights; it never changes a setting
     if (o.readout) m.readout = o.readout;
     if (o.field) m.field = o.field;
     send(m);
@@ -257,7 +257,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
     if (o.field) m.field = o.field;
     send(m);
     if (active) active.classList.remove('on');
-    active = b; b.classList.add('on');
+    active = b; b.classList.add('on'); clearTimeout(act.t); act.t = setTimeout(function(){ b.classList.remove('on'); }, 4000);
     st.textContent = 'Shown in the twin: ' + (o.readout || o.field || 'the value');
   }
   document.querySelectorAll('button.lk').forEach(function(b){
