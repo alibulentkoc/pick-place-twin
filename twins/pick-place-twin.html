@@ -1736,12 +1736,12 @@ function sweepHalfDepth(){
 // The legs stand off the arm plane, clear of the swept volume, so the arm can pass them.
 // They are on the side away from the camera, so they never block its view of the tip.
 function legZ(){ return sweepHalfDepth() + 3 + barSz() / 2; }
-function legSide(){ return P.camArm >= 0 ? 1 : -1; }
+function legSide(){ return P.camArm >= 0 ? -1 : 1; }   // the legs stand behind the bar, away from the viewer
 // Gap from the pivot pins up to the bar bottom: a cylinder at pivot height must clear the bar.
 function barGap(){ return P.bore / 2 + 0.3 + 0.5; }
 function barTop(){ return P.barH + barGap() + barSz(); }
-// Camera z position: the camera arm reaches back from the bar
-function camZ(){ return -P.camArm; }
+// Camera z position: the camera arm reaches toward the viewer, so the camera and the cylinders face you in the default view
+function camZ(){ return P.camArm; }
 function camPose(){
   var pos = new V3(0, barTop() + P.camMast, camZ()), tgt;
   if (P.camAuto) {
