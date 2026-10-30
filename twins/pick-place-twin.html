@@ -1520,10 +1520,10 @@ var LAB = { binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:
   gStroke:4, wMin:0.5, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:100, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.4 };
 var TRACTOR = { binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
-  objW:60, gripW:80, objH:14, gripLen:12, shape:'Bale',
+  objW:8, gripW:25, objH:8, gripLen:12, shape:'Ball',
   deadband:1.0, latency:120, noise:0.25, camHz:15, flowErr:8,
-  camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:60,
-  gStroke:12, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
+  camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:90,
+  gStroke:6.5, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:450, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.8 };
 var P = Object.assign({}, LAB, { showAnswers:false, binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
 
@@ -2028,6 +2028,24 @@ function gripHits(tp, g){
   }
   return null;
 }
+// The object in the gripper against the objects on the ground (bounding box in the arm plane)
+function heldHits(t){
+  if (!S.held) return null;
+  var hx = halfX(), cy = t.y - S.holdDy, objs = nearObjs();
+  for (var i = 0; i < objs.length; i++) { var o = objs[i]; if (Math.abs(o.x - t.x) < 2 * hx - 0.05 && Math.abs(o.y - cy) < P.objH - 0.05) return o; }
+  return null;
+}
+// Full check of one tip position (for moves that set the cylinder lengths directly: sliders and the demonstration)
+function poseBlocked(L){
+  var t = fk(L[0], L[1]); if (!t) return 'The cylinders cannot meet at these lengths.';
+  if (L[0] < P.Lmin - 1e-6 || L[1] < P.Lmin - 1e-6 || L[0] > Lmax() + 1e-6 || L[1] > Lmax() + 1e-6) return 'A cylinder would be past the end of its stroke.';
+  if (t.y < floorMin() - 1e-6) return 'The gripper would hit the floor.';
+  if (t.y > P.barH - 3) return 'The tip would hit the bar.';
+  if (binHit(t)) return 'The gripper or the object would hit the bin wall.';
+  if (gripHits(t, S.grip)) return 'The gripper would hit the object.';
+  if (heldHits(t)) return 'The object in the gripper would hit another object.';
+  return '';
+}
 function gripForce(){ return P.actForce / 2; }
 // Actuator: moves the fingers, pushes objects to center, stops on contact
 function releaseHeld(){
@@ -2160,10 +2178,9 @@ function makeObjMesh(){
 function addObject(x, z){
   z = isFinite(z) ? z : 0;
   if (!zone || !tray) { say('No pick zone at this pick height. Change the geometry.', 'bad'); return; }
-  if (x === undefined) {
-    var lo = tray.x + tray.w / 2 + halfX() + 1, hi = zone.b - halfX();
-    if (hi <= lo) { lo = zone.a + halfX(); hi = zone.b - halfX(); }
-    x = lo + Math.random() * Math.max(0, hi - lo);
+  if (x === undefined) {   // a random place in the pick zone, away from the drop spot
+    var a0 = zone.a + halfX(), b0 = zone.b - halfX(), keep = tray.w / 2 + halfX() + 1;
+    for (var tr = 0; tr < 40; tr++) { x = a0 + Math.random() * Math.max(0, b0 - a0); if (Math.abs(x - tray.x) > keep || P.binOn) break; }
   }
   var m = makeObjMesh(); objGroup.add(m);
   S.objs.push({ x:x, y:P.objH / 2, z:z, mesh:m, done:false });
@@ -2242,6 +2259,7 @@ function moveCheck(i, dir, dL){
   if (t.y > P.barH - 3 && t.y > tc.y) return 'The tip would hit the bar.';
   if (binHit(t) && !binHit(tc)) return 'The gripper or the object would hit the bin wall.';
   if (gripHits(t, S.grip) && !gripHits(tc, S.grip)) return 'The gripper would hit the object.';
+  if (heldHits(t) && !heldHits(tc)) return 'The object in the gripper would hit another object.';
   var f = forcesPerLb(tc.x, tc.y);
   if (f) {
     var F = f[i] * tipLoad();
@@ -2679,7 +2697,9 @@ $('#runTimed').onclick = function(){ if (busy()) return; timedMove(parseFloat($(
     var L = S.L.slice(); L[i] = parseFloat(sl.value);
     var t = fk(L[0], L[1]);
     if (!t) { say('The cylinders cannot meet at these lengths.', 'warn'); return; }
-    if (S.held && t.y < pickY()) { say('The object would hit the floor.', 'warn'); return; }
+    if (S.held && t.y < pickY()) { say('The object would hit the floor.', 'warn'); syncSliders(); return; }
+    var blk = poseBlocked(L), now = poseBlocked(S.L);
+    if (blk && !now) { say('Stopped: ' + blk, 'warn'); syncSliders(); return; }
     S.L = L; say('', '');
   });
 });
@@ -2837,15 +2857,28 @@ function demoStart(xs){
   var steps = [], d = binInUse() ? { x:tray.x, y:dropY() } : null;
   S.objs.slice().forEach(function(o, i){
     var a = { x:o.x, y:demoTop(o.x) };
-    steps.push({ go:a, note:'Fruit ' + (i + 1) + ' of ' + xs.length + ': move above it (x = ' + o.x.toFixed(1) + ' in).' });
+    steps.push({ route:a, note:'Fruit ' + (i + 1) + ' of ' + xs.length + ': move above it (x = ' + o.x.toFixed(1) + ' in), along the top of the reach band.' });
+    steps.push({ open:true, wait:1, note:'Open the gripper.' });
     steps.push({ go:{ x:o.x, y:pickY() }, note:'Lower to the grasp height y_g = ' + pickY().toFixed(1) + ' in.' });
     steps.push({ grip:o, wait:1, note:'Close the gripper (1 s).' });
     steps.push({ go:a, note:'Lift.' });
     if (d) steps.push({ route:d, note:'Carry over the bin rim to the drop point (' + d.x.toFixed(1) + ', ' + d.y.toFixed(1) + ') in.' });
     steps.push({ release:o, wait:1, note:'Open the gripper (1 s). The fruit drops into the bin.' });
+    steps.push({ close:true, wait:0.5, note:'Close the empty gripper, so that the fingers clear the bin rim.' });
   });
   var h = findHome(); if (h) steps.push({ route:{ x:h.x, y:h.y }, note:'Back to home.' });
   DEMO = { steps:steps, path:[], wait:0, n:xs.length, placed:0 };
+}
+// Route for the demonstration: in 2 in steps of x, as high as the reach band and the drop height allow, then to the target
+function demoRoute(to){
+  var t0 = tipNow(), n = Math.max(1, Math.ceil(Math.abs(to.x - t0.x) / 2)), out = [], top = binInUse() ? dropY() : demoTop(to.x);
+  for (var k = 1; k <= n; k++) { var x = t0.x + (to.x - t0.x) * k / n, r = reachAtX(x); out.push({ x:x, y:r ? Math.max(pickY(), Math.min(top, r.hi - 0.5)) : to.y }); }
+  out.push({ x:to.x, y:to.y }); return out;
+}
+function demoMove(x, y){   // one small step of the tip, with the full collision check
+  var L = ik(x, y), blk = poseBlocked(L);
+  if (blk) { say('Demonstration stopped: ' + blk, 'bad'); DEMO = null; return false; }
+  S.L = L; return true;
 }
 function demoTick(dt){
   if (!DEMO) return;
@@ -2856,17 +2889,21 @@ function demoTick(dt){
   if (DEMO.wait > 0) { DEMO.wait -= dt; return; }
   if (DEMO.path.length) {
     var tip = tipNow(), w = DEMO.path[0], dx = w.x - tip.x, dy = w.y - tip.y, dist = Math.hypot(dx, dy), stepL = 14 * dt * simSpeed;   // tip speed approximately 14 in/s
-    if (dist <= stepL) { if (reachable(w.x, w.y)) S.L = ik(w.x, w.y); DEMO.path.shift(); }
-    else { var nx = tip.x + dx / dist * stepL, ny = tip.y + dy / dist * stepL; if (reachable(nx, ny)) S.L = ik(nx, ny); else { S.L = ik(w.x, w.y); DEMO.path.shift(); } }
+    var nx = dist <= stepL ? w.x : tip.x + dx / dist * stepL, ny = dist <= stepL ? w.y : tip.y + dy / dist * stepL;
+    if (!reachable(nx, ny)) { say('Demonstration stopped: the path leaves the reach band at (' + nx.toFixed(1) + ', ' + ny.toFixed(1) + ') in.', 'bad'); DEMO = null; return; }
+    if (!demoMove(nx, ny)) return;
+    if (dist <= stepL) DEMO.path.shift();
     return;
   }
   var st = DEMO.steps.shift();
   if (!st) { say('Demonstration finished: ' + DEMO.placed + ' of ' + DEMO.n + ' fruits in the bin.', 'ok'); DEMO = null; return; }
   if (st.note) say(st.note, '');
   if (st.go) DEMO.path = [st.go];
-  if (st.route) { var r = carryRoute(tipNow(), st.route); DEMO.path = r; }
+  if (st.route) DEMO.path = demoRoute(st.route);
+  if (st.open) { S.gripCmd = 0; S.grip = 0; }
+  if (st.close) { S.gripCmd = 1; S.grip = 1; S.contact = null; }
   if (st.grip) { var o = st.grip, G = gripGeo(); DEMO.hold = o; S.gripFn = gripForce(); S.held = o; S.holdDy = P.gripLen; S.contact = o; S.gripCmd = 1; S.grip = Math.max(0, Math.min(1, (G.wMax - 2 * halfX()) / (G.wMax - G.wMin))); }
-  if (st.release) { DEMO.hold = null; if (S.held) S.held.z = (DEMO.placed % 3 - 1) * 4; S.gripCmd = 0; DEMO.placed++; }   // side by side in the bin
+  if (st.release) { DEMO.hold = null; if (S.held) S.held.z = (DEMO.placed % 3 - 1) * 4; S.gripCmd = 0; DEMO.placed++; }
   if (st.wait) DEMO.wait = st.wait;
 }
 var demoLast = performance.now();
