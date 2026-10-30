@@ -1513,19 +1513,19 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 
 <script id="core">
 // ---------- Core model (no DOM). Units: in, lb, psi, gpm, s ----------
-var LAB = { binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
+var LAB = { effType:'Jaws', binType:'Bin', binOn:false, spacing:24, barH:32, Lmin:20, stroke:12, bore:1.5, rod:1.0, pressure:800, flow:0.5,
   objW:20, gripW:5, objH:5, gripLen:5, shape:'Ball',
   deadband:0.25, latency:120, noise:0.06, camHz:15, flowErr:8,
   camMast:18, camArm:16, camAuto:true, camTilt:35, camFov:60,
   gStroke:4, wMin:0.5, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:100, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.4 };
-var TRACTOR = { binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
+var TRACTOR = { effType:'Jaws', binType:'Bin', binOn:false, pickW:48, binRim:36, binIn:45, binW:16, binClear:4, spacing:60, barH:72, Lmin:40, stroke:30, bore:3.0, rod:1.5, pressure:2500, flow:10,
   objW:8, gripW:25, objH:8, gripLen:12, shape:'Ball',
   deadband:1.0, latency:120, noise:0.25, camHz:15, flowErr:8,
   camMast:36, camArm:30, camAuto:true, camTilt:35, camFov:90,
   gStroke:6.5, wMin:1.0, pixNoise:1.0, dispNoise:0.15, baseline:3.0, camAimLine:true, imgRes:'1280 x 960',
   actForce:450, actSpeed:1.0, mu:0.5, descent:'Stepped', stepL:0.8 };
-var P = Object.assign({}, LAB, { showAnswers:false, binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
+var P = Object.assign({}, LAB, { effType:'Jaws', attachTime:10, binType:'Bin', showAnswers:false, binOn:false, pickW:24, binRim:12, binIn:20, binW:8, binClear:2, cbPsi:0, cbOn:false, cbSet:1.3, cbPilot:3, leak:3, showMap:true, mapMode:'Force per lb of load', showTrail:true, showView:true, showFoot:true });
 
 function Lmax(){ return P.Lmin + P.stroke; }
 function Abore(){ return 0.7854 * P.bore * P.bore; }
@@ -1610,11 +1610,11 @@ if (typeof module !== 'undefined') module.exports = { P:P, LAB:LAB, TRACTOR:TRAC
 // (grasp height, across the pick width) up to the drop height and across to the drop point.
 function binDrop(){
   if (!P.binOn) return null;
-  return { x:P.binIn + P.binW / 2, y:P.binRim + P.binClear + P.objH / 2 + P.gripLen };
+  return { x:P.binIn + binWidth() / 2, y:P.binRim + P.binClear + P.objH / 2 + P.gripLen };
 }
 function workPath(){
   var d = binDrop(), y0 = pickY(), half = P.pickW / 2;
-  var key = JSON.stringify([P.spacing, P.barH, P.Lmin, P.stroke, P.bore, P.rod, P.objW, P.gripW, P.objH, P.gripLen, P.binOn, P.pickW, P.binRim, P.binIn, P.binW, P.binClear]);
+  var key = JSON.stringify([P.spacing, P.barH, P.Lmin, P.stroke, P.bore, P.rod, P.objW, P.gripW, P.objH, P.gripLen, P.binOn, P.pickW, P.binRim, P.binIn, binWidth(), P.effType, P.binClear]);
   if (workPath.key === key) return workPath.v;
   var xa = -half, xb = d ? Math.max(half, d.x) : half, yb = d ? Math.max(y0, d.y) : y0, W = P.objW + P.gripW;
   var v = { n:0, worst:null, cyl:[null, null], hold:[0, 0], holdRod:[0, 0], holdCap:[0, 0], pull:[null, null], push:[null, null] };
@@ -1900,13 +1900,21 @@ function buildWorld(){
     tray = { x:zone.a + tw / 2, w:tw, h:Math.max(0.75, P.objH * 0.12) };
     if (dropX !== null) { if (dropOk(dropX)) tray.x = dropX; else { dropX = null; dropMsg = true; } }
     var bd = binDrop();
-    if (bd && dropOk(bd.x)) { tray.x = bd.x; tray.w = Math.max(2, P.binW - 1); }
-    trayMesh = box(tray.w, tray.h, P.objH + 3, mat.tray); trayMesh.position.set(tray.x, tray.h / 2, 0); world.add(trayMesh);
+    if (bd && dropOk(bd.x)) { tray.x = bd.x; tray.w = Math.max(2, binWidth() - 1); if (P.binType === 'Pallet trailer') tray.h = P.binRim; }
+    trayMesh = box(tray.w, tray.h, P.objH + 3, mat.tray); trayMesh.position.set(tray.x, tray.h / 2, 0); if (!(P.binOn && P.binType === 'Pallet trailer')) world.add(trayMesh);
   } else tray = null;
   if (P.binOn) {
     var bd2 = binDrop(), bc = binChecks(), dep = Math.min(P.objH + 6, 2 * (legZ() - barSz() / 2) - 1);
-    [P.binIn, P.binIn + P.binW].forEach(function(xw){ var w = box(0.5, P.binRim, dep, mat.tray); w.position.set(xw, P.binRim / 2, 0); world.add(w); collSolids.push({ m:w, name:'bin wall' }); });
-    var fl = box(P.binW, 0.4, dep, mat.tray); fl.position.set(P.binIn + P.binW / 2, 0.2, 0); world.add(fl);
+    var BW = binWidth();
+    if (P.binType === 'Pallet trailer') {   // flat deck at the rim height, low edges, two wheels
+      var deck = box(BW, 1.5, dep, mat.tray); deck.position.set(P.binIn + BW / 2, P.binRim - 0.75, 0); world.add(deck);
+      [P.binIn, P.binIn + BW].forEach(function(xw){ var w = box(0.6, 2, dep, mat.tray); w.position.set(xw, P.binRim + 1, 0); world.add(w);
+        var ps = box(0.6, P.binRim - 1.5, 0.6, mat.tray); ps.position.set(xw, (P.binRim - 1.5) / 2, 0); world.add(ps); collSolids.push({ m:ps, name:'bin wall' }); });
+      var wr = Math.min(P.binRim * 0.45, 8); [-1, 1].forEach(function(sz){ var wh = new THREE.Mesh(new THREE.CylinderGeometry(wr, wr, 3, 20), mat.tray); wh.rotation.x = Math.PI / 2; wh.position.set(P.binIn + BW / 2, wr, sz * (dep / 2 + 1.5)); world.add(wh); });
+    } else {
+      [P.binIn, P.binIn + BW].forEach(function(xw){ var w = box(0.5, P.binRim, dep, mat.tray); w.position.set(xw, P.binRim / 2, 0); world.add(w); collSolids.push({ m:w, name:'bin wall' }); });
+      var fl = box(BW, 0.4, dep, mat.tray); fl.position.set(P.binIn + BW / 2, 0.2, 0); world.add(fl);
+    }
     var dm = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.6, P.objH * 0.08), 16, 12), new THREE.MeshBasicMaterial({ color: bc && bc.rim ? 0x1f8a5b : 0xc0392b }));
     dm.position.set(bd2.x, bd2.y, 0); world.add(dm);
     [-P.pickW / 2, P.pickW / 2].forEach(function(xp){ var m = box(0.3, 0.12, 8, new THREE.MeshBasicMaterial({ color:0xd9661a })); m.position.set(xp, 0.08, 0); world.add(m); });
@@ -1993,7 +2001,16 @@ function buildFoot(){
 // Two vertical jaws slide on a rail in the wide base. The actuator pushes the left jaw; a rack and
 // pinion at the center moves the right jaw the same distance the other way. Opening: w = w_min + 2 s.
 var PIV_DROP = 0.4, FT = 0.22;
-function gripGeo(){ var st = P.gStroke, wMin = P.wMin, wMax = wMin + 2 * st; return { stroke:st, wMin:wMin, wMax:wMax, Lf:P.gripLen, bw:wMax + 4 * FT + 1.2 }; }
+// End effector: parallel jaws, or a lifting harness on a hook (straps hang just outside the object; an operator attaches and releases it)
+function harness(){ return P.effType === 'Harness on hook'; }
+function gripGeo(){
+  if (harness()) { var hw = P.objH + 1; return { stroke:0, wMin:hw, wMax:hw, Lf:P.gripLen, bw:3 }; }
+  var st = P.gStroke, wMin = P.wMin, wMax = wMin + 2 * st; return { stroke:st, wMin:wMin, wMax:wMax, Lf:P.gripLen, bw:wMax + 4 * FT + 1.2 };
+}
+// Time to close or open the end effector (jaws: actuator travel; harness: attach or release by the operator)
+function gripTime(){ return harness() ? P.attachTime : gripGeo().stroke / Math.max(0.1, P.actSpeed); }
+// Bin width: a pallet trailer is at least the object diameter + 6 in wide
+function binWidth(){ return P.binType === 'Pallet trailer' ? Math.max(P.binW, P.objH + 6) : P.binW; }
 function gripW(g){ var G = gripGeo(); return G.wMax - g * (G.wMax - G.wMin); }
 function gripExt(g){ return (gripW(g) - P.wMin) / 2; }
 function fingerSegs(tp, g){
@@ -2056,6 +2073,7 @@ function releaseHeld(){
 function tryHold(o){
   var r = P.objH / 2, tip = tipNow(), segs = fingerSegs(tip, S.grip), tipZ = Math.min(segs[0].p1.y, segs[1].p1.y);
   var Fn = gripForce(); S.gripFn = Fn;
+  if (harness()) { S.held = o; o.z = 0; S.holdDy = tip.y - o.y; o.x = tip.x; S.gripNote = 'Harness attached.'; return true; }
   var lowEnough = P.shape === 'Bale' ? tipZ < P.objH * 0.6 : tipZ < o.y + 0.2 * r;
   if (!lowEnough) { S.gripNote = 'Fingers touch above the widest point. The object would squeeze out.'; return false; }
   if (2 * P.mu * Fn < P.objW) { S.gripNote = 'Grip too weak: 2 x ' + P.mu.toFixed(2) + ' x ' + Fn.toFixed(1) + ' lb < ' + P.objW + ' lb. The object slips.'; return false; }
@@ -2065,6 +2083,30 @@ function tryHold(o){
 function updateGripper(dt){
   var G = gripGeo(), rate = P.actSpeed / Math.max(0.05, G.stroke);
   S.gMove = 0;
+  if (harness()) {
+    if (!S.gripCmd) {                       // release: the operator unhooks the harness
+      S.attT = 0; S.contact = null;
+      if (S.held) { S.detT = (S.detT || 0) + dt; S.gMove = -1; if (S.detT >= P.attachTime) { S.detT = 0; releaseHeld(); S.grip = 0; } }
+      else S.grip = 0;
+      return;
+    }
+    S.detT = 0;
+    if (S.held || S.grip >= 1) return;
+    S.attT = (S.attT || 0) + dt; S.gMove = 1;
+    if (S.attT >= P.attachTime) {          // attach: the object must hang centered under the hook, cradle below its center
+      S.attT = 0; S.grip = 1;
+      var tp = tipNow(), r0 = P.objH / 2, zb = tp.y - PIV_DROP - P.gripLen, os = nearObjs();
+      for (var j = 0; j < os.length; j++) {
+        var ob = os[j];
+        if (Math.abs(ob.x - tp.x) <= Math.max(1, 0.25 * r0) && zb <= ob.y + 0.2 * r0 && zb >= ob.y - r0) {
+          S.held = ob; ob.z = 0; S.holdDy = tp.y - ob.y; ob.x = tp.x; S.contact = ob; S.gripFn = 0;
+          S.gripNote = 'Harness attached (' + P.attachTime + ' s).'; return;
+        }
+      }
+      S.gripNote = 'The harness is not under an object.';
+    }
+    return;
+  }
   if (!S.gripCmd) {
     if (S.held) releaseHeld();
     S.contact = null;
@@ -2095,7 +2137,7 @@ function updateGripper(dt){
 }
 
 // ---------- Dynamic parts ----------
-var gAct = null, gRod = null, gPinion = null, gCarr = [], gRacks = [], estMark = null, estRay = null, cyl = [], tipJoint, tipMarker, plate, fingers = [], trailLine, trailPts = [];
+var gCradle = null, gHook = null, gAct = null, gRod = null, gPinion = null, gCarr = [], gRacks = [], estMark = null, estRay = null, cyl = [], tipJoint, tipMarker, plate, fingers = [], trailLine, trailPts = [];
 function buildDyn(){
   clearGroup(dyn); cyl = []; fingers = [];
   var rb = P.bore / 2 + 0.3, rr = Math.max(0.2, P.rod / 2);
@@ -2107,9 +2149,15 @@ function buildDyn(){
   tipJoint = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.5, P.bore * 0.35), 16, 12), mat.joint); dyn.add(tipJoint);
   var GG = gripGeo();
   plate = box(GG.bw, 0.4, 2.6, mat.eff); dyn.add(plate);
+  var strap = harness() ? new THREE.MeshStandardMaterial({ color:0xe0a21a, roughness:0.8 }) : null;
   for (var k = 0; k < 2; k++) {
-    var piv = new THREE.Group(), f = box(0.45, P.gripLen, 1.6, mat.eff);
+    var piv = new THREE.Group(), f = harness() ? box(0.25, P.gripLen, 1.4, strap) : box(0.45, P.gripLen, 1.6, mat.eff);
     f.position.y = -P.gripLen / 2; piv.add(f); dyn.add(piv); fingers.push(piv);
+  }
+  gCradle = null; gHook = null;
+  if (harness()) {   // a hook at the tip and a cradle (sling) under the object
+    gHook = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.3, 8, 18, Math.PI * 1.5), mat.joint); dyn.add(gHook);
+    gCradle = new THREE.Mesh(new THREE.TorusGeometry(GG.wMax / 2 + FT, 0.3, 8, 32, Math.PI), strap); gCradle.rotation.z = Math.PI; dyn.add(gCradle);
   }
   var am = new THREE.MeshStandardMaterial({ color:0x2b3139, metalness:0.4, roughness:0.4 });
   var bodyLen = Math.max(1.5, GG.bw / 2 - 1.2);
@@ -2154,6 +2202,9 @@ function updateDyn(){
     var rl = Math.max(0.2, w / 2); gRacks[k].scale.set(rl, 1, 1); gRacks[k].position.set(tip.x + sg * rl / 2, by + 0.3, sg * 0.45);
   });
   gPinion.position.set(tip.x, by + 0.3, 0);
+  var hz = harness(); [gAct, gRod, gPinion].concat(gCarr, gRacks).forEach(function(m){ if (m) m.visible = !hz; });
+  if (gHook) gHook.position.set(tip.x, by - 0.6, 0);
+  if (gCradle) gCradle.position.set(tip.x, pz - P.gripLen, 0);
   var bodyLen = Math.max(1.5, GG.bw / 2 - 1.2); gAct.position.set(tip.x + 0.9 + bodyLen / 2, by + 1.05, 0.9);
   placeSeg(gRod, tip.x + 0.9, by + 1.05, 0.9, tip.x - w / 2 - FT, by + 1.05, 0.9);
   coils.forEach(function(c, i){
@@ -2276,7 +2327,7 @@ function binHit(t){
   [-1, 1].forEach(function(sg){ var fx = t.x + sg * (w / 2 + FT); parts.push([fx - 0.25, fx + 0.25, fb, t.y - PIV_DROP]); });
   if (S.held) { var hx = halfX(), cy = t.y - P.gripLen; parts.push([t.x - hx, t.x + hx, cy - P.objH / 2, cy + P.objH / 2]); }
   for (var w = 0; w < 2; w++) {
-    var xw = w === 0 ? P.binIn : P.binIn + P.binW;
+    var xw = w === 0 ? P.binIn : P.binIn + binWidth();
     for (var k = 0; k < parts.length; k++) { var q = parts[k]; if (q[0] < xw + 0.3 && q[1] > xw - 0.3 && q[2] < P.binRim + 0.05) return true; }
     // the cylinders: height of each cylinder line where it passes over the wall
     var pv = pivots(), rb = P.bore / 2 + 0.3;
@@ -2436,7 +2487,8 @@ function pickChecks(pc){
   var cap = reach ? maxTipLoad(e.x, Math.max(P.gripLen + 0.05, ty)) - P.gripW : 0;
   out.push({ ok:reach && cap >= P.objW, txt:'Can lift ' + P.objW + ' lb here (capacity ' + Math.max(0, cap).toFixed(0) + ' lb)', why:'the cylinders cannot lift ' + P.objW + ' lb at this point.' });
   var wNeed = pc.wEst + 2 * (0.3 + P.deadband) + 0.5, wMax = gripGeo().wMax;
-  out.push({ ok:wNeed <= wMax, txt:'Opening clearance: needs ' + wNeed.toFixed(2) + ' in, gripper opens ' + wMax.toFixed(2) + ' in', why:'the gripper cannot open wide enough to clear the object safely (' + wNeed.toFixed(1) + ' in needed).' });
+  if (harness()) out.push({ ok:true, txt:'Harness: the operator places the straps around the object' });
+  else out.push({ ok:wNeed <= wMax, txt:'Opening clearance: needs ' + wNeed.toFixed(2) + ' in, gripper opens ' + wMax.toFixed(2) + ' in', why:'the gripper cannot open wide enough to clear the object safely (' + wNeed.toFixed(1) + ' in needed).' });
   out.push({ ok:!!tray && dropOk(tray.x), txt:'Drop spot reachable', why:'the drop spot is out of reach.' });
   return out;
 }
@@ -2566,7 +2618,7 @@ function autoUpdate(){
     case 'down': if (A.reached) { S.v = [0, 0]; S.gripCmd = 1; go('grip'); } break;
     case 'grip':
       if (!A.gripT0) A.gripT0 = S.t;
-      if (S.held || S.contact || S.grip >= 1 || S.t - A.gripT0 > gripGeo().stroke / P.actSpeed + 1) {
+      if (S.held || S.contact || S.grip >= 1 || S.t - A.gripT0 > gripTime() + 1) {
         A.gripT0 = 0; tip = tipNow();
         var dx = tip.x - o.x, dy = tip.y - pickY(), err = Math.hypot(dx, dy);
         R.lastGrab = err;
@@ -2588,7 +2640,7 @@ function autoUpdate(){
       } break;
     case 'release':
       if (A.relObj === undefined) A.relObj = S.held;
-      if (S.grip <= 0.001 || S.t - A.phaseT > gripGeo().stroke / P.actSpeed + 1) {
+      if (S.grip <= 0.001 || S.t - A.phaseT > gripTime() + 1) {
         var h = A.relObj; A.relObj = undefined;
         if (h) {
           h.done = true;
@@ -2753,6 +2805,8 @@ fL.add(P, 'objH', 2, 36, 0.5).name('Height (in)');
 fL.add(P, 'objW', 0, 1000, 1).name('Weight (lb)');
 fL.add(P, 'gripW', 0, 300, 1).name('Gripper weight (lb)');
 var fGr = gui.addFolder('Gripper (electric actuator)');
+fGr.add(P, 'effType', ['Jaws', 'Harness on hook']).name('End effector');
+fGr.add(P, 'attachTime', 1, 60, 1).name('Harness attach / release (s)');
 fGr.add(P, 'gStroke', 0.5, 16, 0.25).name('Actuator stroke (in)');
 fGr.add(P, 'wMin', 0.2, 12, 0.1).name('Closed width (in)');
 fGr.add(P, 'actForce', 10, 1000, 5).name('Actuator force (lb)');
@@ -2782,6 +2836,7 @@ fB.add(P, 'binOn').name('Show the bin');
 fB.add(P, 'pickW', 4, 120, 1).name('Pick width (in)');
 fB.add(P, 'binRim', 4, 72, 0.5).name('Bin rim height (in)');
 fB.add(P, 'binIn', 0, 120, 0.5).name('Bin inner rim distance (in)');
+fB.add(P, 'binType', ['Bin', 'Pallet trailer']).name('Bin type');
 fB.add(P, 'binW', 4, 48, 0.5).name('Bin width (in)');
 fB.add(P, 'binClear', 0, 12, 0.5).name('Rim clearance (in)');
 var fK = gui.addFolder('Controller');
@@ -2858,13 +2913,14 @@ function demoStart(xs){
   S.objs.slice().forEach(function(o, i){
     var a = { x:o.x, y:demoTop(o.x) };
     steps.push({ route:a, note:'Fruit ' + (i + 1) + ' of ' + xs.length + ': move above it (x = ' + o.x.toFixed(1) + ' in), along the top of the reach band.' });
-    steps.push({ open:true, wait:1, note:'Open the gripper.' });
+    steps.push({ open:true, wait:harness() ? 0.2 : 1, note:harness() ? 'Lower the open harness over the object.' : 'Open the gripper.' });
     steps.push({ go:{ x:o.x, y:pickY() }, note:'Lower to the grasp height y_g = ' + pickY().toFixed(1) + ' in.' });
-    steps.push({ grip:o, wait:1, note:'Close the gripper (1 s).' });
+    steps.push({ grip:o, wait:harness() ? P.attachTime : 1, note:harness() ? 'Attach the harness (' + P.attachTime + ' s).' : 'Close the gripper (1 s).' });
     steps.push({ go:a, note:'Lift.' });
     if (d) steps.push({ route:d, note:'Carry over the bin rim to the drop point (' + d.x.toFixed(1) + ', ' + d.y.toFixed(1) + ') in.' });
-    steps.push({ release:o, wait:1, note:'Open the gripper (1 s). The fruit drops into the bin.' });
-    steps.push({ close:true, wait:0.5, note:'Close the empty gripper, so that the fingers clear the bin rim.' });
+    if (d && P.binType === 'Pallet trailer') steps.push({ go:{ x:d.x, y:d.y - P.binClear + 0.2 }, note:'Lower the object onto the pallet.' });
+    steps.push({ release:o, wait:harness() ? P.attachTime : 1, note:harness() ? 'Release the harness (' + P.attachTime + ' s).' : 'Open the gripper (1 s). The fruit drops into the bin.' });
+    if (!harness()) steps.push({ close:true, wait:0.5, note:'Close the empty gripper, so that the fingers clear the bin rim.' });
   });
   var h = findHome(); if (h) steps.push({ route:{ x:h.x, y:h.y }, note:'Back to home.' });
   DEMO = { steps:steps, path:[], wait:0, n:xs.length, placed:0 };
@@ -2984,7 +3040,7 @@ function fitView(){
 // Front view, looking along the row from behind the tractor, as in Figure 1 of the assignment: x to the right, y up
 function frontView(){
   var d = P.binOn ? binDrop() : null, xr = P.spacing / 2 + Lmax();
-  var xa = -Math.max(P.pickW / 2 + 20, P.spacing / 2 + 8), xb = d ? P.binIn + P.binW + 8 : Math.min(xr, P.pickW / 2 + 8);
+  var xa = -Math.max(P.pickW / 2 + 20, P.spacing / 2 + 8), xb = d ? P.binIn + binWidth() + 8 : Math.min(xr, P.pickW / 2 + 8);
   var top = barTop() + Math.max(0, P.camMast) + 4, xc = (xa + xb) / 2;
   cam.fov = 12; cam.updateProjectionMatrix();  // a narrow lens looks almost flat, like the drawing
   var hw = (xb - xa) / 2 * 1.08, hh = top / 2 * 1.1, vf = cam.fov * Math.PI / 360, asp = cam.aspect || 1;
@@ -3198,6 +3254,8 @@ function eqHTML(){
   h += '<p class="note">&#916;x = pivot x - tip x, &#916;y = H - tip y (from the tip to each pivot). A cylinder force splits like the sides of its triangle: horizontal part T &#916;x/L, vertical part T &#916;y/L. The two equations are the horizontal and vertical balance at the tip; solve them by substitution. Positive T means the cylinder pulls: the rod end holds the load. Negative T means it pushes: the cap end holds the load. These forces have no safety factor.</p>';
   // Gripper
   var GG = gripGeo(), gs = gripExt(S.grip), Fn = gripForce();
+  if (harness()) h += '<h3>End effector: lifting harness on a hook</h3><p class="note">The harness carries the object; there is no jaw force or slip check. An operator attaches and releases it (' + P.attachTime + ' s each). The straps hang ' + P.gripLen + ' in from the tip to the center of the object.</p>';
+  else {
   h += '<h3>Gripper: one linear actuator, parallel jaws</h3>';
   h += M(sb(mi('w'), mi('j')) + EQ + sb(mi('w'), mi('j,min')) + PL + mn(2, 0) + sb(mi('s'), mi('a')) + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(gs) + EQ + hot(mn(gripW(S.grip)) + un('in')));
   h += M(sb(mi('w'), mi('j,max')) + EQ + sb(mi('w'), mi('j,min')) + PL + mn(2, 0) + sb(mi('S'), mi('a')) + EQ + mn(P.wMin) + PL + mn(2, 0) + X + mn(GG.stroke) + EQ + mn(GG.wMax) + un('in'));
@@ -3205,6 +3263,7 @@ function eqHTML(){
   var haveF = 2 * P.mu * Fn;
   h += M(mn(2, 0) + '<mi>&#956;</mi>' + sb(mi('F'), mi('n')) + EQ + mn(2, 0) + X + mn(P.mu) + X + mn(Fn, 1) + EQ + hot(mn(haveF, 1) + un('lb')) + mo(haveF >= P.objW ? '&#8805;' : '&lt;') + sb(mi('W'), mi('fruit')) + EQ + mn(P.objW, 0) + un(haveF >= P.objW ? 'lb: holds' : 'lb: slips'));
   h += '<p class="note">w<sub>j</sub> = jaw opening, s<sub>a</sub> = actuator extension from closed, S<sub>a</sub> = actuator stroke. The rack and pinion moves both jaws by s<sub>a</sub>, so the opening changes by 2s<sub>a</sub>. Each jaw squeezes with half the actuator force. Open width must exceed the object width + 2 x (camera error + deadband) + 0.5 in. ' + (P.descent === 'Stepped' ? 'Stepped descent: each cylinder moves at most ' + P.stepL.toFixed(2) + ' in before switching, so the tip comes down nearly straight.' : 'Direct descent: one cylinder runs fully before the other, so the tip swings sideways on the way down.') + '</p>';
+  }
   // Hydraulics
   var Ab = Abore(), Aa = Aann(), T = [T1, T2];
   if (!P.showAnswers) h += '<h3>Pressures and speeds</h3><p class="note">Hidden. Calculate the areas, pressures and speeds with the Equation Card first. Then, to check them, select Show answers in Settings, View.</p>';

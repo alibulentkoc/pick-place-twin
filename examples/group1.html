@@ -73,12 +73,12 @@ ul.checks li{ margin:.15rem 0; }
 .rule{ border-left:4px solid var(--line); padding:.3rem .8rem; font-size:.95rem; }
 @media (max-width: 1150px){ .vals{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
 .tabs{ position:sticky; top:0; z-index:3; display:flex; gap:.25rem; flex-wrap:wrap; background:var(--panel); padding:.6rem 0 .5rem; margin:.8rem 0 0; border-bottom:2px solid var(--line); }
-.tab{ font:inherit; font-weight:700; font-size:.92rem; padding:.4rem .65rem; border:1px solid var(--line); border-bottom:0; border-radius:5px 5px 0 0; background:var(--paper); color:var(--muted); cursor:pointer; }
+.tab{ font:inherit; font-weight:700; font-size:.88rem; padding:.35rem .55rem; border:1px solid var(--line); border-bottom:0; border-radius:5px 5px 0 0; background:var(--paper); color:var(--muted); cursor:pointer; }
 .tab[aria-selected="true"]{ background:var(--mark); color:var(--ink); border-color:var(--markline); }
 .tabpane h2, .tabpane h3, .tabpane section{ scroll-margin-top:4.5rem; }
 .tabpane math[display="block"]{ display:block; overflow-x:auto; overflow-y:hidden; max-width:100%; padding:.2rem 0; }
 .tabpane img{ max-width:100%; height:auto; }
-.tab.later{ cursor:default; opacity:.55; font-weight:600; border-style:dashed; }
+.tab.later{ cursor:default; opacity:.55; font-weight:600; font-size:.8rem; border-style:dashed; }
 .tabpane{ display:none; } .tabpane.on{ display:block; }
 details{ border:1px solid var(--line); border-radius:6px; padding:.4rem .8rem; margin:.8rem 0; }
 details > summary{ cursor:pointer; font-weight:700; }
@@ -110,7 +110,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
     <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
-<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Design path</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">Homework 1</button><span class="tab later" title="Released at the start of week 2">Homework 2 (week 2)</span><span class="tab later" title="Released at the start of week 3">Homework 3 (week 3)</span><span class="tab later" title="Released at the start of week 4">Final report (week 4)</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><span class="tab later" title="Released at the start of week 2">HW 2: week 2</span><span class="tab later" title="Released at the start of week 3">HW 3: week 3</span><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
 <section class="tabpane" role="tabpanel" id="p-path" data-tab="path"><h2 id="figure">Figure 1 and the twin</h2>
 <p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. In step 3 below, select 15 in or 55 in to move the twin tip to these points. At 55 in, the cantaloupe is in the gripper, above the bin.</p>
 <p>Three things are in the twin but not in Figure 1. The frame holds the bar; its legs stand outside the pick width and off the arm plane, so the arm can pass them. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
@@ -181,6 +181,679 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <li><strong>Write it up.</strong> Every number, with where it came from.</li>
 </ol>
 </section>
+<section class="tabpane" role="tabpanel" id="p-ref" data-tab="ref"><div class='how'><p>This tab collects the values to assume, the symbols, all formulas (F1 to F31) and the twin tables that the homework tabs use.</p></div><h2 id="values-to-assume">Values to assume</h2>
+<p>Use these values unless you have better data. Write in your report which values you used.</p>
+<ul>
+<li><strong>Fruit diameter:</strong> the value in the table. The radius r is half of the diameter. Group 9: use the height of the pumpkin.</li>
+<li><strong>Grip length</strong> (tip to fruit center): the value in the table. It is the end effector body (9 in) plus the fruit radius. Group 9: harness straps (24 in) plus half of the height.</li>
+<li><strong>End effector time:</strong> 2 s for each cycle (1 s to close, 1 s to open).</li>
+<li><strong>Pump efficiencies (Option B):</strong> volumetric efficiency 0.95, overall efficiency 0.85.</li>
+<li><strong>Steel modulus (buckling):</strong> E = 29,000,000 psi.</li>
+<li><strong>Bin position:</strong> use the nearest bin inner rim distance <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>b</mi></msub><annotation encoding="application/x-tex">x_b</annotation></semantics></math> where the twin shows Rim clearance = OK. The readout checks the front of the fruit, so its tip height can be less than <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>d</mi></msub><annotation encoding="application/x-tex">y_d</annotation></semantics></math>.</li>
+<li><strong>Bin on a cart:</strong> the bin rides on a low cart beside the row. Rim height = cart deck height + bin height (for example, a 24 in bin on a 12 in deck = 36 in).</li>
+<li><strong>Bin width:</strong> 16 in. The drop point is at the center of the bin: the inner rim distance plus 8 in.</li>
+<li><strong>Hose oil velocity, maximum:</strong> pressure line and cylinder hoses 15 ft/s (180 in/s); return line 10 ft/s (120 in/s); suction line 4 ft/s (48 in/s).</li>
+<li><strong>Week 1 twin values:</strong> keep the tractor start bore, rod and valves. Set <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{min} = S</annotation></semantics></math> + 10 in (F6). Enter <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">p_{relief}</annotation></semantics></math> and the SCV flow rate from your data card.</li>
+</ul>
+<h2 id="symbols-terms-and-acronyms">Symbols, terms and acronyms</h2>
+<table>
+<caption>Terms, symbols and acronyms used in this assignment. Figure 1 (Design path tab) shows the dimension symbols.</caption>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 14%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Symbol or acronym</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Arm plane</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>,</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x, y</annotation></semantics></math></td>
+<td>The vertical plane, across the row, in which the cylinders and the tip move</td>
+</tr>
+<tr class="even">
+<td>Arm center (x = 0)</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x = 0</annotation></semantics></math></td>
+<td>The point on the ground below the middle of the two pivots. The x distance starts at this point.</td>
+</tr>
+<tr class="odd">
+<td>Bar height</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math></td>
+<td>The height of the pivot pins above the ground</td>
+</tr>
+<tr class="even">
+<td>Pivot spacing</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math></td>
+<td>The distance between the two pivot pins <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>1</mn></msub><annotation encoding="application/x-tex">P_1</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mn>2</mn></msub><annotation encoding="application/x-tex">P_2</annotation></semantics></math> on the bar</td>
+</tr>
+<tr class="odd">
+<td>Cylinder length</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mn>1</mn></msub><mo>,</mo><msub><mi>L</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">L_1, L_2</annotation></semantics></math></td>
+<td>The pin-to-pin length of a cylinder. It changes from the retracted length to the extended length (retracted length plus stroke).</td>
+</tr>
+<tr class="even">
+<td>Stroke</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math></td>
+<td>The distance that the rod moves from fully retracted to fully extended</td>
+</tr>
+<tr class="odd">
+<td>Retracted length</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">L_{min}</annotation></semantics></math></td>
+<td>The pin-to-pin length of a fully retracted cylinder. For a catalog cylinder, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi><mo>+</mo><msub><mi>L</mi><mrow><mi>d</mi><mi>e</mi><mi>a</mi><mi>d</mi></mrow></msub></mrow><annotation encoding="application/x-tex">L_{min} = S + L_{dead}</annotation></semantics></math>.</td>
+</tr>
+<tr class="even">
+<td>Dead length</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mrow><mi>d</mi><mi>e</mi><mi>a</mi><mi>d</mi></mrow></msub><annotation encoding="application/x-tex">L_{dead}</annotation></semantics></math></td>
+<td>The part of the retracted length that the stroke does not use (end caps, piston, rod eye). Read it from the catalog: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>d</mi><mi>e</mi><mi>a</mi><mi>d</mi></mrow></msub><mo>=</mo><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{dead} = L_{min} - S</annotation></semantics></math>. It is approximately 10 in.</td>
+</tr>
+<tr class="odd">
+<td>Tip</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></td>
+<td>The point where the two rod ends connect. The end effector hangs from the tip.</td>
+</tr>
+<tr class="even">
+<td>End effector</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">W_{effector}</annotation></semantics></math></td>
+<td>The gripper or harness that holds the fruit. It is a purchased part.</td>
+</tr>
+<tr class="odd">
+<td>Load at the tip</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math></td>
+<td>The fruit weight plus the end effector weight. It acts down at the tip.</td>
+</tr>
+<tr class="even">
+<td>Grip length</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math></td>
+<td>The vertical distance from the tip to the center of the fruit that the end effector holds</td>
+</tr>
+<tr class="odd">
+<td>Fruit radius</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math></td>
+<td>Half of the fruit diameter</td>
+</tr>
+<tr class="even">
+<td>Grasp height</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>g</mi></msub><annotation encoding="application/x-tex">y_g</annotation></semantics></math></td>
+<td>The tip height when the end effector holds a fruit on the ground: fruit radius plus grip length</td>
+</tr>
+<tr class="odd">
+<td>Pick width</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math></td>
+<td>The width across the row, at the arm center, where fruit can lie. The tip must reach all of this width at grasp height.</td>
+</tr>
+<tr class="even">
+<td>Bin rim height</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>h</mi><mrow><mi>r</mi><mi>i</mi><mi>m</mi></mrow></msub><annotation encoding="application/x-tex">h_{rim}</annotation></semantics></math></td>
+<td>The height of the top edge of the bin above the ground</td>
+</tr>
+<tr class="odd">
+<td>Bin inner rim distance</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>b</mi></msub><annotation encoding="application/x-tex">x_b</annotation></semantics></math></td>
+<td>The horizontal distance from the arm center to the bin wall nearer the arm</td>
+</tr>
+<tr class="even">
+<td>Bin width</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>b</mi></msub><annotation encoding="application/x-tex">w_b</annotation></semantics></math></td>
+<td>The inside width of the bin</td>
+</tr>
+<tr class="odd">
+<td>Rim clearance</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math></td>
+<td>The vertical gap between the bottom of the fruit and the bin rim. The minimum is 4 in.</td>
+</tr>
+<tr class="even">
+<td>Drop point</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>d</mi></msub><mo>,</mo><msub><mi>y</mi><mi>d</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x_d, y_d)</annotation></semantics></math></td>
+<td>The tip position where the end effector releases the fruit above the bin</td>
+</tr>
+<tr class="odd">
+<td>Drop distance</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>d</mi></msub><annotation encoding="application/x-tex">x_d</annotation></semantics></math></td>
+<td>The horizontal distance from the arm center to the drop point</td>
+</tr>
+<tr class="even">
+<td>Worst point</td>
+<td>-</td>
+<td>The tip position in the work path where a cylinder force is the maximum</td>
+</tr>
+<tr class="odd">
+<td>Unfactored force</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>1</mn></msub><mo>,</mo><msub><mi>T</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">T_1, T_2</annotation></semantics></math></td>
+<td>The cylinder force from the loads only, without the safety factor. The twin shows unfactored forces.</td>
+</tr>
+<tr class="even">
+<td>Design force</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math></td>
+<td>The unfactored force multiplied by the safety factor (2). Use it for cylinder sizing and in FluidSIM.</td>
+</tr>
+<tr class="odd">
+<td>Cap end</td>
+<td>-</td>
+<td>The end of the cylinder without the rod. Oil in the cap end pushes on the full piston area.</td>
+</tr>
+<tr class="even">
+<td>Rod end</td>
+<td>-</td>
+<td>The end of the cylinder with the rod. Oil in the rod end pushes on the annulus area.</td>
+</tr>
+<tr class="odd">
+<td>Bore and rod diameter</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>,</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">D, d</annotation></semantics></math></td>
+<td>The inside diameter of the barrel (equal to the piston diameter) and the diameter of the rod</td>
+</tr>
+<tr class="even">
+<td>Piston area</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math></td>
+<td>The area of the piston, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><msup><mi>D</mi><mn>2</mn></msup><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">\pi D^2/4</annotation></semantics></math>. It is the area at the cap end.</td>
+</tr>
+<tr class="odd">
+<td>Annulus area</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math></td>
+<td>The piston area minus the rod area. It is the area at the rod end.</td>
+</tr>
+<tr class="even">
+<td>Holding pressure</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>h</mi></msub><annotation encoding="application/x-tex">p_h</annotation></semantics></math></td>
+<td>The pressure in the chamber that holds the load, with the unfactored load</td>
+</tr>
+<tr class="odd">
+<td>Relief valve</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">p_{relief}</annotation></semantics></math></td>
+<td>A valve that opens at a set pressure. It limits the maximum pressure in the circuit.</td>
+</tr>
+<tr class="even">
+<td>Pressure limit</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mrow><mi>a</mi><mi>l</mi><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub><annotation encoding="application/x-tex">p_{allow}</annotation></semantics></math></td>
+<td>80% of the relief valve pressure, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>a</mi><mi>l</mi><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub><mo>=</mo><mn>0.8</mn><mo>×</mo><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub></mrow><annotation encoding="application/x-tex">p_{allow} = 0.8 \times p_{relief}</annotation></semantics></math>. The design pressure must be equal to or less than this value.</td>
+</tr>
+<tr class="odd">
+<td>Counterbalance valve</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mrow><mi>s</mi><mi>e</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">p_{set}</annotation></semantics></math></td>
+<td>A valve on the cylinder port that holds the load. It opens when the load pressure plus the pilot ratio times the pilot pressure reaches its setting. Thus, the load alone cannot open it.</td>
+</tr>
+<tr class="even">
+<td>Dual counterbalance valve</td>
+<td>-</td>
+<td>Two counterbalance valves in one body, one for each port. Use it when the force in a cylinder changes from pull to push in the work path.</td>
+</tr>
+<tr class="odd">
+<td>Pilot ratio</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>R</mi><annotation encoding="application/x-tex">R</annotation></semantics></math></td>
+<td>The ratio of the pilot area to the load area in a counterbalance valve, for example 4:1</td>
+</tr>
+<tr class="even">
+<td>Selective control valve (SCV)</td>
+<td>SCV</td>
+<td>A directional control valve on the tractor. It supplies oil to an implement through the rear remote outlets.</td>
+</tr>
+<tr class="odd">
+<td>Directional control valve (DCV)</td>
+<td>DCV</td>
+<td>A valve that sends oil to port A or port B of a cylinder. In the center position, it blocks the ports or connects them to the tank. A tractor SCV is a DCV.</td>
+</tr>
+<tr class="even">
+<td>Power take-off (PTO)</td>
+<td>PTO</td>
+<td>The rotating shaft at the rear of the tractor that can turn a pump</td>
+</tr>
+<tr class="odd">
+<td>Flow rate</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math></td>
+<td>The oil volume that flows in one unit of time. Convert gpm to in<sup>3</sup>/s: multiply by 231 and divide by 60.</td>
+</tr>
+<tr class="even">
+<td>Pump displacement</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>p</mi></msub><annotation encoding="application/x-tex">D_p</annotation></semantics></math></td>
+<td>The oil volume that the pump moves in one revolution of its shaft</td>
+</tr>
+<tr class="odd">
+<td>Hose inside diameter</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><annotation encoding="application/x-tex">d_{hose}</annotation></semantics></math></td>
+<td>The inside diameter of a hose. A hose dash size is the inside diameter in sixteenths of an inch: -8 = 8/16 = 0.5 in.</td>
+</tr>
+<tr class="even">
+<td>Oil velocity in a hose</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><annotation encoding="application/x-tex">v_{hose}</annotation></semantics></math></td>
+<td>The average speed of the oil in a hose, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><mi>Q</mi><mi>/</mi><msub><mi>A</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub></mrow><annotation encoding="application/x-tex">v_{hose} = Q / A_{hose}</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td>Cycle time</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mrow><mi>c</mi><mi>y</mi><mi>c</mi><mi>l</mi><mi>e</mi></mrow></msub><annotation encoding="application/x-tex">t_{cycle}</annotation></semantics></math></td>
+<td>The time for one pick-and-place cycle, from the bin and back to the bin</td>
+</tr>
+<tr class="even">
+<td>lb</td>
+<td>lbf</td>
+<td>Pound-force (lbf). In this assignment, all weights and forces are in lbf.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="formulas-for-homework-1">Formulas for homework 1</h2>
+<table>
+<caption>Formulas for homework 1.</caption>
+<thead>
+<tr class="header">
+<th>No.</th>
+<th>Formula</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F1</td>
+<td>Load at the tip: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><msub><mi>W</mi><mrow><mi>f</mi><mi>r</mi><mi>u</mi><mi>i</mi><mi>t</mi></mrow></msub><mo>+</mo><msub><mi>W</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">W = W_{fruit} + W_{effector}</annotation></semantics></math></td>
+<td>lb</td>
+</tr>
+<tr class="even">
+<td>F2</td>
+<td>Fruit radius: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math> = fruit diameter / 2</td>
+<td>in</td>
+</tr>
+<tr class="odd">
+<td>F3</td>
+<td>Grasp height: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>g</mi></msub><mo>=</mo><mi>r</mi><mo>+</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">y_g = r + g</annotation></semantics></math></td>
+<td>in</td>
+</tr>
+<tr class="even">
+<td>F4</td>
+<td>Drop height: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>d</mi></msub><mo>=</mo><msub><mi>h</mi><mrow><mi>r</mi><mi>i</mi><mi>m</mi></mrow></msub><mo>+</mo><mi>c</mi><mo>+</mo><mi>r</mi><mo>+</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">y_d = h_{rim} + c + r + g</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> = 4 in</td>
+<td>in</td>
+</tr>
+<tr class="odd">
+<td>F5</td>
+<td>Drop distance: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>d</mi></msub><mo>=</mo><msub><mi>x</mi><mi>b</mi></msub><mo>+</mo><msub><mi>w</mi><mi>b</mi></msub><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">x_d = x_b + w_b / 2</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>b</mi></msub><annotation encoding="application/x-tex">w_b</annotation></semantics></math> = 16 in</td>
+<td>in</td>
+</tr>
+<tr class="even">
+<td>F6</td>
+<td>Retracted length in week 1: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{min} = S</annotation></semantics></math> + 10 in</td>
+<td>in</td>
+</tr>
+<tr class="odd">
+<td>F7</td>
+<td>Pressure limit: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>a</mi><mi>l</mi><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub><mo>=</mo><mn>0.8</mn><mo>×</mo><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub></mrow><annotation encoding="application/x-tex">p_{allow} = 0.8 \times p_{relief}</annotation></semantics></math></td>
+<td>psi</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-each-twin-value-comes-from">Where each twin value comes from</h2>
+<p><strong>Where each twin value comes from.</strong> The table below tells what to do in the twin and which line of Readouts to read. Readouts is the table under the 3D view. Read the lines "at the worst point" and "in the work path". Do not use the lines "Cylinder 1 force" and "Cylinder 2 force": they are for the present tip position only.</p>
+<table>
+<caption>Twin values and where to read them.</caption>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 35%" />
+<col style="width: 29%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Value</th>
+<th>What to do in the twin</th>
+<th>Readout line to read</th>
+<th>Where you use it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pick width reached</td>
+<td>Enter the pick width in the Bin and pick width folder. Change Bar height, Pivot spacing and Stroke in the Arm geometry folder.</td>
+<td>Pick width reached: yes</td>
+<td>Reach and bin checks</td>
+</tr>
+<tr class="even">
+<td>Drop point</td>
+<td>Select Show the bin. Enter Bin rim height, Bin width (16 in) and Bin inner rim distance.</td>
+<td>Drop point (bin): x, tip height and "reachable". Check x with F5 and the tip height with F4.</td>
+<td>Reach and bin checks</td>
+</tr>
+<tr class="odd">
+<td>Bin position <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>b</mi></msub><annotation encoding="application/x-tex">x_b</annotation></semantics></math></td>
+<td>Increase Bin inner rim distance in steps of 0.5 in.</td>
+<td>Rim clearance over the inner rim: OK. Use the first value that gives OK.</td>
+<td>Values to assume</td>
+</tr>
+<tr class="even">
+<td>Worst point <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></td>
+<td>Push Show worst point (panel step 3).</td>
+<td>Worst point of the work path: x, y</td>
+<td>F20 (hand check)</td>
+</tr>
+<tr class="odd">
+<td>Forces at the worst point <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>1</mn></msub><annotation encoding="application/x-tex">T_1</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>2</mn></msub><annotation encoding="application/x-tex">T_2</annotation></semantics></math></td>
+<td>After Show worst point.</td>
+<td>Cylinder 1 at the worst point and Cylinder 2 at the worst point: force in lb, pull or push, and the end</td>
+<td>F20 (hand check)</td>
+</tr>
+<tr class="even">
+<td>Largest pull and push in the work path</td>
+<td>After Show worst point.</td>
+<td>Cylinder 1 in the work path and Cylinder 2 in the work path. If the line says "The force changes sign", the cylinder needs a dual counterbalance valve.</td>
+<td>Cylinder card rows 1 and 2; F14 for each end</td>
+</tr>
+<tr class="odd">
+<td>Length change <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">\Delta L</annotation></semantics></math></td>
+<td>After the drop point is reachable.</td>
+<td>Length change, far pick point to drop point: + extends, - retracts</td>
+<td>Cylinder card row 11</td>
+</tr>
+<tr class="even">
+<td>Check of your pressures</td>
+<td>Only after your own calculations: Settings, View, select Show answers.</td>
+<td>Cylinder 1 and 2 at the worst point now also show psi and the design (x2) pressure.</td>
+<td>Compare with F12</td>
+</tr>
+<tr class="odd">
+<td>Check of your valve settings</td>
+<td>Show answers selected.</td>
+<td>Counterbalance guide: 1.3 x holding pressure of each end</td>
+<td>Compare with F14</td>
+</tr>
+<tr class="even">
+<td>Check of your speeds</td>
+<td>Show answers selected.</td>
+<td>Calculated speed, extend / retract</td>
+<td>Compare with F16</td>
+</tr>
+</tbody>
+</table>
+<h2 id="twin-settings-that-you-enter">Twin settings that you enter</h2>
+<p><strong>Twin settings that you enter.</strong> The table below lists every field that you enter or change in Settings. Keep the tractor start value of every other field. The worked example (Group 1) shows each value with its reason.</p>
+<table>
+<caption>Twin settings that you enter or change.</caption>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 44%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Folder</th>
+<th>Field</th>
+<th>Where your value comes from</th>
+<th>Group 1 example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Arm geometry</td>
+<td>Pivot spacing</td>
+<td>You select it: trials in the twin (homework 1, tasks 2 and 4)</td>
+<td>16 in</td>
+</tr>
+<tr class="even">
+<td>Arm geometry</td>
+<td>Bar height</td>
+<td>You select it: start at 72 in, then trials</td>
+<td>72 in</td>
+</tr>
+<tr class="odd">
+<td>Arm geometry</td>
+<td>Stroke</td>
+<td>You select it (36 in or less), then the stroke of your catalog cylinder</td>
+<td>30 in</td>
+</tr>
+<tr class="even">
+<td>Arm geometry</td>
+<td>Retracted length</td>
+<td>Week 1: stroke + 10 in (F6). Week 2: your catalog cylinder</td>
+<td>40.25 in</td>
+</tr>
+<tr class="odd">
+<td>Arm geometry</td>
+<td>Gripper length</td>
+<td>Grip length g, Table 1</td>
+<td>12 in</td>
+</tr>
+<tr class="even">
+<td>Cylinders and hydraulics</td>
+<td>Bore (in), Rod (in)</td>
+<td>Week 1: keep the tractor start values. Week 2: your catalog cylinder</td>
+<td>2 in, 1.25 in</td>
+</tr>
+<tr class="odd">
+<td>Cylinders and hydraulics</td>
+<td>Pressure (psi)</td>
+<td>Relief valve pressure, data card</td>
+<td>2,347 psi</td>
+</tr>
+<tr class="even">
+<td>Cylinders and hydraulics</td>
+<td>Flow setting (gpm)</td>
+<td>Option A: SCV flow rate, data card. Option B: your pump flow rate</td>
+<td>6.3 gpm</td>
+</tr>
+<tr class="odd">
+<td>Load</td>
+<td>Shape</td>
+<td>Ball for a round crop</td>
+<td>Ball</td>
+</tr>
+<tr class="even">
+<td>Load</td>
+<td>Height (in)</td>
+<td>Fruit diameter, Table 1</td>
+<td>6 in</td>
+</tr>
+<tr class="odd">
+<td>Load</td>
+<td>Weight (lb)</td>
+<td>Fruit weight, Table 1</td>
+<td>4 lb</td>
+</tr>
+<tr class="even">
+<td>Load</td>
+<td>Gripper weight (lb)</td>
+<td>End effector weight: 25 lb (Group 9: 15 lb)</td>
+<td>25 lb</td>
+</tr>
+<tr class="odd">
+<td>Bin and pick width</td>
+<td>Show the bin</td>
+<td>Select it</td>
+<td>selected</td>
+</tr>
+<tr class="even">
+<td>Bin and pick width</td>
+<td>Pick width (in), Bin rim height (in)</td>
+<td>Table 1</td>
+<td>48 in, 36 in</td>
+</tr>
+<tr class="odd">
+<td>Bin and pick width</td>
+<td>Bin inner rim distance (in)</td>
+<td>You find it: the nearest value with Rim clearance = OK</td>
+<td>46.5 in</td>
+</tr>
+<tr class="even">
+<td>Bin and pick width</td>
+<td>Bin width (in), Rim clearance (in)</td>
+<td>Values to assume: 16 in and 4 in</td>
+<td>16 in, 4 in</td>
+</tr>
+<tr class="odd">
+<td>Counterbalance valves</td>
+<td>Fitted on both cylinders</td>
+<td>Select it in week 2</td>
+<td>selected</td>
+</tr>
+<tr class="even">
+<td>Counterbalance valves</td>
+<td>Setting (psi)</td>
+<td>Your setting, F14</td>
+<td>435 psi</td>
+</tr>
+<tr class="odd">
+<td>Counterbalance valves</td>
+<td>Pilot ratio</td>
+<td>Your catalog valve</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="formulas-for-homework-2">Formulas for homework 2</h2>
+<table>
+<caption>Formulas for homework 2.</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 68%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>No.</th>
+<th>Formula</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F8</td>
+<td>Design force: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>2</mn><mo>×</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">F = 2 \times \lvert T \rvert</annotation></semantics></math></td>
+<td>lb</td>
+</tr>
+<tr class="even">
+<td>F9</td>
+<td>Necessary area: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><mi>F</mi><mi>/</mi><msub><mi>p</mi><mrow><mi>a</mi><mi>l</mi><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">A = F / p_{allow}</annotation></semantics></math></td>
+<td>in<sup>2</sup></td>
+</tr>
+<tr class="odd">
+<td>F10</td>
+<td>Piston area (cap end): <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>c</mi></msub><mo>=</mo><mi>π</mi><msup><mi>D</mi><mn>2</mn></msup><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">A_c = \pi D^2 / 4</annotation></semantics></math></td>
+<td>in<sup>2</sup></td>
+</tr>
+<tr class="even">
+<td>F11</td>
+<td>Annulus area (rod end): <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>r</mi></msub><mo>=</mo><mi>π</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>D</mi><mn>2</mn></msup><mo>−</mo><msup><mi>d</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">A_r = \pi (D^2 - d^2) / 4</annotation></semantics></math></td>
+<td>in<sup>2</sup></td>
+</tr>
+<tr class="odd">
+<td>F12</td>
+<td>Design pressure: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi>F</mi><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p = F / A</annotation></semantics></math>. Pull: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><msub><mi>A</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">A = A_r</annotation></semantics></math>. Push: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><msub><mi>A</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">A = A_c</annotation></semantics></math></td>
+<td>psi</td>
+</tr>
+<tr class="even">
+<td>F13</td>
+<td>Buckling limit (push only): <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>c</mi><mi>r</mi></mrow></msub><mo>=</mo><msup><mi>π</mi><mn>2</mn></msup><mi>E</mi><mi>I</mi><mi>/</mi><msup><mi>L</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">P_{cr} = \pi^2 E I / L^2</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mi>π</mi><msup><mi>d</mi><mn>4</mn></msup><mi>/</mi><mn>64</mn></mrow><annotation encoding="application/x-tex">I = \pi d^4 / 64</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math> = 29,000,000 psi and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>+</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L = L_{min} + S</annotation></semantics></math>. Or use the column load from the catalog.</td>
+<td>lb</td>
+</tr>
+<tr class="odd">
+<td>F14</td>
+<td>Holding pressure: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>h</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p_h = \lvert T \rvert / A</annotation></semantics></math>. Valve setting: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>s</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mn>1.3</mn><mo>×</mo><msub><mi>p</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">p_{set} = 1.3 \times p_h</annotation></semantics></math> (or the catalog minimum, if it is higher)</td>
+<td>psi</td>
+</tr>
+<tr class="even">
+<td>F15</td>
+<td>Convert the flow rate to in<sup>3</sup>/s before you use it: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> (in<sup>3</sup>/s) = <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> (gal/min) <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> 231 in<sup>3</sup>/gal / 60 s/min</td>
+<td>in<sup>3</sup>/s</td>
+</tr>
+<tr class="odd">
+<td>F16</td>
+<td>Speeds: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi></mrow></msub><mo>=</mo><mi>Q</mi><mi>/</mi><msub><mi>A</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">v_{ext} = Q / A_c</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mrow><mi>r</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mi>Q</mi><mi>/</mi><msub><mi>A</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">v_{ret} = Q / A_r</annotation></semantics></math></td>
+<td>in/s</td>
+</tr>
+<tr class="even">
+<td>F17</td>
+<td>Time for one cylinder: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>Δ</mi><mi>L</mi><mi>/</mi><msub><mi>v</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi></mrow></msub><mo>+</mo><mi>Δ</mi><mi>L</mi><mi>/</mi><msub><mi>v</mi><mrow><mi>r</mi><mi>e</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">t = \Delta L / v_{ext} + \Delta L / v_{ret}</annotation></semantics></math></td>
+<td>s</td>
+</tr>
+<tr class="odd">
+<td>F18</td>
+<td>Cycle time: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mrow><mi>c</mi><mi>y</mi><mi>c</mi><mi>l</mi><mi>e</mi></mrow></msub><mo>=</mo><msub><mi>t</mi><mn>1</mn></msub><mo>+</mo><msub><mi>t</mi><mn>2</mn></msub><mo>+</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">t_{cycle} = t_1 + t_2 + 2</annotation></semantics></math> s</td>
+<td>s</td>
+</tr>
+<tr class="even">
+<td>F19</td>
+<td>Largest flow in the cap-end hose: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi>c</mi><mi>a</mi><mi>p</mi></mrow></msub><mo>=</mo><mi>Q</mi><mo>×</mo><msub><mi>A</mi><mi>c</mi></msub><mi>/</mi><msub><mi>A</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">Q_{cap} = Q \times A_c / A_r</annotation></semantics></math></td>
+<td>in<sup>3</sup>/s</td>
+</tr>
+<tr class="odd">
+<td>F20</td>
+<td>Hand check of the forces at the worst point <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math>: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mo>−</mo><mi>s</mi><mi>/</mi><mn>2</mn><mo>−</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">\Delta x_1 = -s/2 - x</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mi>s</mi><mi>/</mi><mn>2</mn><mo>−</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">\Delta x_2 = s/2 - x</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>y</mi><mo>=</mo><mi>H</mi><mo>−</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">\Delta y = H - y</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>i</mi></msub><mo>=</mo><msqrt><mrow><mi>Δ</mi><msubsup><mi>x</mi><mi>i</mi><mn>2</mn></msubsup><mo>+</mo><mi>Δ</mi><msup><mi>y</mi><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">L_i = \sqrt{\Delta x_i^2 + \Delta y^2}</annotation></semantics></math>. Then <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>2</mn></msub><mo>=</mo><mi>W</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><mi>y</mi><mi>/</mi><msub><mi>L</mi><mn>2</mn></msub><mo>−</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><msub><mi>x</mi><mn>2</mn></msub><mi>/</mi><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><mi>y</mi><mi>/</mi><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><msub><mi>x</mi><mn>1</mn></msub><mi>/</mi><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">T_2 = W / \left(\Delta y / L_2 - (\Delta x_2 / L_2)(\Delta y / L_1) / (\Delta x_1 / L_1)\right)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>1</mn></msub><mo>=</mo><mo>−</mo><msub><mi>T</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><msub><mi>x</mi><mn>2</mn></msub><mi>/</mi><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Δ</mi><msub><mi>x</mi><mn>1</mn></msub><mi>/</mi><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">T_1 = -T_2 (\Delta x_2 / L_2) / (\Delta x_1 / L_1)</annotation></semantics></math></td>
+<td>lb</td>
+</tr>
+</tbody>
+</table>
+<h2 id="formulas-for-homework-3">Formulas for homework 3</h2>
+<table>
+<caption>Formulas for homework 3.</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 68%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>No.</th>
+<th>Formula</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>F21</td>
+<td>Oil volume for one cycle: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><mi>Δ</mi><msub><mi>L</mi><mn>1</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mrow><mi>c</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>A</mi><mrow><mi>r</mi><mn>1</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>Δ</mi><msub><mi>L</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mrow><mi>c</mi><mn>2</mn></mrow></msub><mo>+</mo><msub><mi>A</mi><mrow><mi>r</mi><mn>2</mn></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">V = \Delta L_1 (A_{c1} + A_{r1}) + \Delta L_2 (A_{c2} + A_{r2})</annotation></semantics></math></td>
+<td>in<sup>3</sup></td>
+</tr>
+<tr class="even">
+<td>F22</td>
+<td>Minimum flow rate: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>V</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>−</mo><msub><mi>t</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q_{min} = V / (t_{max} - t_{effector})</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">t_{max}</annotation></semantics></math> = your maximum cycle time and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub><annotation encoding="application/x-tex">t_{effector}</annotation></semantics></math> = 2 s. To get gpm: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> 60 s/min / 231 in<sup>3</sup>/gal</td>
+<td>in<sup>3</sup>/s, gpm</td>
+</tr>
+<tr class="odd">
+<td>F23</td>
+<td>Minimum pump displacement: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mi>p</mi></msub><mo>=</mo><msub><mi>Q</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>N</mi><msub><mi>η</mi><mi>v</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D_p = Q_{min} / (N \eta_v)</annotation></semantics></math>. First convert <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">Q_{min}</annotation></semantics></math> to in<sup>3</sup>/min (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> 60 s/min); <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math> in rev/min</td>
+<td>in<sup>3</sup>/rev</td>
+</tr>
+<tr class="even">
+<td>F24</td>
+<td>Pump flow rate: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo>=</mo><msub><mi>D</mi><mi>p</mi></msub><mi>N</mi><msub><mi>η</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">Q = D_p N \eta_v</annotation></semantics></math></td>
+<td>in<sup>3</sup>/min</td>
+</tr>
+<tr class="odd">
+<td>F25</td>
+<td>Input power: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub><mi>Q</mi><mi>/</mi><msub><mi>η</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">P_{in} = p_{relief} Q / \eta_o</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> in in<sup>3</sup>/s. Result in in-lbf/s; convert with 1 hp = 6,600 in-lbf/s</td>
+<td>hp</td>
+</tr>
+<tr class="even">
+<td>F26</td>
+<td>PTO torque: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><msub><mi>P</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mi>/</mi><mi>ω</mi></mrow><annotation encoding="application/x-tex">\tau = P_{in} / \omega</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">P_{in}</annotation></semantics></math> in in-lbf/s and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ω</mi><mo>=</mo><mn>2</mn><mi>π</mi><mi>N</mi></mrow><annotation encoding="application/x-tex">\omega = 2 \pi N</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math> in rev/s (rev/min / 60 s/min)</td>
+<td>in-lbf</td>
+</tr>
+<tr class="odd">
+<td>F27</td>
+<td>Reservoir volume: 1 to 3 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> pump flow rate in gpm</td>
+<td>gal</td>
+</tr>
+<tr class="even">
+<td>F28</td>
+<td>Hose inside diameter: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><msqrt><mrow><mn>4</mn><mi>Q</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">d_{hose} = \sqrt{4 Q / (\pi v_{max})}</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> in in<sup>3</sup>/s. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">v_{max}</annotation></semantics></math> = 180 in/s (pressure line and cylinder hoses), 120 in/s (return line), 48 in/s (suction line)</td>
+<td>in</td>
+</tr>
+<tr class="odd">
+<td>F29</td>
+<td>Hitch: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><msub><mi>W</mi><mi>i</mi></msub><mo>×</mo><msub><mi>d</mi><mrow><mi>c</mi><mi>g</mi></mrow></msub></mrow><annotation encoding="application/x-tex">M = W_i \times d_{cg}</annotation></semantics></math>. PASS if <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>≤</mo><msub><mi>F</mi><mn>24</mn></msub><mo>×</mo><mn>24</mn></mrow><annotation encoding="application/x-tex">M \le F_{24} \times 24</annotation></semantics></math> in</td>
+<td>in-lb</td>
+</tr>
+<tr class="even">
+<td>F30</td>
+<td>Front axle: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>f</mi><mi>r</mi><mi>o</mi><mi>n</mi><mi>t</mi></mrow></msub><mo>=</mo><mn>0.4</mn><mo>×</mo><msub><mi>W</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub><mo>−</mo><msub><mi>W</mi><mi>i</mi></msub><mo>×</mo><mi>a</mi><mi>/</mi><mi>W</mi><mi>B</mi></mrow><annotation encoding="application/x-tex">F_{front} = 0.4 \times W_{tractor} - W_i \times a / WB</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math> = 20 in (groups 1 to 5) or 24 in (groups 6 to 9) <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><msub><mi>d</mi><mrow><mi>c</mi><mi>g</mi></mrow></msub></mrow><annotation encoding="application/x-tex">+ d_{cg}</annotation></semantics></math>. PASS if <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>f</mi><mi>r</mi><mi>o</mi><mi>n</mi><mi>t</mi></mrow></msub><mo>≥</mo><mn>0.2</mn><mo>×</mo><msub><mi>W</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_{front} \ge 0.2 \times W_{tractor}</annotation></semantics></math></td>
+<td>lb</td>
+</tr>
+<tr class="odd">
+<td>F31</td>
+<td>Side tip-over: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></msub><mo>=</mo><msub><mi>W</mi><mrow><mi>b</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>×</mo><msub><mi>x</mi><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">M_{side} = W_{bin} \times x_d</annotation></semantics></math>. PASS if <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mrow><mi>s</mi><mi>i</mi><mi>d</mi><mi>e</mi></mrow></msub><mo>&lt;</mo><msub><mi>W</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>t</mi><mi>o</mi><mi>r</mi></mrow></msub><mo>×</mo><msub><mi>t</mi><mi>w</mi></msub><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">M_{side} &lt; W_{tractor} \times t_w / 2</annotation></semantics></math></td>
+<td>in-lb</td>
+</tr>
+</tbody>
+</table>
+</section>
 <section class="tabpane" role="tabpanel" id="p-hw1" data-tab="hw1"><h2 id="homework-1-the-load-the-twin-and-the-cylinder-forces">Homework 1: the load, the twin and the cylinder forces</h2>
 <p><strong>Done this week, by task.</strong></p>
 <p><strong>Task 1. Load and heights (A).</strong></p>
@@ -192,7 +865,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <li>F5 (after task 2): <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>d</mi></msub><mo>=</mo><msub><mi>x</mi><mi>b</mi></msub><mo>+</mo><msub><mi>w</mi><mi>b</mi></msub><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">x_d = x_b + w_b / 2</annotation></semantics></math> = 46.5 in + 16 in / 2 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;carry&quot;: true}'><strong>54.5 in</strong></button>.</li>
 </ul>
 <p>The pick width (48 in) comes from the field: cantaloupe rows are 6 ft (72 in) apart. The fruit lie in a 48 in band centered on the row, from x = -24 to +24 in. The arm center is over the row center.</p>
-<p><strong>Task 2. First geometry in the twin (A and B).</strong> We pushed Load tractor start. Then we entered our values (Table 16): Load: Ball, Height 6, Weight 4, Gripper weight 25. Bin and pick width: Show the bin, Pick width 48, Bin rim height 36, Bin width 16, Rim clearance 4. Cylinders and hydraulics: Pressure 2347, Flow setting 6.3. Arm geometry: Gripper length 12. We kept the tractor start bore, rod and valves (week 1 values). We set the retracted length with F6: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{min} = S</annotation></semantics></math> + 10 in = 30 + 10 = 40 in. Then we changed one value at a time:</p>
+<p><strong>Task 2. First geometry in the twin (A and B).</strong> We pushed Load tractor start. Then we entered our values (the twin settings table in the Reference tab): Load: Ball, Height 6, Weight 4, Gripper weight 25. Bin and pick width: Show the bin, Pick width 48, Bin rim height 36, Bin width 16, Rim clearance 4. Cylinders and hydraulics: Pressure 2347, Flow setting 6.3. Arm geometry: Gripper length 12. We kept the tractor start bore, rod and valves (week 1 values). We set the retracted length with F6: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{min} = S</annotation></semantics></math> + 10 in = 30 + 10 = 40 in. Then we changed one value at a time:</p>
 <table>
 <caption>Table H1-1. Trials in the twin (H = 72 in, S = 30 in, L_min = 40 in).</caption>
 <colgroup>
@@ -434,7 +1107,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>Stroke and retracted length</td><td>catalog cylinder, Bailey 288411</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Stroke&quot;, &quot;readout&quot;: &quot;Pick zone x range&quot;}'>S = 30 in, L_min = 40.25 in</button></td></tr>
 </tbody></table></details>
 <details open><summary>All design settings, folder by folder</summary><h2 id="settings">Design settings in the twin, folder by folder</h2>
-<p>These are all the values that we entered in Settings, at the bottom of the twin panel. We kept the tractor start value of every other field. Point at a value to see its field in the twin. The last column tells where the value comes from. Table 16 of the assignment gives the same list for your own design.</p>
+<p>These are all the values that we entered in Settings, at the bottom of the twin panel. We kept the tractor start value of every other field. Point at a value to see its field in the twin. The last column tells where the value comes from. The Reference tab gives the same list for your own design.</p>
 <h3>Arm geometry (required)</h3>
 <table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
 <tr><td>Pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;}'>16 in</button></td><td>Selected by trials (Table V-trial below). The pick width needs 48 in and the drop point must be reachable.</td></tr>
@@ -464,7 +1137,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>Bin rim height (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin rim height (in)&quot;}'>36 in</button></td><td>Table 1.</td></tr>
 <tr><td>Bin inner rim distance (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>46.5 in</button></td><td>The nearest position with Rim clearance = OK (46.0 in is NOT OK).</td></tr>
 <tr><td>Bin width (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bin width (in)&quot;}'>16 in</button></td><td>Values to assume.</td></tr>
-<tr><td>Rim clearance (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rim clearance (in)&quot;}'>4 in</button></td><td>Requirement 2.</td></tr>
+<tr><td>Rim clearance (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rim clearance (in)&quot;}'>4 in</button></td><td>The minimum rim clearance (Reference tab, values to assume).</td></tr>
 </tbody></table>
 <h3>Counterbalance valves (required)</h3>
 <table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
@@ -595,7 +1268,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </tbody></table></details></section>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029s" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261030a" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
