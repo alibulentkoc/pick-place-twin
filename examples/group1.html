@@ -75,6 +75,7 @@ ul.checks li{ margin:.15rem 0; }
 .tabs{ position:sticky; top:0; z-index:3; display:flex; gap:.25rem; flex-wrap:wrap; background:var(--panel); padding:.6rem 0 .5rem; margin:.8rem 0 0; border-bottom:2px solid var(--line); }
 .tab{ font:inherit; font-weight:700; font-size:.95rem; padding:.4rem .8rem; border:1px solid var(--line); border-bottom:0; border-radius:5px 5px 0 0; background:var(--paper); color:var(--muted); cursor:pointer; }
 .tab[aria-selected="true"]{ background:var(--mark); color:var(--ink); border-color:var(--markline); }
+.tabpane h2, .tabpane h3, .tabpane section{ scroll-margin-top:4.5rem; }
 .tabpane{ display:none; } .tabpane.on{ display:block; }
 details{ border:1px solid var(--line); border-radius:6px; padding:.4rem .8rem; margin:.8rem 0; }
 details > summary{ cursor:pointer; font-weight:700; }
@@ -416,7 +417,20 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p><strong>Who did what.</strong> Student A: tasks 1, 3, 4 and 6. Student B: tasks 2 and 4. Student C: task 5.</p>
 <p><strong>Plan for next week.</strong> Student A: size the cylinders. Student B: counterbalance valves and the Option A circuit. Student C: speeds and cycle time.</p>
 
-<details><summary>All design settings, folder by folder</summary><h2 id="settings">Design settings in the twin, folder by folder</h2>
+<details open><summary>Inputs and the first formulas</summary><h2 id="inputs">Inputs</h2>
+<p>Group 1 picks cantaloupe (4 lb, 6 in diameter) with a Kubota L3301. The twin on the right has these values. Point at a yellow value to see where it is in the twin. Select it to move the twin there.</p>
+<table class="calc"><caption>Table V-in. Inputs and the first formulas</caption><thead><tr><th>Item</th><th>Calculation</th><th>Result</th></tr></thead><tbody>
+<tr><td>Load at the tip (F1)</td><td>4 lb fruit + 25 lb end effector</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Weight (lb)&quot;}'>W = 29 lb</button></td></tr>
+<tr><td>Fruit radius (F2)</td><td>6 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Height (in)&quot;}'>r = 3 in</button></td></tr>
+<tr><td>Grasp height (F3)</td><td>r + g = 3 in + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick height (tip)&quot;, &quot;tip&quot;: [-24, 15], &quot;ground&quot;: true, &quot;field&quot;: &quot;Gripper length&quot;}'>y_g = 15 in</button></td></tr>
+<tr><td>Drop height (F4)</td><td>h_rim + c + r + g = 36 + 4 + 3 + 12 in</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;carry&quot;: true, &quot;field&quot;: &quot;Bin rim height (in)&quot;}'>y_d = 55 in</button></td></tr>
+<tr><td>Drop distance (F5)</td><td>x_b + w_b / 2 = 46.5 in + 16 in / 2</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Drop point (bin)&quot;, &quot;tip&quot;: [54.5, 55], &quot;carry&quot;: true, &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>x_d = 54.5 in</button></td></tr>
+<tr><td>Pressure limit (F7)</td><td>0.8 x 2,347 psi</td><td>p_allow = 1,878 psi</td></tr>
+<tr><td>Bar height</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bar height&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>H = 72 in</button></td></tr>
+<tr><td>Pivot spacing</td><td>selected in the twin</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Pivot spacing&quot;, &quot;readout&quot;: &quot;Pick width reached&quot;}'>s = 16 in</button></td></tr>
+<tr><td>Stroke and retracted length</td><td>catalog cylinder, Bailey 288411</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Stroke&quot;, &quot;readout&quot;: &quot;Pick zone x range&quot;}'>S = 30 in, L_min = 40.25 in</button></td></tr>
+</tbody></table></details>
+<details open><summary>All design settings, folder by folder</summary><h2 id="settings">Design settings in the twin, folder by folder</h2>
 <p>These are all the values that we entered in Settings, at the bottom of the twin panel. We kept the tractor start value of every other field. Point at a value to see its field in the twin. The last column tells where the value comes from. Table 16 of the assignment gives the same list for your own design.</p>
 <h3>Arm geometry (required)</h3>
 <table class="calc"><thead><tr><th>Field</th><th>Value</th><th>Where the value comes from</th></tr></thead><tbody>
@@ -462,7 +476,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>Field of view</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Field of view&quot;}'>90 deg</button></td><td>Wide enough that the camera sees the tip at the drop point. With 60 deg the camera lost the tip there.</td></tr>
 <tr><td>Deadband (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Deadband (in)&quot;}'>0.5 in</button></td><td>The controller stops within 0.5 in of the target.</td></tr>
 </tbody></table></details>
-<details><summary>The trials as cards, with the reasons</summary><h2 id="trials">How we chose the frame</h2>
+<details open><summary>The trials as cards, with the reasons</summary><h2 id="trials">How we chose the frame</h2>
 <p>We started from the tractor start values and changed one value at a time. Each card below is one trial. The five design values of the trial are in the gray boxes; the value that we changed in that trial is yellow. Under them are the three checks of the twin, and why the trial passed or failed. Select "Show in the twin" to load the trial into the twin and see the result yourself.</p>
 <p class="rule"><strong>The rule behind every result.</strong> A cylinder can be no shorter than its retracted length L_min and no longer than L_min + S. The tip can reach a point only if both cylinder lengths to that point are in this range. Each length is L = &radic;(&Delta;x&sup2; + &Delta;y&sup2;), from the pivot of the cylinder to the tip. The pivots are at x = -s/2 and x = +s/2, at the bar height H.</p>
 <section class="trial"><h3>Trial 1. Tractor start</h3>
@@ -563,7 +577,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </ul><p class="why"><strong>Why:</strong> The forces are 30% smaller (226.9 lb and 239.2 lb): at the drop point the cylinders are steeper, so more of each force holds the load up. But the far pick point is now further from the pivots: cylinder 1 needs &radic;(32&sup2; + 65&sup2;) = 72.4 in, more than its 70.25 in maximum.</p><p class="dec"><strong>Decision:</strong> Smaller forces, but the pick width fails. Keep H = 72 in.</p>
 <p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 80, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 7 in the twin</button></p></section>
 <p class="small">After trials 6 and 7, select "Load the Group 1 values again" to go back to the design.</p></details>
-<details><summary>Where each twin value comes from</summary><h2 id="twin">Where the twin values come from</h2>
+<details open><summary>Where each twin value comes from</summary><h2 id="twin">Where the twin values come from</h2>
 <p>We read each value in Readouts, the table under the 3D view of the twin. We used the lines "at the worst point" and "in the work path". The lines "Cylinder 1 force" and "Cylinder 2 force" are for the present tip position only.</p>
 <table class="calc"><caption>Table V0. Twin values and where we read them</caption><thead><tr><th>Value</th><th>What we did in the twin</th><th>Readout line and value</th></tr></thead><tbody>
 <tr><td>Pick width</td><td>Arm geometry: Bar height 72, Pivot spacing 16, Retracted length 40.25, Stroke 30. Bin and pick width: Pick width 48.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Pick width reached&quot;, &quot;field&quot;: &quot;Pick width (in)&quot;, &quot;tip&quot;: [-24, 15]}'>Pick width reached: yes (-24.0 to +24.0 in)</button></td></tr>
@@ -690,7 +704,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p><strong>Task 8. What if the flow rate is 20% less?</strong> F15: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> = 0.8 x 24.26 = 19.41 in³/s. F16: 19.41 / 3.142 = 6.18 in/s; 19.41 / 1.914 = 10.14 in/s. F17: cylinder 1: 5.57 / 6.18 + 5.57 / 10.14 = 1.45 s; cylinder 2: 15.86 / 6.18 + 15.86 / 10.14 = 4.13 s. F18: 1.45 + 4.13 + 2 = <strong>7.58 s</strong>. It still passes, but with only 0.42 s of margin.</p>
 <p><strong>Problems and decisions.</strong> The stocked sizes set the bore, not the pressure: 345 psi is only 18% of the limit. The counterbalance setting (435 psi) is the catalog minimum, not 1.3 x p_h.</p>
 
-<details><summary>The full Cylinder card</summary><h2 id="cyl">Cylinder card</h2>
+<details open><summary>The full Cylinder card</summary><h2 id="cyl">Cylinder card</h2>
 <table class="calc card"><caption>Table V1. Group 1 Cylinder card</caption><thead><tr><th>Row</th><th>What to do</th><th>Cylinder 1</th><th>Cylinder 2</th></tr></thead><tbody>
 <tr><td>1</td><td>Largest force in the work path (twin)</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;, &quot;worst&quot;: true}'>T_1 = 321.1 lb, push</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;, &quot;worst&quot;: true}'>T_2 = 329.9 lb, pull</button></td></tr>
 <tr><td>2</td><td>End that holds the load</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;}'>both ends: cap end (push), rod end (pull)</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;}'>both ends: rod end (pull), cap end (push)</button></td></tr>
@@ -1033,7 +1047,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </table>
 <p>For a new design, we would select the bin on the ground. The fruit falls less, so it bruises less, and the forces are much smaller. The bin then sits in the lane between the fruit bands (from 25 to 41 in), where the wheels travel. But a 12 in bin holds less fruit and must be changed more often.</p>
 
-<details><summary>Supply card and Hose table as cards</summary><h2 id="supply">Supply card</h2>
+<details open><summary>Supply card and Hose table</summary><h2 id="supply">Supply card</h2>
 <p>These values come from calculations, not from the twin.</p>
 <table class="calc"><caption>Table V2. Group 1 Supply card</caption><thead><tr><th>Row</th><th>What to do</th><th>Value</th></tr></thead><tbody>
 <tr><td>1</td><td>F21: oil volume V</td><td>(5.57 in + 15.86 in) x (3.142 in&sup2; + 1.914 in&sup2;) = 108.4 in&sup3;</td></tr>
@@ -1063,7 +1077,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <div class="bar"><button type="button" id="demo">Place 3 fruits at random and pick them</button><button type="button" id="stop">Stop</button></div></section>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029q" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029r" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
