@@ -56,6 +56,22 @@ h3{ font-family:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif; font-we
 figure{ margin:1rem 0; }
 figure img{ width:100%; height:auto; border:1px solid var(--line); background:#fff; }
 figcaption{ font-size:.9rem; color:var(--muted); margin-top:.3rem; }
+section.trial{ border:1px solid var(--line); border-radius:6px; padding:.6rem .8rem .2rem; margin:.8rem 0; background:var(--panel); }
+section.trial h3{ margin:.1rem 0 .3rem; }
+.chg-note{ margin:.1rem 0 .5rem; font-size:.92rem; }
+.vals{ display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:.35rem; margin:.3rem 0 .5rem; }
+.val{ background:var(--paper); border:1px solid var(--line); border-radius:4px; padding:.3rem .35rem; }
+.val.changed{ background:var(--mark); border-color:var(--markline); }
+.val .vl{ display:block; font-size:.72rem; color:var(--muted); line-height:1.2; }
+.val.changed .vl{ color:var(--ink); }
+.val .vv{ display:block; font-weight:700; font-variant-numeric:tabular-nums; }
+ul.checks{ list-style:none; padding:0; margin:.2rem 0 .4rem; font-size:.93rem; }
+ul.checks li{ margin:.15rem 0; }
+.mk{ display:inline-block; min-width:3.2em; text-align:center; font-weight:700; font-size:.78rem; border-radius:3px; padding:0 .3em; margin-right:.3em; }
+.mk.pass{ background:#d8efdc; color:#1d5e2b; } .mk.fail{ background:#f6d6d3; color:#8c2219; } .mk.na{ background:var(--paper); color:var(--muted); }
+.why, .dec{ font-size:.93rem; margin:.3rem 0; }
+.rule{ border-left:4px solid var(--line); padding:.3rem .8rem; font-size:.95rem; }
+@media (max-width: 1150px){ .vals{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
 button.lk{ font:inherit; color:inherit; text-align:left; padding:0 .15rem; margin:0; border:0; border-radius:2px;
   background:transparent; border-bottom:2px dotted var(--markline); cursor:pointer; }
 button.lk:hover, button.lk:focus-visible, button.lk.on{ background:var(--mark); outline:none; }
@@ -131,17 +147,106 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>Deadband (in)</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Deadband (in)&quot;}'>0.5 in</button></td><td>The controller stops within 0.5 in of the target.</td></tr>
 </tbody></table>
 <h2 id="trials">How we chose the frame</h2>
-<p>We started from the tractor start values and changed one value at a time. Select a row: the twin takes those values, so you can see the result yourself. The last row is our design.</p>
-<table class="calc"><caption>Table V-trial. Trials in the twin</caption><thead><tr><th>Trial</th><th>s, H, L_min, S, x_b (in)</th><th>Pick width reached</th><th>Drop point</th><th>Rim clearance</th><th>Decision</th></tr></thead><tbody>
-<tr><td>1. Tractor start</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 60, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>60, 72, 40, 30, 45</button></td><td>NO (-10.6 to 10.6 in)</td><td>NOT reachable</td><td>-</td><td>Pivots too far apart: the tip cannot reach the ends of the pick width.</td></tr>
-<tr><td>2. Smaller pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 30, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>30, 72, 40, 30, 45</button></td><td>yes (-25.6 to 25.6 in)</td><td>NOT reachable</td><td>-</td><td>Pick width OK. The drop point is still out of reach.</td></tr>
-<tr><td>3. Smaller pivot spacing</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40, 30, 45</button></td><td>yes (-32.6 to 32.6 in)</td><td>reachable</td><td>NOT OK at 45 in</td><td>Both reach checks pass. Move the bin out.</td></tr>
-<tr><td>4. Bin out</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40, 30, 46.5</button></td><td>yes</td><td>reachable</td><td>OK at 46.5 in</td><td>First design that passes. Forces 321.1 lb push, 329.9 lb pull.</td></tr>
-<tr><td>5. Shorter stroke</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 34.25, &quot;stroke&quot;: 24, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 34.25, 24, 46.5</button></td><td>NO (-4.0 to 4.0 in)</td><td>NOT reachable</td><td>-</td><td>A 24 in cylinder does not reach. Keep 30 in.</td></tr>
-<tr><td>6. Taller bar</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 80, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 80, 40.25, 30, 46.5</button></td><td>NO (-18.6 to 18.6 in)</td><td>reachable</td><td>OK</td><td>Forces 30% smaller, but the pick width fails. Keep 72 in.</td></tr>
-<tr><td>7. Catalog cylinder (design)</td><td><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>16, 72, 40.25, 30, 46.5</button></td><td>yes (-33.1 to 33.0 in)</td><td>reachable</td><td>OK at 46.5 in</td><td>Our design: same forces, 321.1 lb and 329.9 lb.</td></tr>
-</tbody></table>
-<p class="small">After trial 6, select trial 7 or "Load the Group 1 values again" to go back to the design.</p>
+<p>We started from the tractor start values and changed one value at a time. Each card below is one trial. The five design values of the trial are in the gray boxes; the value that we changed in that trial is yellow. Under them are the three checks of the twin, and why the trial passed or failed. Select "Show in the twin" to load the trial into the twin and see the result yourself.</p>
+<p class="rule"><strong>The rule behind every result.</strong> A cylinder can be no shorter than its retracted length L_min and no longer than L_min + S. The tip can reach a point only if both cylinder lengths to that point are in this range. Each length is L = &radic;(&Delta;x&sup2; + &Delta;y&sup2;), from the pivot of the cylinder to the tip. The pivots are at x = -s/2 and x = +s/2, at the bar height H.</p>
+<section class="trial"><h3>Trial 1. Tractor start</h3>
+<div class="vals">
+<div class="val"><span class="vl">Pivot spacing s</span><span class="vv">60 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val"><span class="vl">Retracted length L_min</span><span class="vv">40 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">45 in</span></div>
+</div><ul class="checks">
+<li><span class="mk fail">FAIL</span> Pick width reached: only -10.6 to 10.6 in</li>
+<li><span class="mk fail">FAIL</span> Drop point: not reachable</li>
+<li><span class="mk na">-</span> Rim clearance: not checked</li>
+</ul><p class="why"><strong>Why:</strong> The pivots are at x = &plusmn;30 in. To reach the far pick point (-24, 15), cylinder 2 must be &radic;(54&sup2; + 57&sup2;) = 78.5 in long: more than L_min + S = 70 in.</p><p class="dec"><strong>Decision:</strong> The pivots are too far apart. Make s smaller.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 60, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 1 in the twin</button></p></section>
+<section class="trial"><h3>Trial 2. Smaller pivot spacing</h3>
+<p class="chg-note">Changed: s: 60 to 30 in</p>
+<div class="vals">
+<div class="val changed"><span class="vl">Pivot spacing s</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val"><span class="vl">Retracted length L_min</span><span class="vv">40 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">45 in</span></div>
+</div><ul class="checks">
+<li><span class="mk pass">PASS</span> Pick width reached: -25.6 to 25.6 in</li>
+<li><span class="mk fail">FAIL</span> Drop point: not reachable</li>
+<li><span class="mk na">-</span> Rim clearance: not checked</li>
+</ul><p class="why"><strong>Why:</strong> For the far pick point, cylinder 2 now needs &radic;(39&sup2; + 57&sup2;) = 69.1 in: less than 70 in. For the drop point (53, 55), cylinder 1 needs &radic;(68&sup2; + 17&sup2;) = 70.1 in: just more than 70 in.</p><p class="dec"><strong>Decision:</strong> The pick width passes, but the drop point is still out of reach. Make s smaller again.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 30, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 2 in the twin</button></p></section>
+<section class="trial"><h3>Trial 3. Smaller pivot spacing again</h3>
+<p class="chg-note">Changed: s: 30 to 16 in</p>
+<div class="vals">
+<div class="val changed"><span class="vl">Pivot spacing s</span><span class="vv">16 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val"><span class="vl">Retracted length L_min</span><span class="vv">40 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">45 in</span></div>
+</div><ul class="checks">
+<li><span class="mk pass">PASS</span> Pick width reached: -32.6 to 32.6 in</li>
+<li><span class="mk pass">PASS</span> Drop point: reachable</li>
+<li><span class="mk fail">FAIL</span> Rim clearance: NOT OK with the bin at 45 in</li>
+</ul><p class="why"><strong>Why:</strong> At the drop point, cylinder 1 needs 63.3 in and cylinder 2 needs 48.1 in: both in the range 40 to 70 in. But when the front of the fruit is above the rim, the tip must be at (42, 52). Cylinder 2 would need &radic;(34&sup2; + 20&sup2;) = 39.4 in: shorter than L_min = 40 in. The cylinder cannot retract enough to lift the fruit that high there.</p><p class="dec"><strong>Decision:</strong> Both reach checks pass. Move the bin away from the arm.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 45}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 3 in the twin</button></p></section>
+<section class="trial"><h3>Trial 4. Bin further out</h3>
+<p class="chg-note">Changed: x_b: 45 to 46.5 in (46.0 in still fails)</p>
+<div class="vals">
+<div class="val"><span class="vl">Pivot spacing s</span><span class="vv">16 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val"><span class="vl">Retracted length L_min</span><span class="vv">40 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val changed"><span class="vl">Bin inner rim distance x_b</span><span class="vv">46.5 in</span></div>
+</div><ul class="checks">
+<li><span class="mk pass">PASS</span> Pick width reached: -32.6 to 32.6 in</li>
+<li><span class="mk pass">PASS</span> Drop point: reachable</li>
+<li><span class="mk pass">PASS</span> Rim clearance: OK at 46.5 in</li>
+</ul><p class="why"><strong>Why:</strong> The rim point moves to (43.5, 52). Cylinder 2 now needs &radic;(35.5&sup2; + 20&sup2;) = 40.7 in: longer than L_min = 40 in.</p><p class="dec"><strong>Decision:</strong> The first design that passes all checks. The forces at the worst point are 321.1 lb push (cylinder 1) and 329.9 lb pull (cylinder 2).</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 4 in the twin</button></p></section>
+<section class="trial"><h3>Trial 5. Catalog cylinder: our design</h3>
+<p class="chg-note">Changed: L_min: 40 to 40.25 in (Bailey 288411, 2 x 30 in)</p>
+<div class="vals">
+<div class="val"><span class="vl">Pivot spacing s</span><span class="vv">16 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val changed"><span class="vl">Retracted length L_min</span><span class="vv">40.25 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">46.5 in</span></div>
+</div><ul class="checks">
+<li><span class="mk pass">PASS</span> Pick width reached: -33.1 to 33.0 in</li>
+<li><span class="mk pass">PASS</span> Drop point: reachable</li>
+<li><span class="mk pass">PASS</span> Rim clearance: OK at 46.5 in</li>
+</ul><p class="why"><strong>Why:</strong> The real cylinder is 0.25 in longer when retracted. The reach changes very little. The forces stay at 321.1 lb and 329.9 lb: they depend only on where the pivots and the tip are, not on the length range of the cylinders.</p><p class="dec"><strong>Decision:</strong> This is our design. Trials 6 and 7 check two other choices against it.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 5 in the twin</button></p></section>
+<section class="trial"><h3>Trial 6. Check: a shorter cylinder</h3>
+<p class="chg-note">Changed: from trial 5: S 30 to 24 in, L_min 40.25 to 34.25 in</p>
+<div class="vals">
+<div class="val"><span class="vl">Pivot spacing s</span><span class="vv">16 in</span></div>
+<div class="val"><span class="vl">Bar height H</span><span class="vv">72 in</span></div>
+<div class="val changed"><span class="vl">Retracted length L_min</span><span class="vv">34.25 in</span></div>
+<div class="val changed"><span class="vl">Stroke S</span><span class="vv">24 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">46.5 in</span></div>
+</div><ul class="checks">
+<li><span class="mk fail">FAIL</span> Pick width reached: only -4.0 to 4.0 in</li>
+<li><span class="mk fail">FAIL</span> Drop point: not reachable</li>
+<li><span class="mk na">-</span> Rim clearance: not checked</li>
+</ul><p class="why"><strong>Why:</strong> A 24 in cylinder can be at most 34.25 + 24 = 58.25 in long. The far pick point needs &radic;(32&sup2; + 57&sup2;) = 65.4 in.</p><p class="dec"><strong>Decision:</strong> It does not reach. Keep the 30 in stroke.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 34.25, &quot;stroke&quot;: 24, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 6 in the twin</button></p></section>
+<section class="trial"><h3>Trial 7. Check: a taller bar</h3>
+<p class="chg-note">Changed: from trial 5: H 72 to 80 in</p>
+<div class="vals">
+<div class="val"><span class="vl">Pivot spacing s</span><span class="vv">16 in</span></div>
+<div class="val changed"><span class="vl">Bar height H</span><span class="vv">80 in</span></div>
+<div class="val"><span class="vl">Retracted length L_min</span><span class="vv">40.25 in</span></div>
+<div class="val"><span class="vl">Stroke S</span><span class="vv">30 in</span></div>
+<div class="val"><span class="vl">Bin inner rim distance x_b</span><span class="vv">46.5 in</span></div>
+</div><ul class="checks">
+<li><span class="mk fail">FAIL</span> Pick width reached: only -18.6 to 18.6 in</li>
+<li><span class="mk pass">PASS</span> Drop point: reachable</li>
+<li><span class="mk pass">PASS</span> Rim clearance: OK</li>
+</ul><p class="why"><strong>Why:</strong> The forces are 30% smaller (226.9 lb and 239.2 lb): at the drop point the cylinders are steeper, so more of each force holds the load up. But the far pick point is now further from the pivots: cylinder 1 needs &radic;(32&sup2; + 65&sup2;) = 72.4 in, more than its 70.25 in maximum.</p><p class="dec"><strong>Decision:</strong> Smaller forces, but the pick width fails. Keep H = 72 in.</p>
+<p><button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 80, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 46.5}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Pick width reached&quot;}'>Show trial 7 in the twin</button></p></section>
+<p class="small">After trials 6 and 7, select "Load the Group 1 values again" to go back to the design.</p>
 <h2 id="pickplace">Pick and place</h2>
 <p>Select the button: the twin puts three cantaloupes at random places in the pick width (at least 14 in apart) and moves each one to the bin. It shows the path: up from the fruit, along the top of the reach band, over the bin rim, and down to the drop point. Watch the status line in the twin for each step.</p>
 <p>The demonstration moves the tip along a safe path. It does not show the valve timing. For the cycle time, use F17 and F18 (Cylinder card row 13): 6.46 s.</p>
@@ -217,7 +322,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029n" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261029o" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
