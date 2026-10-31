@@ -5,6 +5,7 @@
 - Worked example page (examples/group1.html): the Group 1 example report next to the live twin. Pointing at a value flashes its settings field and its Readouts line in the twin. The page lists every design setting with the reason for its value, shows the frame trials, and runs a pick-and-place demonstration with fruits at random places.
 - The twin can now take values and commands from a page that embeds it. Long readout values now wrap.
 - Tractor start now has a round crop (Ball, 8 in, 8 lb) and a 25 lb gripper, not a bale. "Add object" therefore places a round fruit.
+- Run the arm: Camera auto no longer places a hidden object; place one by coordinates or push Random object. The placement box is open and easier to see. An empty harness does not push objects (its straps are slack).
 - Group 9 options: End effector = Harness on hook (a hook, straps and a cradle; an operator attaches and releases it, 10 s each; no jaw opening or slip check), and Bin type = Pallet trailer (a flat deck at the rim height, at least the object diameter + 6 in wide; the object is lowered onto it).
 - Collision checks: the cylinder length sliders now stop before the gripper hits an object, the bin wall, the floor or the bar. The object in the gripper can no longer pass through another object. The pick-and-place demonstration stops with a message if a step would collide.
 - Default view: the camera arm and the cylinders now face you, and the frame legs stand behind the bar. You no longer need to turn the view around.
