@@ -2327,10 +2327,12 @@ function binHit(t){
   // plate and actuator at the tip; two fingers at the current opening, hanging gripLen below the tip pin
   var G = gripGeo(), w = gripW(S.grip), fb = t.y - PIV_DROP - P.gripLen, parts = [[t.x - G.bw / 2, t.x + G.bw / 2, t.y - 0.6, t.y + 1.6]];
   [-1, 1].forEach(function(sg){ var fx = t.x + sg * (w / 2 + FT); parts.push([fx - 0.25, fx + 0.25, fb, t.y - PIV_DROP]); });
-  if (S.held) { var hx = halfX(), cy = t.y - P.gripLen; parts.push([t.x - hx, t.x + hx, cy - P.objH / 2, cy + P.objH / 2]); }
+  var ball = null;   // a held ball is checked as a circle (as the rim check does), other shapes as a box
+  if (S.held) { var hx = halfX(), cy = t.y - P.gripLen; if (P.shape === 'Ball') ball = { x:t.x, cy:cy, r:P.objH / 2 }; else parts.push([t.x - hx, t.x + hx, cy - P.objH / 2, cy + P.objH / 2]); }
   for (var w = 0; w < 2; w++) {
     var xw = w === 0 ? P.binIn : P.binIn + binWidth();
     for (var k = 0; k < parts.length; k++) { var q = parts[k]; if (q[0] < xw + 0.3 && q[1] > xw - 0.3 && q[2] < P.binRim + 0.05) return true; }
+    if (ball) { var dxw = Math.max(0, Math.abs(xw - ball.x) - 0.3); if (dxw < ball.r && ball.cy - Math.sqrt(ball.r * ball.r - dxw * dxw) < P.binRim + 0.05) return true; }
     // the cylinders: height of each cylinder line where it passes over the wall
     var pv = pivots(), rb = P.bore / 2 + 0.3;
     for (var c = 0; c < 2; c++) {
@@ -2350,8 +2352,8 @@ function step(dt){
   S.starved = S.v[0] !== 0 && S.v[1] !== 0;
   var i = S.v[0] !== 0 ? 0 : (S.v[1] !== 0 ? 1 : -1), tc = fk(S.L[0], S.L[1]);
   if (i >= 0 && tc) {
-    var dir = S.v[i], f = forcesPerLb(tc.x, tc.y), F = f ? f[i] * tipLoad() : 0;
-    var v = (dir > 0 ? P.flow * 3.85 / Abore() : P.flow * 3.85 / Aann()) * (1 + P.flowErr / 100);
+    var dir = Math.sign(S.v[i]), f = forcesPerLb(tc.x, tc.y), F = f ? f[i] * tipLoad() : 0;
+    var v = Math.abs(S.v[i]) * (dir > 0 ? P.flow * 3.85 / Abore() : P.flow * 3.85 / Aann()) * (1 + P.flowErr / 100);   // a command below 1 is a pulsed valve
     var cr = Math.abs(F) / capFor(F), assist = (dir > 0 && F > 0) || (dir < 0 && F < 0);
     if (assist) {
       // load helps the motion: without a counterbalance valve it overruns; with one, the valve meters the return flow
@@ -2496,17 +2498,18 @@ function pickChecks(pc){
 }
 
 // ---------- Controller ----------
-var MOVING = { above:1, down:1, lift:1, tobin:1, retreat:1, home:1, 'goto':1 };
+var MOVING = { above:1, refine:1, down:1, lift:1, tobin:1, retreat:1, home:1, 'goto':1 };
 var A = { mode:'jog', phase:'idle', wp:null, Lt:null, active:-1, dir:0, lastDir:[0, 0], rev:0, phaseT:0, nextTick:0,
   obj:null, all:false, cycleT0:0, stuckT:0, lostT:0, seq:null, reached:false };
 // Carry route to the bin: points every 2 in along x. Each point aims for the drop height,
 // but stays at or below the top of the reach region at that x. The tip follows the points in turn,
 // so the on/off valves never make one long move that can dip below the bin rim.
 function carryRoute(from, to){
-  var n = Math.max(1, Math.ceil(Math.abs(to.x - from.x) / 2)), out = [];
+  var n = Math.max(1, Math.ceil(Math.abs(to.x - from.x) / 1)), out = [], rr = P.objH / 2;
   for (var k = 1; k <= n; k++) {
     var x = from.x + (to.x - from.x) * k / n, r = reachAtX(x);
-    var y = r ? Math.max(pickY(), Math.min(to.y, r.hi - 0.3)) : to.y;
+    var nearRim = x > P.binIn - rr - 3 && x < P.binIn + rr + 3;   // over the inner rim: use the full height, the rim check has no margin to spare
+    var y = r ? Math.max(pickY(), Math.min(to.y, r.hi - (nearRim ? 0.05 : 0.3))) : to.y;
     out.push({ x:x, y:k === n ? to.y : y });
   }
   return out;
@@ -2520,6 +2523,22 @@ function logCmd(ph){
   if (cmdLog.length > 6) cmdLog.pop();
 }
 function cancelAuto(){ A.phase = 'idle'; A.wp = null; A.all = false; A.seq = null; S.v = [0, 0]; }
+function dbNow(m){
+  // Near-parallel cylinders turn a small length error into a large tip error (about error / sin of the angle between them).
+  // Over the object and over the bin rim the tip must be within about the set deadband, so the length deadband shrinks with that sine.
+  if (A.phase !== 'above' && A.phase !== 'refine' && A.phase !== 'down' && A.phase !== 'tobin') return P.deadband;
+  var pv = pivots(), La = ik(m.x, m.y);
+  var sinA = Math.abs(((pv[0].x - m.x) * (pv[1].y - m.y) - (pv[0].y - m.y) * (pv[1].x - m.x)) / (La[0] * La[1])) || 1;
+  var db = Math.max(0.12, P.deadband * Math.min(1, sinA));
+  return A.phase === 'tobin' ? Math.min(db, 0.4) : db;
+}
+// Several camera frames averaged: a steadier estimate of where the object is
+function perceiveAvg(o, n){
+  var sx = 0, sy = 0, sz = 0, sw = 0, k = 0, last = null;
+  for (var i = 0; i < n; i++) { var pc = perceive(o); last = pc; if (!pc.visible || !pc.inImg) continue; sx += pc.est.x; sy += pc.est.y; sz += pc.est.z; sw += pc.wEst; k++; }
+  if (!k) return last;
+  last.est = { x:sx / k, y:sy / k, z:sz / k }; last.wEst = sw / k; return last;
+}
 function controlTick(){
   if (!A.wp) return;
   if (!vis.tip) {
@@ -2528,10 +2547,10 @@ function controlTick(){
     return;
   }
   A.lostT = 0;
-  var m = measuredTip(), Lm = ik(m.x, m.y), e = [A.Lt[0] - Lm[0], A.Lt[1] - Lm[1]], db = P.deadband, cmd = [0, 0];
+  var m = measuredTip(), Lm = ik(m.x, m.y), e = [A.Lt[0] - Lm[0], A.Lt[1] - Lm[1]], db = dbNow(m), cmd = [0, 0];
   A.Lm = Lm; A.e = e;
   fbSeq++; A.fb = '{"seq":' + fbSeq + ', "t":' + S.t.toFixed(2) + ', "tip_x":' + m.x.toFixed(2) + ', "tip_y":' + m.y.toFixed(2) + ', "L1":' + Lm[0].toFixed(2) + ', "L2":' + Lm[1].toFixed(2) + '}';
-  var stepped = P.descent === 'Stepped' && (A.phase === 'above' || A.phase === 'down' || A.phase === 'lift' || A.phase === 'tobin' || A.phase === 'retreat' || A.phase === 'goto');
+  var stepped = P.descent === 'Stepped' && (A.phase === 'above' || A.phase === 'refine' || A.phase === 'down' || A.phase === 'lift' || A.phase === 'tobin' || A.phase === 'retreat' || A.phase === 'goto');
   if (A.active >= 0) {
     var i = A.active, s = Math.sign(e[i]);
     // Near-parallel cylinders amplify a length step into a large tip step, so the step shrinks with the angle between them.
@@ -2556,13 +2575,24 @@ function controlTick(){
       }
     }
   }
+  // Going down onto the object, the ESP32 pulses the valves (about 40% of full speed): the camera latency then overshoots each step less, so the tip swings less
+  if (A.phase === 'down' || A.phase === 'refine') for (var q2 = 0; q2 < 2; q2++) cmd[q2] *= 0.4;
+  // Near the target in the fine moves, the ESP32 pulses the valve (about 30% of full speed), so the tighter deadband does not cause hunting
+  if (db < P.deadband) for (var q = 0; q < 2; q++) if (cmd[q] && Math.abs(e[q]) < 3 * P.deadband) cmd[q] *= 0.3;
   S.v = cmd;
   if (Math.abs(e[0]) <= db && Math.abs(e[1]) <= db && A.active < 0) { A.reached = true; S.v = [0, 0]; return; }
   if (A.rev >= 10) { A.reached = true; S.v = [0, 0]; say('Hunting around the target. Lower the flow or widen the deadband.', 'warn'); return; }
   if (cmd[0] === 0 && cmd[1] === 0) A.stuckT += 1 / P.camHz; else A.stuckT = 0;
+  if (A.stuckT > 1.0 && (A.phase === 'down' || A.phase === 'refine') && (A.retries || 0) < 2 && /hit the object/.test(A.lastBlock || '')) {
+    // A finger touches the object on the way down: back up, look again and retry (at most twice), as a real controller would
+    A.retries = (A.retries || 0) + 1; A.refined = false; S.v = [0, 0];
+    say('A finger touched the object on the way down. Backing up to look again (retry ' + A.retries + ' of 2).', 'warn');
+    setWp(A.tx, liftY(A.tx)); go('above'); return;
+  }
   if (A.stuckT > 1.0) { var hit = /hit the object/.test(A.lastBlock || ''); if (hit) R.hits++; abort((hit ? 'Gripper hit the object during the move. ' + (P.descent === 'Direct' ? 'Try Stepped descent or a wider opening.' : 'Try a wider opening or smaller steps.') : 'Cannot reach the target: ' + (A.lastBlock || 'a cylinder is at its limit.'))); }
 }
-function liftY(x){ var r = reachAtX(x); var top = r ? r.hi - 0.3 : pickY(); var want = binInUse() ? dropY() : pickY() + Math.max(4, P.objH * 0.8); return Math.max(pickY(), Math.min(want, top)); }
+function liftY(x){ var r = reachAtX(x); var top = r ? Math.max(r.lo + 0.3, r.hi - 1.5) : pickY();   // hover 1.5 in below the top of the reach: at the very top one cylinder is at the end of its stroke and cannot help the descent
+  var want = binInUse() ? dropY() : pickY() + Math.max(4, P.objH * 0.8); return Math.max(pickY(), Math.min(want, top)); }
 // Back from the bin: travel high (as on the way to the bin), then go down to home. A direct move can dip into the bin wall.
 function routeHome(){
   var hm = findHome(); if (!hm) return false;
@@ -2585,7 +2615,7 @@ function startCycle(){
   if (!tray) { say('No pick zone at this pick height. Change the geometry.', 'bad'); return; }
   var o = nextObject();
   if (!o) { cancelAuto(); say(R.tries ? 'All objects placed.' : 'Place an object first.', R.tries ? 'ok' : 'warn'); return; }
-  A.obj = o; A.cycleT0 = S.t; R.tries++;
+  A.obj = o; A.cycleT0 = S.t; R.tries++; A.retries = 0;
   S.gripCmd = 0; S.contact = null; go('detect'); say('Camera found an object at x = ' + o.x.toFixed(1) + ' in.', '');
 }
 function abort(msg){ cancelAuto(); say(msg, 'bad'); }
@@ -2604,7 +2634,7 @@ function autoUpdate(){
   switch (A.phase) {
     case 'detect':
       if (S.t - A.phaseT > 0.6) {
-        var pc = perceive(o); A.perc = pc; A.checks = pickChecks(pc);
+        var pc = perceiveAvg(o, 8); A.perc = pc; A.checks = pickChecks(pc);
         var bad = A.checks.filter(function(c){ return !c.ok; });
         if (bad.length) {
           o.done = true; o.skipped = true;
@@ -2616,7 +2646,13 @@ function autoUpdate(){
         A.tx = pc.est.x; A.ty = Math.max(floorMin() + 0.05, P.gripLen + 0.05, pc.est.y + P.gripLen - 0.8 * P.deadband);
         setWp(A.tx, liftY(A.tx)); go('above');
       } break;
-    case 'above': if (A.reached && S.grip <= 0.001) { setWp(A.tx, A.ty); go('down'); } break;
+    case 'above':
+      if (A.reached && S.grip <= 0.001) {
+        var pr = perceiveAvg(o, 8);
+        if (pr && pr.visible && pr.inImg && Math.abs(pr.est.x - A.tx) > 0.25 && !A.refined) { A.refined = true; A.tx = pr.est.x; setWp(A.tx, liftY(A.tx)); go('refine'); break; }
+        A.refined = false; setWp(A.tx, A.ty); go('down');
+      } break;
+    case 'refine': if (A.reached) { A.refined = false; setWp(A.tx, A.ty); go('down'); } break;
     case 'down': if (A.reached) { S.v = [0, 0]; S.gripCmd = 1; go('grip'); } break;
     case 'grip':
       if (!A.gripT0) A.gripT0 = S.t;
