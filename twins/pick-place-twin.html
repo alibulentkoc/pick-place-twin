@@ -74,6 +74,7 @@ h2{ font-size:14px; font-weight:600; margin:0 0 8px; }
 .seg button + button{ border-left:1px solid var(--line); }
 .seg button[aria-pressed="true"]{ background:var(--on); color:var(--ontext); }
 .row{ display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+.saverow{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0; }
 .btn{ border:1px solid var(--line); background:var(--chip); color:var(--ink); border-radius:6px; padding:7px 10px; font:inherit; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:none; }
 .btn:hover{ border-color:var(--muted); }
 .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
@@ -214,6 +215,19 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
         <li><strong>Counterbalance valves:</strong> fitted, setting in psi (or the ratio) and pilot ratio.</li>
       </ol>
       <button class="btn" id="openDesign">Open my design settings</button>
+      <p class="small" style="margin:10px 0 4px"><strong>Keep your values:</strong> save them in this browser or as a file, and bring them back later.</p>
+      <div class="saverow">
+        <button class="btn" id="saveDesign">Save my design</button>
+        <button class="btn" id="restoreDesign">Restore my design</button>
+        <button class="btn" id="undoDesign">Bring back previous values</button>
+      </div>
+      <div class="saverow">
+        <button class="btn" id="downloadPage">Download as a web page</button>
+        <button class="btn" id="downloadDesign">Download as a data file</button>
+        <button class="btn" id="openDesignFile">Open a file</button>
+        <input type="file" id="designFile" accept=".html,.htm,.json,text/html,application/json" style="display:none">
+      </div>
+      <p class="small" id="saveNote"></p>
     </section>
 
     <section>
@@ -2919,7 +2933,87 @@ document.getElementById('reachBtn').onclick = function(){
   P.showMap = !P.showMap; if (mapMesh) mapMesh.visible = P.showMap; document.getElementById('legend').style.display = P.showMap ? '' : 'none';
   gui.controllersRecursive().forEach(function(c){ if (c.property === 'showMap') c.updateDisplay(); }); reachUI();
 };
-document.getElementById('presetTractor').onclick = function(){ presets.tractor(); say('Tractor start loaded. Now enter your design in the Required settings folders (step 2).', ''); };
+// ---------- Keep the design values: in this browser (localStorage) or as a file (JSON)
+var SAVE_KEY = 'pickPlaceTwin.saved', BACKUP_KEY = 'pickPlaceTwin.previous', AUTO_KEY = 'pickPlaceTwin.lastSession';
+function designValues(){ var o = {}; Object.keys(P).forEach(function(k){ var v = P[k]; if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') o[k] = v; }); return o; }
+function store(key, obj){ try { localStorage.setItem(key, JSON.stringify({ when:new Date().toISOString(), values:obj })); return true; } catch (e) { return false; } }
+function fetchStored(key){ try { var t = localStorage.getItem(key); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
+function whenText(iso){ try { var d = new Date(iso); return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); } catch (e) { return ''; } }
+function applyDesign(vals){
+  var n = 0; Object.keys(vals || {}).forEach(function(k){ if (k in P && typeof vals[k] === typeof P[k]) { P[k] = vals[k]; n++; } });
+  cancelAuto(); applyParams(true, false);
+  if (typeof gui !== 'undefined') gui.controllersRecursive().forEach(function(c){ c.updateDisplay(); });
+  return n;
+}
+function keepPrevious(){ store(BACKUP_KEY, designValues()); }
+function saveNote(){
+  var sv = fetchStored(SAVE_KEY), el = document.getElementById('saveNote'); if (!el) return;
+  el.textContent = sv ? 'Saved design in this browser: ' + whenText(sv.when) + '.' : 'No design saved in this browser yet.';
+}
+document.getElementById('saveDesign').onclick = function(){
+  if (store(SAVE_KEY, designValues())) { say('Design saved in this browser. Restore my design brings it back, also after closing the page.', 'ok'); saveNote(); }
+  else say('This browser does not allow saving here. Use Download as a file instead.', 'warn');
+};
+document.getElementById('restoreDesign').onclick = function(){
+  var sv = fetchStored(SAVE_KEY); if (!sv) { say('No saved design in this browser. Push Save my design first, or open a file.', 'warn'); return; }
+  keepPrevious(); applyDesign(sv.values); say('Saved design from ' + whenText(sv.when) + ' restored.', 'ok');
+};
+document.getElementById('undoDesign').onclick = function(){
+  var bk = fetchStored(BACKUP_KEY); if (!bk) { say('No previous values kept yet.', 'warn'); return; }
+  var now = designValues(); applyDesign(bk.values); store(BACKUP_KEY, now);
+  say('Previous values brought back (from ' + whenText(bk.when) + '). Push again to switch back.', 'ok');
+};
+document.getElementById('downloadDesign').onclick = function(){
+  var data = JSON.stringify({ twin:'Two-cylinder pick-and-place', saved:new Date().toISOString(), values:designValues() }, null, 2);
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type:'application/json' }));
+  a.download = 'my-arm-design.json'; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  say('Design downloaded as my-arm-design.json (a data file). Open a file brings it back on any computer.', 'ok');
+};
+// A design web page: double-click it to open the online twin with the values loaded; it also lists the values in the twin's order
+var TWIN_ONLINE = 'https://alibulentkoc.github.io/pick-place-twin/twins/pick-place-twin.html';
+var DESIGN_FIELDS = [['Arm geometry', [['spacing', 'Pivot spacing'], ['barH', 'Bar height'], ['Lmin', 'Retracted length'], ['stroke', 'Stroke'], ['gripLen', 'Gripper length']]],
+  ['Cylinders and hydraulics', [['bore', 'Bore (in)'], ['rod', 'Rod (in)'], ['pressure', 'Pressure (psi)'], ['flow', 'Flow setting (gpm)'], ['flowErr', 'Actual flow error (%)']]],
+  ['Load', [['shape', 'Shape'], ['objH', 'Height (in)'], ['objW', 'Weight (lb)'], ['gripW', 'Gripper weight (lb)']]],
+  ['Bin and pick width', [['binOn', 'Show the bin'], ['pickW', 'Pick width (in)'], ['binRim', 'Bin rim height (in)'], ['binIn', 'Bin inner rim distance (in)'], ['binType', 'Bin type'], ['binW', 'Bin width (in)'], ['binClear', 'Rim clearance (in)']]],
+  ['Counterbalance valves', [['cbOn', 'Fitted on both cylinders'], ['cbSet', 'Setting / highest load pressure'], ['cbPsi', 'Setting (psi), 0 = use ratio'], ['cbPilot', 'Pilot ratio (x:1)'], ['leak', 'Valve leakage at 1000 psi (in3/min)']]],
+  ['Gripper details', [['effType', 'End effector'], ['attachTime', 'Harness attach / release (s)'], ['gStroke', 'Actuator stroke (in)'], ['wMin', 'Closed width (in)'], ['actForce', 'Actuator force (lb)'], ['actSpeed', 'Actuator speed (in/s)'], ['mu', 'Pad friction (mu)']]]];
+function encodeDesign(vals){ return btoa(unescape(encodeURIComponent(JSON.stringify(vals)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function decodeDesign(code){ var b = code.replace(/-/g, '+').replace(/_/g, '/'); while (b.length % 4) b += '='; return JSON.parse(decodeURIComponent(escape(atob(b)))); }
+function htmlEsc(t){ return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+document.getElementById('downloadPage').onclick = function(){
+  var vals = designValues(), url = TWIN_ONLINE + '#design=' + encodeDesign(vals), when = new Date();
+  var rows = DESIGN_FIELDS.map(function(f){ return '<tr><th colspan="2">' + f[0] + '</th></tr>' + f[1].map(function(x){ var v = vals[x[0]]; return '<tr><td>' + x[1] + '</td><td>' + htmlEsc(typeof v === 'boolean' ? (v ? 'checked' : 'not checked') : v) + '</td></tr>'; }).join(''); }).join('');
+  var page = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>My arm design</title>' +
+    '<style>body{font:15px system-ui,Arial,sans-serif;max-width:640px;margin:30px auto;padding:0 14px;color:#1c2530}a.go{display:inline-block;background:#c2410c;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;font-weight:600}table{border-collapse:collapse;width:100%;margin-top:18px}td,th{border-bottom:1px solid #d5dbe1;padding:5px 8px;text-align:left}th{background:#eef1f4}</style></head><body>' +
+    '<h1>My arm design</h1><p>Saved ' + when.toLocaleString() + ' from the two-cylinder pick-and-place twin.</p>' +
+    '<p><a class="go" href="' + url + '">Open this design in the twin</a></p>' +
+    '<p>The link opens the online twin with all values below loaded (an internet connection is needed). In the twin, push Show worst point to check the design.</p>' +
+    '<table>' + rows + '</table><p style="color:#4a5562;font-size:13px">Values in the order of the twin\'s Settings folders.</p></body></html>';
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([page], { type:'text/html' }));
+  a.download = 'my-arm-design.html'; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  say('Design downloaded as my-arm-design.html. Double-click it, then push Open this design in the twin.', 'ok');
+};
+document.getElementById('openDesignFile').onclick = function(){ document.getElementById('designFile').click(); };
+document.getElementById('designFile').onchange = function(ev){
+  var file = ev.target.files && ev.target.files[0]; if (!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){ try { var txt = String(rd.result), m = /#design=([A-Za-z0-9_-]+)/.exec(txt); var d = m ? { values:decodeDesign(m[1]) } : JSON.parse(txt); var vals = d.values || d; keepPrevious(); var n = applyDesign(vals); say('Design opened from ' + file.name + ' (' + n + ' values).', 'ok'); } catch (e) { say('This file is not a saved design (' + e.message + ').', 'bad'); } ev.target.value = ''; };
+  rd.readAsText(file);
+};
+// The values before a preset are kept, so a preset pushed by mistake can be undone; the last session is kept too
+['presetTractor', 'presetLab'].forEach(function(id){ var b = document.getElementById(id); if (b) b.addEventListener('click', keepPrevious, true); });
+(function(){
+  var last = fetchStored(AUTO_KEY); if (last) store(BACKUP_KEY, last.values);   // at the start, "previous values" are the values from the last visit
+  var lastJson = ''; setInterval(function(){ var j = JSON.stringify(designValues()); if (j !== lastJson) { lastJson = j; store(AUTO_KEY, JSON.parse(j)); } }, 3000);
+  saveNote();
+  var mh = /#design=([A-Za-z0-9_-]+)/.exec(location.hash);
+  if (mh) setTimeout(function(){
+    try { keepPrevious(); var n = applyDesign(decodeDesign(mh[1])); say('Design loaded from your saved web page (' + n + ' values). Push Show worst point to check it.', 'ok'); }
+    catch (e) { say('The design link could not be read (' + e.message + ').', 'bad'); }
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  }, 600);
+})();
+document.getElementById('presetTractor').onclick = function(){ presets.tractor(); say('Tractor start loaded. Now enter your design in the Required settings folders (step 2). Bring back previous values undoes this.', ''); };
 document.getElementById('presetLab').onclick = function(){ presets.lab(); say('Lab rig loaded.', ''); };
 document.getElementById('openDesign').onclick = function(){
   [fG, fC, fL, fB, fCB].forEach(function(f){ f.open(); });
