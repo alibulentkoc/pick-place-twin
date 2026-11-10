@@ -110,7 +110,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
     <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
-<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><span class="tab later" title="Released at the start of week 2">HW 2: week 2</span><span class="tab later" title="Released at the start of week 3">HW 3: week 3</span><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><button type="button" role="tab" class="tab" data-tab="hw2" id="t-hw2">HW 2</button><span class="tab later" title="Released at the start of week 3">HW 3: week 3</span><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
 <section class="tabpane" role="tabpanel" id="p-path" data-tab="path"><h2 id="figure">Figure 1 and the twin</h2>
 <p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. In step 3 below, select 15 in or 55 in to move the twin tip to these points. At 55 in, the cantaloupe is in the gripper, above the bin.</p>
 <p>Three things are in the twin but not in Figure 1. The frame holds the bar; its legs stand outside the pick width and off the arm plane, so the arm can pass them. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
@@ -1266,6 +1266,138 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>Length change</td><td>No change.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [-24, 15]}'>cylinder 1 +5.57 in, cylinder 2 -15.86 in</button></td></tr>
 <tr><td>Checks</td><td>After our calculations: Settings, View, selected Show answers. Cylinders and hydraulics: Bore 2, Rod 1.25, Pressure 2347, Flow setting 6.3.</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true, &quot;field&quot;: &quot;Show answers: pressures and speeds&quot;}'>Counterbalance guide: 43, 133, 224 and 16 psi</button></td></tr>
 </tbody></table></details></section>
+<section class="tabpane" role="tabpanel" id="p-hw2" data-tab="hw2"><h2 id="homework-2-each-cylinder-the-cycle-time-and-option-a">Homework 2: each cylinder, the cycle time and Option A</h2>
+<p><strong>Task 1. Size each cylinder (A).</strong> Card rows 3 to 8.</p>
+<ul>
+<li>F8: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mn>2</mn><mo>×</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo></mrow><annotation encoding="application/x-tex">F = 2 \times \lvert T \rvert</annotation></semantics></math>. Cylinder 1: 2 x 321.1 = <strong>642.2 lb push</strong>. Cylinder 2: 2 x 329.9 = <strong>659.8 lb pull</strong>.</li>
+<li>F9: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><mi>F</mi><mi>/</mi><msub><mi>p</mi><mrow><mi>a</mi><mi>l</mi><mi>l</mi><mi>o</mi><mi>w</mi></mrow></msub></mrow><annotation encoding="application/x-tex">A = F / p_{allow}</annotation></semantics></math>. Cylinder 1: 642.2 / 1,878 = <strong>0.342 in²</strong> (cap end). Cylinder 2: 659.8 / 1,878 = <strong>0.351 in²</strong> (rod end).</li>
+<li>Selected: <strong>Bailey 288411</strong> (Maxim WC welded clevis cylinder), 2 in bore, 1.25 in rod, 30 in stroke, retracted length 40.25 in, rated 3,000 psi, $345.64, 114 in stock (catalog screenshot in the appendix). The same model for both cylinders.</li>
+<li>F10: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>c</mi></msub><mo>=</mo><mi>π</mi><msup><mi>D</mi><mn>2</mn></msup><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">A_c = \pi D^2 / 4</annotation></semantics></math> = π x (2 in)² / 4 = <strong>3.142 in²</strong>. F11: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>r</mi></msub><mo>=</mo><mi>π</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>D</mi><mn>2</mn></msup><mo>−</mo><msup><mi>d</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">A_r = \pi (D^2 - d^2) / 4</annotation></semantics></math> = π x (4 - 1.5625) in² / 4 = <strong>1.914 in²</strong>.</li>
+<li>F12: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi>F</mi><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p = F / A</annotation></semantics></math>. Cylinder 1 (push, cap end): 642.2 / 3.142 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'><strong>204 psi</strong></button>. Cylinder 2 (pull, rod end): 659.8 / 1.914 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'><strong>345 psi</strong></button>. PASS: both are less than 1,878 psi.</li>
+<li>Row 8: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>d</mi><mi>e</mi><mi>a</mi><mi>d</mi></mrow></msub><mo>=</mo><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>−</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{dead} = L_{min} - S</annotation></semantics></math> = 40.25 - 30 = <strong>10.25 in</strong>.</li>
+</ul>
+<p><strong>Task 2. Catalog lengths in the twin (A).</strong> We changed Retracted length from 40 to 40.25 in and entered Bore 2, Rod 1.25. All three readouts still pass (pick zone -33.1 to 33.0 in). The forces did not change: 321.1 lb and 329.9 lb.</p>
+<p><strong>Task 3. Buckling (A).</strong> Cylinder 1 pushes. F13: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>=</mo><mi>π</mi><msup><mi>d</mi><mn>4</mn></msup><mi>/</mi><mn>64</mn></mrow><annotation encoding="application/x-tex">I = \pi d^4 / 64</annotation></semantics></math> = π x (1.25 in)⁴ / 64 = 0.1198 in⁴. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>+</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L = L_{min} + S</annotation></semantics></math> = 40.25 + 30 = 70.25 in. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>c</mi><mi>r</mi></mrow></msub><mo>=</mo><msup><mi>π</mi><mn>2</mn></msup><mi>E</mi><mi>I</mi><mi>/</mi><msup><mi>L</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">P_{cr} = \pi^2 E I / L^2</annotation></semantics></math> = 9.870 x 29,000,000 psi x 0.1198 in⁴ / (70.25 in)² = <strong>6,948 lb</strong>. The catalog column load is 5,330 lb. PASS: 642.2 lb ≤ 5,330 lb. Cylinder 2 pushes only 38.3 lb (F = 76.6 lb): PASS.</p>
+<p><strong>Task 4. Counterbalance valves (B).</strong> Card row 10. F14: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>h</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p_h = \lvert T \rvert / A</annotation></semantics></math>, then 1.3 x <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>h</mi></msub><annotation encoding="application/x-tex">p_h</annotation></semantics></math>.</p>
+<table>
+<caption>Table H2-1. Holding pressures and valve settings.</caption>
+<thead>
+<tr class="header">
+<th>End</th>
+<th>Force (lb)</th>
+<th>Area (in²)</th>
+<th>p_h (psi)</th>
+<th>1.3 x p_h (psi)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cylinder 1, cap end (push)</td>
+<td>321.1</td>
+<td>3.142</td>
+<td>102.2</td>
+<td>133</td>
+</tr>
+<tr class="even">
+<td>Cylinder 1, rod end (pull)</td>
+<td>63.2</td>
+<td>1.914</td>
+<td>33.0</td>
+<td>43</td>
+</tr>
+<tr class="odd">
+<td>Cylinder 2, rod end (pull)</td>
+<td>329.9</td>
+<td>1.914</td>
+<td>172.4</td>
+<td>224</td>
+</tr>
+<tr class="even">
+<td>Cylinder 2, cap end (push)</td>
+<td>38.3</td>
+<td>3.142</td>
+<td>12.2</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<p>All values are less than the lowest setting of the catalog valve (435 psi). Thus, all four valves are <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true, &quot;field&quot;: &quot;Setting (psi), 0 = use ratio&quot;}'><strong>set to 435 psi</strong></button>. Valve: dual counterbalance valve, 4:1 pilot ratio, cylinder mounted [sample note: a real group gives the part number]. In the twin, with Show answers, the Counterbalance guide shows 43, 133, 224 and 16 psi: the same values.</p>
+<p><strong>Task 5. Speeds, cycle time and hose flows (A).</strong> Card rows 12 to 14.</p>
+<ul>
+<li>F15: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> = 6.3 gal/min x 231 in³/gal / 60 s/min = <strong>24.26 in³/s</strong>.</li>
+<li>F16: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi></mrow></msub><mo>=</mo><mi>Q</mi><mi>/</mi><msub><mi>A</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">v_{ext} = Q / A_c</annotation></semantics></math> = 24.26 / 3.142 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Calculated speed&quot;, &quot;answers&quot;: true}'><strong>7.72 in/s</strong></button>. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>v</mi><mrow><mi>r</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mi>Q</mi><mi>/</mi><msub><mi>A</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">v_{ret} = Q / A_r</annotation></semantics></math> = 24.26 / 1.914 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Calculated speed&quot;, &quot;answers&quot;: true}'><strong>12.67 in/s</strong></button>.</li>
+<li>F17: cylinder 1: 5.57 / 7.72 + 5.57 / 12.67 = 0.72 + 0.44 = <strong>1.16 s</strong>. Cylinder 2: 15.86 / 7.72 + 15.86 / 12.67 = 2.05 + 1.25 = <strong>3.30 s</strong>.</li>
+<li>F18: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mrow><mi>c</mi><mi>y</mi><mi>c</mi><mi>l</mi><mi>e</mi></mrow></msub><annotation encoding="application/x-tex">t_{cycle}</annotation></semantics></math> = 1.16 + 3.30 + 2 = <strong>6.46 s</strong>. PASS: 6.46 s ≤ 8 s.</li>
+<li>F19: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi>c</mi><mi>a</mi><mi>p</mi></mrow></msub><mo>=</mo><mi>Q</mi><msub><mi>A</mi><mi>c</mi></msub><mi>/</mi><msub><mi>A</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">Q_{cap} = Q A_c / A_r</annotation></semantics></math> = 24.26 x 3.142 / 1.914 = <strong>39.8 in³/s</strong> (Option A).</li>
+<li>Harvest speed: one fruit per plant, plants 2 ft apart: 2 ft / 6.46 s = <strong>0.31 ft/s</strong> (approximately 0.2 mph).</li>
+</ul>
+<p><strong>Task 6. Hand check (A).</strong> F20 at the worst point (54.5, 55.0), with s = 16 in and H = 72 in:</p>
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\Delta x_1</annotation></semantics></math> = -8 - 54.5 = -62.5 in; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\Delta x_2</annotation></semantics></math> = 8 - 54.5 = -46.5 in; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\Delta y</annotation></semantics></math> = 72 - 55 = 17 in.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mn>1</mn></msub><mo>=</mo><msqrt><mrow><msup><mn>62.5</mn><mn>2</mn></msup><mo>+</mo><msup><mn>17</mn><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">L_1 = \sqrt{62.5^2 + 17^2}</annotation></semantics></math> = 64.77 in; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mn>2</mn></msub><mo>=</mo><msqrt><mrow><msup><mn>46.5</mn><mn>2</mn></msup><mo>+</mo><msup><mn>17</mn><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">L_2 = \sqrt{46.5^2 + 17^2}</annotation></semantics></math> = 49.51 in.</li>
+<li>Ratios: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>1</mn></msub><mi>/</mi><msub><mi>L</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\Delta x_1 / L_1</annotation></semantics></math> = -0.9650, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>y</mi><mi>/</mi><msub><mi>L</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">\Delta y / L_1</annotation></semantics></math> = 0.2625, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msub><mi>x</mi><mn>2</mn></msub><mi>/</mi><msub><mi>L</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\Delta x_2 / L_2</annotation></semantics></math> = -0.9392, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>y</mi><mi>/</mi><msub><mi>L</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\Delta y / L_2</annotation></semantics></math> = 0.3434.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>2</mn></msub><annotation encoding="application/x-tex">T_2</annotation></semantics></math> = 29 / (0.3434 - (-0.9392)(0.2625) / (-0.9650)) = 29 / (0.3434 - 0.2555) = 29 / 0.0879 = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 at the worst point&quot;, &quot;worst&quot;: true}'><strong>329.9 lb</strong></button> (pull).</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mn>1</mn></msub><annotation encoding="application/x-tex">T_1</annotation></semantics></math> = -329.9 x (-0.9392) / (-0.9650) = <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;worst&quot;: true}'><strong>-321.1 lb</strong></button> (push).</li>
+</ul>
+<p>The hand check agrees with the twin (card row 1) to 0.1 lb.</p>
+<p><strong>Task 7. Option A circuit (B).</strong> Two branches, one for each cylinder. Each branch has its own tractor SCV, shown in FluidSIM as a 4/3 lever valve with a closed center (ports A and B blocked), because most tractor SCVs block A and B in neutral. Each cylinder has a dual counterbalance valve at its ports.</p>
+<table>
+<caption>Table H2-2. FluidSIM settings for Option A, in US customary units.</caption>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Setting</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pump flow rate</td>
+<td>6.3 gpm</td>
+</tr>
+<tr class="even">
+<td>Relief valve</td>
+<td>2,347 psi</td>
+</tr>
+<tr class="odd">
+<td>Cylinders</td>
+<td>2 in bore, 1.25 in rod, 30 in stroke</td>
+</tr>
+<tr class="even">
+<td>Cylinder 1 load</td>
+<td>642.2 lbf push (design force F)</td>
+</tr>
+<tr class="odd">
+<td>Cylinder 2 load</td>
+<td>659.8 lbf pull (design force F)</td>
+</tr>
+<tr class="even">
+<td>Counterbalance valves</td>
+<td>dual, 435 psi on each port, 4:1</td>
+</tr>
+</tbody>
+</table>
+<p>Expected results: full stroke on both cylinders, maximum pressure approximately 345 psi (rod end of cylinder 2, plus the counterbalance back pressure while it lowers), and no movement with the valves centered. With the closed center, pressure can stay trapped in the pilot lines after a move. If it is high enough, it can hold a counterbalance valve partly open, and the load can creep. The holding test in FluidSIM checks this. [Sample note: the FluidSIM circuit and its position and pressure plots go here.]</p>
+<p><strong>Task 8. What if the flow rate is 20% less?</strong> F15: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> = 0.8 x 24.26 = 19.41 in³/s. F16: 19.41 / 3.142 = 6.18 in/s; 19.41 / 1.914 = 10.14 in/s. F17: cylinder 1: 5.57 / 6.18 + 5.57 / 10.14 = 1.45 s; cylinder 2: 15.86 / 6.18 + 15.86 / 10.14 = 4.13 s. F18: 1.45 + 4.13 + 2 = <strong>7.58 s</strong>. It still passes, but with only 0.42 s of margin.</p>
+<p><strong>Problems and decisions.</strong> The stocked sizes set the bore, not the pressure: 345 psi is only 18% of the limit. The counterbalance setting (435 psi) is the catalog minimum, not 1.3 x p_h.</p>
+
+<details open><summary>The full Cylinder card</summary><h2 id="cyl">Cylinder card</h2>
+<table class="calc card"><caption>Table V1. Group 1 Cylinder card</caption><thead><tr><th>Row</th><th>What to do</th><th>Cylinder 1</th><th>Cylinder 2</th></tr></thead><tbody>
+<tr><td>1</td><td>Largest force in the work path (twin)</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;, &quot;worst&quot;: true}'>T_1 = 321.1 lb, push</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;, &quot;worst&quot;: true}'>T_2 = 329.9 lb, pull</button></td></tr>
+<tr><td>2</td><td>End that holds the load</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 in the work path&quot;}'>both ends: cap end (push), rod end (pull)</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 in the work path&quot;}'>both ends: rod end (pull), cap end (push)</button></td></tr>
+<tr><td>3</td><td>F8: F = 2 |T|</td><td>2 x 321.1 lb = 642.2 lb</td><td>2 x 329.9 lb = 659.8 lb</td></tr>
+<tr><td>4</td><td>F9: A = F / p_allow</td><td>642.2 lb / 1,878 psi = 0.342 in&sup2;</td><td>659.8 lb / 1,878 psi = 0.351 in&sup2;</td></tr>
+<tr><td>5</td><td>Selected cylinder</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Bore (in)&quot;}'>Bailey 288411: D = 2 in, d = 1.25 in</button></td><td>same</td></tr>
+<tr><td>6</td><td>F10, F11: areas</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Rod (in)&quot;}'>A_c = &pi; (2 in)&sup2; / 4 = 3.142 in&sup2;; A_r = &pi; (4 - 1.5625) in&sup2; / 4 = 1.914 in&sup2;</button></td><td>same</td></tr>
+<tr><td>7</td><td>F12: p = F / A</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'>642.2 lb / 3.142 in&sup2; = 204 psi. PASS</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 at the worst point&quot;, &quot;answers&quot;: true, &quot;worst&quot;: true}'>659.8 lb / 1.914 in&sup2; = 345 psi. PASS</button></td></tr>
+<tr><td>8</td><td>S, L_min, L_dead</td><td><button type="button" class="lk" data-tw='{&quot;field&quot;: &quot;Retracted length&quot;}'>30 in, 40.25 in, 10.25 in</button></td><td>same</td></tr>
+<tr><td>9</td><td>F13: buckling</td><td>P_cr = 6,948 lb; catalog 5,330 lb. PASS: 642.2 lb &le; 5,330 lb</td><td>F = 76.6 lb. PASS</td></tr>
+<tr><td>10</td><td>F14: counterbalance valves</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true}'>cap 102.2 psi x 1.3 = 133 psi; rod 33.0 psi x 1.3 = 43 psi; set 435 psi</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Counterbalance guide&quot;, &quot;answers&quot;: true}'>rod 172.4 psi x 1.3 = 224 psi; cap 12.2 psi x 1.3 = 16 psi; set 435 psi</button></td></tr>
+<tr><td>11</td><td>&Delta;L, far pick point to drop point (twin)</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [-24, 15]}'>+5.57 in (extends)</button></td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;, &quot;tip&quot;: [54.5, 55]}'>-15.86 in (retracts)</button></td></tr>
+<tr><td>12</td><td>F15, F16: speeds</td><td><button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Calculated speed&quot;, &quot;answers&quot;: true, &quot;field&quot;: &quot;Flow setting (gpm)&quot;}'>Q = 6.3 gal/min x 231 in&sup3;/gal / 60 s/min = 24.26 in&sup3;/s; v_ext = 7.72 in/s; v_ret = 12.67 in/s</button></td><td>same</td></tr>
+<tr><td>13</td><td>F17: t = &Delta;L / v_ext + &Delta;L / v_ret</td><td>0.72 s + 0.44 s = 1.16 s</td><td>2.05 s + 1.25 s = 3.30 s</td></tr>
+<tr><td>14</td><td>F19: Q_cap = Q A_c / A_r</td><td>39.8 in&sup3;/s (Option A); 46.8 in&sup3;/s (Option B)</td><td>same</td></tr>
+</tbody></table>
+<p class="result">Cycle time (F18): 1.16 s + 3.30 s + 2 s = 6.46 s. PASS: 6.46 s &le; 8 s.</p></details></section>
   </main>
   <section class="twin" aria-label="Live digital twin">
     <iframe id="tw" src="../twins/pick-place-twin.html?v=20261102b" title="Lab and tractor twin with the Group 1 values"></iframe>
