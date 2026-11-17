@@ -110,7 +110,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
     <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
-<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><button type="button" role="tab" class="tab" data-tab="hw2" id="t-hw2">HW 2</button><span class="tab later" title="Released at the start of week 3">HW 3: week 3</span><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><button type="button" role="tab" class="tab" data-tab="hw2" id="t-hw2">HW 2</button><button type="button" role="tab" class="tab" data-tab="hw3" id="t-hw3">HW 3</button><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
 <section class="tabpane" role="tabpanel" id="p-path" data-tab="path"><h2 id="figure">Figure 1 and the twin</h2>
 <p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. In step 3 below, select 15 in or 55 in to move the twin tip to these points. At 55 in, the cantaloupe is in the gripper, above the bin.</p>
 <p>Three things are in the twin but not in Figure 1. The frame holds the bar; its legs stand outside the pick width and off the arm plane, so the arm can pass them. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
@@ -1398,6 +1398,359 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr><td>14</td><td>F19: Q_cap = Q A_c / A_r</td><td>39.8 in&sup3;/s (Option A); 46.8 in&sup3;/s (Option B)</td><td>same</td></tr>
 </tbody></table>
 <p class="result">Cycle time (F18): 1.16 s + 3.30 s + 2 s = 6.46 s. PASS: 6.46 s &le; 8 s.</p></details></section>
+<section class="tabpane" role="tabpanel" id="p-hw3" data-tab="hw3"><h2 id="homework-3-option-b-hoses-tractor-checks-and-parts">Homework 3: Option B, hoses, tractor checks and parts</h2>
+<p>N = 540 rev/min, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>v</mi></msub><annotation encoding="application/x-tex">\eta_v</annotation></semantics></math> = 0.95, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>η</mi><mi>o</mi></msub><annotation encoding="application/x-tex">\eta_o</annotation></semantics></math> = 0.85.</p>
+<p><strong>Task 1. Flow rate (C).</strong> Supply card rows 1 to 3.</p>
+<ul>
+<li>F21: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>V</mi><annotation encoding="application/x-tex">V</annotation></semantics></math> = (5.57 + 15.86) in x (3.142 + 1.914) in² = 21.43 x 5.056 = <strong>108.4 in³</strong>.</li>
+<li>F22: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">Q_{min}</annotation></semantics></math> = 108.4 in³ / (8 s - 2 s) = <strong>18.07 in³/s</strong>; x 60 / 231 = <strong>4.69 gpm</strong>.</li>
+<li>Option A: SCV flow rate 6.3 gpm. PASS: 6.3 ≥ 4.69 gpm.</li>
+</ul>
+<p><strong>Task 2. Pump (C).</strong> F23: 18.07 in³/s x 60 s/min = 1,084 in³/min. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>D</mi><mi>p</mi></msub><annotation encoding="application/x-tex">D_p</annotation></semantics></math> = 1,084 / (540 x 0.95) = <strong>2.11 in³/rev</strong>. Selected: <strong>Bailey 253558</strong> (Chief GP-PTO), 3.41 in³/rev, $655.26, 11 in stock. F24: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> = 3.41 x 540 x 0.95 = 1,749 in³/min = 7.57 gpm. The catalog rates it 7.4 gpm; we use 7.4 gpm = <strong>28.49 in³/s</strong>.</p>
+<p><strong>Task 3. Relief valve, power and torque (C).</strong> Relief valve setting <strong>1,000 psi</strong>: more than the 345 psi working pressure plus the counterbalance pilot pressures, and less than the pump maximum (2,250 psi). F25: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><annotation encoding="application/x-tex">P_{in}</annotation></semantics></math> = 1,000 x 28.49 / 0.85 = 33,520 in-lbf/s; / 6,600 = <strong>5.08 hp</strong>. PASS: 5.08 hp &lt; 27.7 hp. F26: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ω</mi><annotation encoding="application/x-tex">\omega</annotation></semantics></math> = 2π x (540 / 60) = 56.55 rad/s; <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math> = 33,520 / 56.55 = <strong>593 in-lbf</strong>.</p>
+<p><strong>Task 4. Reservoir and filter (C).</strong> F27: 1 to 3 x 7.4 gpm = 7.4 to 22 gal; selected <strong>10 gal</strong>. Filter: 10 micron, rated for <strong>15 gpm</strong>, because the largest return flow is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Q</mi><mrow><mi>c</mi><mi>a</mi><mi>p</mi></mrow></msub><annotation encoding="application/x-tex">Q_{cap}</annotation></semantics></math> = 28.49 x 3.142 / 1.914 = 46.8 in³/s = 12.1 gpm.</p>
+<p><strong>Task 5. Directional control valve (B).</strong> A 2-spool monoblock, 4-way, 3-position, spring centered, open center with ports A and B to the tank in the center (motor spool), rated for at least 7.4 gpm and 1,000 psi, with a built-in relief valve set to 1,000 psi [sample note: a real group gives the part number and the spool symbol].</p>
+<p><strong>Task 6. Hoses (B).</strong> F28: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><msqrt><mrow><mn>4</mn><mi>Q</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">d_{hose} = \sqrt{4 Q / (\pi v_{max})}</annotation></semantics></math>, sized for the larger Option B flow, so that the same hoses fit Option A.</p>
+<table>
+<caption>Table H3-1. Hose table.</caption>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Line</th>
+<th>Q (in³/s)</th>
+<th>v_max (in/s)</th>
+<th>d_hose (in)</th>
+<th>Dash size</th>
+<th>Pressure rating</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pressure line</td>
+<td>28.49</td>
+<td>180</td>
+<td>√(4 x 28.49 / (π x 180)) = 0.449</td>
+<td>-8 (0.50 in)</td>
+<td>at least 2,347 psi</td>
+</tr>
+<tr class="even">
+<td>Cap-end hoses (2)</td>
+<td>46.8</td>
+<td>180</td>
+<td>√(4 x 46.8 / (π x 180)) = 0.575</td>
+<td>-10 (0.625 in)</td>
+<td>at least 2,347 psi</td>
+</tr>
+<tr class="odd">
+<td>Rod-end hoses (2)</td>
+<td>28.49</td>
+<td>180</td>
+<td>0.449</td>
+<td>-8 (0.50 in)</td>
+<td>at least 2,347 psi</td>
+</tr>
+<tr class="even">
+<td>Return line</td>
+<td>46.8</td>
+<td>120</td>
+<td>√(4 x 46.8 / (π x 120)) = 0.705</td>
+<td>-12 (0.75 in)</td>
+<td>at least 2,347 psi</td>
+</tr>
+<tr class="odd">
+<td>Suction line</td>
+<td>28.49</td>
+<td>48</td>
+<td>√(4 x 28.49 / (π x 48)) = 0.869</td>
+<td>-16 (1.00 in)</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task 7. Option B circuit (B).</strong> The branches are the same as Option A. The pump (7.4 gpm), the relief valve (1,000 psi) and the 2-spool open-center valve with A and B to the tank are on the implement. [Sample note: the FluidSIM circuit and its plots go here.]</p>
+<p><strong>Task 8. Tractor checks (C).</strong></p>
+<table>
+<caption>Table H3-2. Implement weight with a full bin.</caption>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Option A (lb)</th>
+<th>Option B (lb)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frame, posts and bar (estimate)</td>
+<td>220</td>
+<td>220</td>
+</tr>
+<tr class="even">
+<td>Two cylinders (catalog)</td>
+<td>64</td>
+<td>64</td>
+</tr>
+<tr class="odd">
+<td>End effector and fruit</td>
+<td>29</td>
+<td>29</td>
+</tr>
+<tr class="even">
+<td>Bin, full (15 lb bin, 20 fruit)</td>
+<td>95</td>
+<td>95</td>
+</tr>
+<tr class="odd">
+<td>Hoses, valves, fittings (estimate)</td>
+<td>20</td>
+<td>30</td>
+</tr>
+<tr class="even">
+<td>Pump, reservoir with oil, filter (estimate)</td>
+<td>0</td>
+<td>130</td>
+</tr>
+<tr class="odd">
+<td><strong>Total, W_i</strong></td>
+<td><strong>428</strong></td>
+<td><strong>568</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>F29 (hitch): capacity 1,433 lb x 24 in = 34,392 in-lb. Center of gravity 24 in behind the lift points (estimate). Option A: 428 x 24 = 10,272 in-lb = <strong>30%</strong> of the capacity. Option B: 568 x 24 = 13,632 in-lb = <strong>40%</strong>. PASS.</li>
+<li>F30 (front axle): with no implement, 0.40 x 2,734 = 1,093.6 lb. a = 20 + 24 = 44 in. Option A: 428 x 44 / 63.3 = 297.5 lb removed; 1,093.6 - 297.5 = 796.1 lb = <strong>29%</strong> of the weight. Option B: 568 x 44 / 63.3 = 394.8 lb removed; 698.8 lb = <strong>26%</strong>. PASS: both are more than 20%. No ballast is necessary.</li>
+<li>F31 (side): full bin 95 lb x 54.5 in = 5,178 in-lb. The tractor resists 2,734 lb x 44 in / 2 = 60,148 in-lb. The bin uses <strong>9%</strong>. PASS.</li>
+</ul>
+<p><strong>Task 9. Parts list (A).</strong></p>
+<table>
+<caption>Table H3-3. Option A parts.</caption>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>Part number</th>
+<th>Quantity</th>
+<th>Unit price</th>
+<th>Stock</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cylinder, 2 in x 30 in x 1.25 in</td>
+<td>Bailey 288411</td>
+<td>2</td>
+<td>$345.64</td>
+<td>114 in stock</td>
+</tr>
+<tr class="even">
+<td>Dual counterbalance valve, 4:1, cylinder mounted</td>
+<td>To select</td>
+<td>2</td>
+<td>Quote necessary</td>
+<td>To check</td>
+</tr>
+<tr class="odd">
+<td>Rear SCV kit, L3301</td>
+<td>Kubota dealer</td>
+<td>1</td>
+<td>Quote necessary</td>
+<td>Dealer</td>
+</tr>
+<tr class="even">
+<td>Hoses: 2 x -10 (cap ends), 2 x -8 (rod ends), with couplers</td>
+<td>To select</td>
+<td>4</td>
+<td>$60 (estimate)</td>
+<td>Common</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table H3-4. Option B parts, in addition to the cylinders, valves and cylinder hoses.</caption>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>Part number</th>
+<th>Quantity</th>
+<th>Unit price</th>
+<th>Stock</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PTO pump, 7.4 gpm at 540 rev/min</td>
+<td>Bailey 253558</td>
+<td>1</td>
+<td>$655.26</td>
+<td>11 in stock</td>
+</tr>
+<tr class="even">
+<td>2-spool directional control valve with relief valve</td>
+<td>To select</td>
+<td>1</td>
+<td>Quote necessary</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Reservoir 10 gal, filter 15 gpm, torque arm (estimate)</td>
+<td>Different</td>
+<td>1 set</td>
+<td>$310</td>
+<td>Common</td>
+</tr>
+<tr class="even">
+<td>Hoses: -8 pressure, -12 return, -16 suction</td>
+<td>To select</td>
+<td>3</td>
+<td>$60 (estimate)</td>
+<td>Common</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task 10. Failure table (all).</strong></p>
+<table>
+<caption>Table H3-5. What could go wrong.</caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Failure</th>
+<th>What happens</th>
+<th>Protection</th>
+<th>What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hose break</td>
+<td>The load would fall</td>
+<td>Dual counterbalance valves on the cylinder ports</td>
+<td>The valves are mounted directly on the cylinders</td>
+</tr>
+<tr class="even">
+<td>Engine stall</td>
+<td>No pump flow</td>
+<td>The counterbalance valves hold the load</td>
+<td>Holding test in FluidSIM</td>
+</tr>
+<tr class="odd">
+<td>Valve stuck open</td>
+<td>A cylinder moves to the end of its stroke; the pressure rises</td>
+<td>The relief valve limits the pressure; the operator stops the engine</td>
+<td>Relief setting; engine stop within reach</td>
+</tr>
+<tr class="even">
+<td>Person in the work region</td>
+<td>The arm can strike or crush</td>
+<td>Keep-out zone; slow lowering through the counterbalance valves</td>
+<td>Mark the zone; train the operator</td>
+</tr>
+<tr class="odd">
+<td>Overloaded bin</td>
+<td>More load on the hitch, less on the front axle</td>
+<td>Hitch at 30%, front axle at 29%</td>
+<td>Weight limit label on the bin</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task 11. What if the crop is 20% heavier?</strong> F1: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math> = 1.2 x 4 + 25 = 29.8 lb, 2.8% more. The forces, design forces and pressures all rise by the same 2.8% (for example, cylinder 2: 329.9 x 29.8 / 29 = 339.0 lb; 345 psi becomes 355 psi). The rise is small because the gripper (25 lb) is most of the load.</p>
+<p><strong>Task 12 (extra). What if the bin stands on the ground, with a rim of 2 x the diameter (12 in)?</strong> F4: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>d</mi></msub><annotation encoding="application/x-tex">y_d</annotation></semantics></math> = 12 + 4 + 3 + 12 = <button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 25, &quot;binRim&quot;: 12}, &quot;tip&quot;: [33, 31], &quot;carry&quot;: true, &quot;readout&quot;: &quot;Drop point (bin)&quot;}'><strong>31 in</strong></button>. In the twin, the nearest bin position is <button type="button" class="lk" data-tw='{&quot;setv&quot;: {&quot;spacing&quot;: 16, &quot;barH&quot;: 72, &quot;Lmin&quot;: 40.25, &quot;stroke&quot;: 30, &quot;binIn&quot;: 25, &quot;binRim&quot;: 12}, &quot;worst&quot;: true, &quot;readout&quot;: &quot;Rim clearance over the inner rim&quot;}'><strong>25 in</strong></button>, and the worst-point forces are <strong>64.1 lb push</strong> and <strong>87.0 lb pull</strong>: approximately four times smaller.</p>
+<table>
+<caption>Table H3-6. The two bins.</caption>
+<colgroup>
+<col style="width: 64%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Bin on a cart (design)</th>
+<th>Bin on the ground</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rim height</td>
+<td>36 in</td>
+<td>12 in</td>
+</tr>
+<tr class="even">
+<td>Drop height (tip), F4</td>
+<td>55 in</td>
+<td>31 in</td>
+</tr>
+<tr class="odd">
+<td>Nearest bin position</td>
+<td>46.5 in</td>
+<td>25 in</td>
+</tr>
+<tr class="even">
+<td>Forces at the worst point</td>
+<td>321.1 lb push, 329.9 lb pull</td>
+<td>64.1 lb push, 87.0 lb pull</td>
+</tr>
+<tr class="odd">
+<td>Fall of the first fruit into the empty bin</td>
+<td>4 in + 24 in bin depth = approximately 28 in</td>
+<td>4 in + 12 in = 16 in</td>
+</tr>
+</tbody>
+</table>
+<p>For a new design, we would select the bin on the ground. The fruit falls less, so it bruises less, and the forces are much smaller. The bin then sits in the lane between the fruit bands (from 25 to 41 in), where the wheels travel. But a 12 in bin holds less fruit and must be changed more often.</p>
+
+<details open><summary>Supply card and Hose table</summary><h2 id="supply">Supply card</h2>
+<p>These values come from calculations, not from the twin.</p>
+<table class="calc"><caption>Table V2. Group 1 Supply card</caption><thead><tr><th>Row</th><th>What to do</th><th>Value</th></tr></thead><tbody>
+<tr><td>1</td><td>F21: oil volume V</td><td>(5.57 in + 15.86 in) x (3.142 in&sup2; + 1.914 in&sup2;) = 108.4 in&sup3;</td></tr>
+<tr><td>2</td><td>F22: Q_min</td><td>108.4 in&sup3; / (8 s - 2 s) = 18.07 in&sup3;/s = 4.69 gpm</td></tr>
+<tr><td>3</td><td>Option A: SCV flow rate</td><td>6.3 gpm. PASS: 6.3 gpm &ge; 4.69 gpm</td></tr>
+<tr><td>4</td><td>F23: minimum D_p</td><td>1,084 in&sup3;/min / (540 rev/min x 0.95) = 2.11 in&sup3;/rev</td></tr>
+<tr><td>5</td><td>F24: selected pump</td><td>Bailey 253558, 3.41 in&sup3;/rev; catalog 7.4 gpm = 28.49 in&sup3;/s</td></tr>
+<tr><td>6</td><td>Relief valve setting</td><td>1,000 psi</td></tr>
+<tr><td>7</td><td>F25: input power</td><td>1,000 psi x 28.49 in&sup3;/s / 0.85 = 33,520 in-lbf/s = 5.08 hp. PASS: 5.08 hp &lt; 27.7 hp</td></tr>
+<tr><td>8</td><td>F26: PTO torque</td><td>&omega; = 56.55 rad/s; &tau; = 593 in-lbf</td></tr>
+<tr><td>9</td><td>F27: reservoir</td><td>7.4 gal to 22 gal; selected 10 gal</td></tr>
+<tr><td>10</td><td>Filter</td><td>10 micron, rated for 15 gpm (largest return flow 12.1 gpm)</td></tr>
+</tbody></table><h2 id="hoses">Hose table</h2>
+<p>F28: d_hose = &radic;(4 Q / (&pi; v_max)). We size each hose for Option B, which has the larger flow rate.</p>
+<table class="calc"><caption>Table V3. Group 1 Hose table</caption><thead><tr><th>Line</th><th>Q, in&sup3;/s</th><th>v_max, in/s</th><th>d_hose, in</th><th>Dash size</th></tr></thead><tbody>
+<tr><td>Pressure line</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
+<tr><td>Cap-end hoses</td><td>46.8</td><td>180</td><td>0.575</td><td>-10</td></tr>
+<tr><td>Rod-end hoses</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
+<tr><td>Return line</td><td>46.8</td><td>120</td><td>0.705</td><td>-12</td></tr>
+<tr><td>Suction line</td><td>28.49</td><td>48</td><td>0.869</td><td>-16</td></tr>
+</tbody></table>
+<p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p></details>
+<h2 id="pickplace">Pick and place</h2>
+<p>Select the button: the twin puts three cantaloupes at random places in the pick width (at least 14 in apart) and moves each one to the bin. It shows the path: up from the fruit, along the top of the reach band, over the bin rim, and down to the drop point. Watch the status line in the twin for each step.</p>
+<p>The demonstration moves the tip along a safe path. It does not show the valve timing. For the cycle time, use F17 and F18 (Cylinder card row 13): 6.46 s.</p>
+<p>The twin also has its own automatic mode (panel step 4, Run the arm: Camera auto, then Pick all). That mode uses the camera and the valve control, as the real rig does. It is optional for your project. It can stop with a message such as "Hunting around the target"; the message tells you which setting to change.</p>
+<div class="bar"><button type="button" id="demo">Place 3 fruits at random and pick them</button><button type="button" id="stop">Stop</button></div></section>
   </main>
   <section class="twin" aria-label="Live digital twin">
     <iframe id="tw" src="../twins/pick-place-twin.html?v=20261102b" title="Lab and tractor twin with the Group 1 values"></iframe>
