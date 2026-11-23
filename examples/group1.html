@@ -110,7 +110,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
       <p>This example shows the method and the format. Your crop, tractor and numbers are different. If you copy its numbers, your answers are wrong.</p>
     </div>
     <div class="bar"><button type="button" id="reset">Load the Group 1 values again</button><button type="button" id="front">Front view (as Figure 1)</button><span id="status" role="status">Loading the twin...</span></div>
-<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><button type="button" role="tab" class="tab" data-tab="hw2" id="t-hw2">HW 2</button><button type="button" role="tab" class="tab" data-tab="hw3" id="t-hw3">HW 3</button><span class="tab later" title="Released at the start of week 4">Report: week 4</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" class="tab" data-tab="path" id="t-path">Path</button><button type="button" role="tab" class="tab" data-tab="ref" id="t-ref">Reference</button><button type="button" role="tab" class="tab" data-tab="hw1" id="t-hw1">HW 1</button><button type="button" role="tab" class="tab" data-tab="hw2" id="t-hw2">HW 2</button><button type="button" role="tab" class="tab" data-tab="hw3" id="t-hw3">HW 3</button><button type="button" role="tab" class="tab" data-tab="report" id="t-report">Report</button></div>
 <section class="tabpane" role="tabpanel" id="p-path" data-tab="path"><h2 id="figure">Figure 1 and the twin</h2>
 <p>Figure 1 shows the Group 1 arm, seen from behind the tractor. The twin starts in the same front view, with the same values. The dashed cylinders in Figure 1 show the tip at the far pick point; the solid cylinders show the tip at the drop point. In step 3 below, select 15 in or 55 in to move the twin tip to these points. At 55 in, the cantaloupe is in the gripper, above the bin.</p>
 <p>Three things are in the twin but not in Figure 1. The frame holds the bar; its legs stand outside the pick width and off the arm plane, so the arm can pass them. The camera is on its mast above the bar. The shaded band shows all tip positions that the cylinders can reach; its color shows the cylinder force for each pound of load. The band stops above the ground because the fingers must stay above the ground.</p>
@@ -162,9 +162,9 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <li><strong>Pick the hoses.</strong> A hose that is too thin makes the oil run too fast.
 <ol type="a">
 <li><strong>Largest flow in each hose:</strong> the pump flow, 28.49 in³/s; but a cylinder that pulls in pushes 28.49 x 3.142 / 1.914 = <strong>46.8 in³/s</strong> out of its big side.</li>
-<li><strong>Speed limits for oil:</strong> 180 in/s (pressure and cylinder hoses), 120 in/s (return), 48 in/s (suction).</li>
-<li><strong>Smallest inside diameter:</strong> d = √(4 x flow / (π x speed limit)): 0.449 in, 0.575 in, 0.705 in and 0.869 in.</li>
-<li><strong>Round up to a hose size</strong> (the dash number is the inside diameter in sixteenths of an inch): <strong>-8</strong>, <strong>-10</strong>, <strong>-12</strong> and <strong>-16</strong>.</li>
+<li><strong>Speed limits for oil:</strong> 240 in/s (pressure and cylinder hoses), 120 in/s (return), 48 in/s (suction).</li>
+<li><strong>Smallest inside diameter:</strong> d = √(4 x flow / (π x speed limit)): pressure line 0.389 in; cylinder hoses 0.498 in (all four the same size, for the cap-end flow 46.8 in³/s); return line, DCV to tank, 0.705 in; suction line 0.869 in.</li>
+<li><strong>Round up to a hose size</strong> (the dash number is the inside diameter in sixteenths of an inch): <strong>-8</strong> (pressure line and cylinder hoses), <strong>-12</strong> (return) and <strong>-16</strong> (suction).</li>
 <li><strong>Pressure rating:</strong> at least 2,347 psi (not the suction hose).</li>
 </ol></li>
 <li><strong>Check the tractor.</strong>
@@ -192,7 +192,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <li><strong>Bin position:</strong> use the nearest bin inner rim distance <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mi>b</mi></msub><annotation encoding="application/x-tex">x_b</annotation></semantics></math> where the twin shows Rim clearance = OK. The readout checks the front of the fruit, so its tip height can be less than <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>d</mi></msub><annotation encoding="application/x-tex">y_d</annotation></semantics></math>.</li>
 <li><strong>Bin on a cart:</strong> the bin rides on a low cart beside the row. Rim height = cart deck height + bin height (for example, a 24 in bin on a 12 in deck = 36 in).</li>
 <li><strong>Bin width:</strong> 16 in. The drop point is at the center of the bin: the inner rim distance plus 8 in.</li>
-<li><strong>Hose oil velocity, maximum:</strong> pressure line and cylinder hoses 15 ft/s (180 in/s); return line 10 ft/s (120 in/s); suction line 4 ft/s (48 in/s).</li>
+<li><strong>Hose oil velocity, maximum:</strong> pressure line and cylinder hoses 20 ft/s (240 in/s); return line 10 ft/s (120 in/s); suction line 4 ft/s (48 in/s).</li>
 <li><strong>Week 1 twin values:</strong> keep the tractor start bore, rod and valves. Set <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mrow><mi>m</mi><mi>i</mi><mi>n</mi></mrow></msub><mo>=</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">L_{min} = S</annotation></semantics></math> + 10 in (F6). Enter <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mrow><mi>r</mi><mi>e</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">p_{relief}</annotation></semantics></math> and the SCV flow rate from your data card.</li>
 </ul>
 <h2 id="symbols-terms-and-acronyms">Symbols, terms and acronyms</h2>
@@ -379,7 +379,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr class="even">
 <td>Dual counterbalance valve</td>
 <td>-</td>
-<td>Two counterbalance valves in one body, one for each port. Use it when the force in a cylinder changes from pull to push in the work path.</td>
+<td>Two counterbalance valves in one body, one for each port. Use one on each cylinder: it holds the load in both directions.</td>
 </tr>
 <tr class="odd">
 <td>Pilot ratio</td>
@@ -533,7 +533,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <tr class="even">
 <td>Largest pull and push in the work path</td>
 <td>After Show worst point.</td>
-<td>Cylinder 1 in the work path and Cylinder 2 in the work path. If the line says "The force changes sign", the cylinder needs a dual counterbalance valve.</td>
+<td>Cylinder 1 in the work path and Cylinder 2 in the work path. Use the larger of the two forces for the valve setting (F14).</td>
 <td>Cylinder card rows 1 and 2; F14 for each end</td>
 </tr>
 <tr class="odd">
@@ -745,7 +745,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </tr>
 <tr class="odd">
 <td>F14</td>
-<td>Holding pressure: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>h</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p_h = \lvert T \rvert / A</annotation></semantics></math>. Valve setting: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>s</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mn>1.3</mn><mo>×</mo><msub><mi>p</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">p_{set} = 1.3 \times p_h</annotation></semantics></math> (or the catalog minimum, if it is higher)</td>
+<td>Holding pressure: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mi>h</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">|</mo><mi>T</mi><mo stretchy="false" form="postfix">|</mo><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">p_h = \lvert T \rvert / A</annotation></semantics></math>, with the largest force of the cylinder (twin, not doubled) and the area of the end that holds it (pull: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>r</mi></msub><annotation encoding="application/x-tex">A_r</annotation></semantics></math>; push: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>c</mi></msub><annotation encoding="application/x-tex">A_c</annotation></semantics></math>). Valve setting: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>s</mi><mi>e</mi><mi>t</mi></mrow></msub><mo>=</mo><mn>1.3</mn><mo>×</mo><msub><mi>p</mi><mi>h</mi></msub></mrow><annotation encoding="application/x-tex">p_{set} = 1.3 \times p_h</annotation></semantics></math>, or the catalog minimum if it is higher. One setting for each cylinder.</td>
 <td>psi</td>
 </tr>
 <tr class="even">
@@ -833,7 +833,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </tr>
 <tr class="even">
 <td>F28</td>
-<td>Hose inside diameter: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><msqrt><mrow><mn>4</mn><mi>Q</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">d_{hose} = \sqrt{4 Q / (\pi v_{max})}</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> in in<sup>3</sup>/s. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">v_{max}</annotation></semantics></math> = 180 in/s (pressure line and cylinder hoses), 120 in/s (return line), 48 in/s (suction line)</td>
+<td>Hose inside diameter: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi>h</mi><mi>o</mi><mi>s</mi><mi>e</mi></mrow></msub><mo>=</mo><msqrt><mrow><mn>4</mn><mi>Q</mi><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>π</mi><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">d_{hose} = \sqrt{4 Q / (\pi v_{max})}</annotation></semantics></math>, with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math> in in<sup>3</sup>/s. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>v</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">v_{max}</annotation></semantics></math> = 240 in/s (pressure line and cylinder hoses), 120 in/s (return line), 48 in/s (suction line)</td>
 <td>in</td>
 </tr>
 <tr class="odd">
@@ -1433,38 +1433,30 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </thead>
 <tbody>
 <tr class="odd">
-<td>Pressure line</td>
+<td>Pressure line (pump to DCV)</td>
 <td>28.49</td>
-<td>180</td>
-<td>√(4 x 28.49 / (π x 180)) = 0.449</td>
+<td>240</td>
+<td>√(4 x 28.49 / (π x 240)) = 0.389</td>
 <td>-8 (0.50 in)</td>
 <td>at least 2,347 psi</td>
 </tr>
 <tr class="even">
-<td>Cap-end hoses (2)</td>
+<td>Cylinder hoses (4), same size for both ends</td>
 <td>46.8</td>
-<td>180</td>
-<td>√(4 x 46.8 / (π x 180)) = 0.575</td>
-<td>-10 (0.625 in)</td>
+<td>240</td>
+<td>√(4 x 46.8 / (π x 240)) = 0.498</td>
+<td>-8 (0.50 in)</td>
 <td>at least 2,347 psi</td>
 </tr>
 <tr class="odd">
-<td>Rod-end hoses (2)</td>
-<td>28.49</td>
-<td>180</td>
-<td>0.449</td>
-<td>-8 (0.50 in)</td>
-<td>at least 2,347 psi</td>
-</tr>
-<tr class="even">
-<td>Return line</td>
+<td>Return line (DCV to tank)</td>
 <td>46.8</td>
 <td>120</td>
 <td>√(4 x 46.8 / (π x 120)) = 0.705</td>
 <td>-12 (0.75 in)</td>
 <td>at least 2,347 psi</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Suction line</td>
 <td>28.49</td>
 <td>48</td>
@@ -1570,7 +1562,7 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 <td>Dealer</td>
 </tr>
 <tr class="even">
-<td>Hoses: 2 x -10 (cap ends), 2 x -8 (rod ends), with couplers</td>
+<td>Hoses: 4 x -8 (cylinder hoses, same size at both ends), with couplers</td>
 <td>To select</td>
 <td>4</td>
 <td>$60 (estimate)</td>
@@ -1739,21 +1731,21 @@ button.lk:focus-visible{ box-shadow:0 0 0 2px var(--markline); }
 </tbody></table><h2 id="hoses">Hose table</h2>
 <p>F28: d_hose = &radic;(4 Q / (&pi; v_max)). We size each hose for Option B, which has the larger flow rate.</p>
 <table class="calc"><caption>Table V3. Group 1 Hose table</caption><thead><tr><th>Line</th><th>Q, in&sup3;/s</th><th>v_max, in/s</th><th>d_hose, in</th><th>Dash size</th></tr></thead><tbody>
-<tr><td>Pressure line</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
-<tr><td>Cap-end hoses</td><td>46.8</td><td>180</td><td>0.575</td><td>-10</td></tr>
-<tr><td>Rod-end hoses</td><td>28.49</td><td>180</td><td>0.449</td><td>-8</td></tr>
-<tr><td>Return line</td><td>46.8</td><td>120</td><td>0.705</td><td>-12</td></tr>
+<tr><td>Pressure line (pump to DCV)</td><td>28.49</td><td>240</td><td>0.389</td><td>-8</td></tr>
+<tr><td>Cylinder hoses (4)</td><td>46.8</td><td>240</td><td>0.498</td><td>-8</td></tr>
+<tr><td>Return line (DCV to tank)</td><td>46.8</td><td>120</td><td>0.705</td><td>-12</td></tr>
 <tr><td>Suction line</td><td>28.49</td><td>48</td><td>0.869</td><td>-16</td></tr>
 </tbody></table>
-<p>The cap-end hoses are one size larger: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end.</p></details>
+<p>Each cylinder hose carries pressure oil one way and return oil the other, so all four are the same size. They are sized for the largest flow: a retracting cylinder sends A_c / A_r = 1.64 times the pump flow out of its cap end (46.8 in&sup3;/s).</p></details>
 <h2 id="pickplace">Pick and place</h2>
 <p>Select the button: the twin puts three cantaloupes at random places in the pick width (at least 14 in apart) and moves each one to the bin. It shows the path: up from the fruit, along the top of the reach band, over the bin rim, and down to the drop point. Watch the status line in the twin for each step.</p>
 <p>The demonstration moves the tip along a safe path. It does not show the valve timing. For the cycle time, use F17 and F18 (Cylinder card row 13): 6.46 s.</p>
 <p>The twin also has its own automatic mode (panel step 4, Run the arm: Camera auto, then Pick all). That mode uses the camera and the valve control, as the real rig does. It is optional for your project. It can stop with a message such as "Hunting around the target"; the message tells you which setting to change.</p>
 <div class="bar"><button type="button" id="demo">Place 3 fruits at random and pick them</button><button type="button" id="stop">Stop</button></div></section>
+<section class="tabpane" role="tabpanel" id="p-report" data-tab="report"><div class='how'><p><strong>The Group 1 final report.</strong> This is the report as a group submits it: the ten sections of the outline, in order, with every table and figure numbered and cited in the text. Use it as the model for the method and the format. Your crop, tractor, rim height and grip length give different numbers.</p><p><strong>Due: 11:00 am, Thursday, December 3, 2026.</strong> Canvas (report as PDF or Word, FluidSIM .ct files, design file), email (the report) and one printed copy in class. The Final Report Outline gives the details.</p><p><strong>Section order.</strong> This report uses the order of the Final Report Outline. The order of the assignment is also accepted, if every required item is in the report. Assignment section -> section in this report: Crop and tractor -> 1; Geometry and reach -> 2; Hand calculations -> 2 (forces), 3 (areas, pressures) and 4 (speeds, flow); Cylinder selection -> 3; Circuits -> 4; Option B power unit -> 5; Tractor checks -> 6; Parts list and cost -> 7; Recommendation -> 9; Appendices -> 10. The requirements check after the Summary shows where each of the ten design requirements is met.</p><p><a style='display:inline-block;padding:.4rem .8rem;margin:.2rem .4rem .2rem 0;border:1px solid var(--markline);border-radius:5px;background:var(--paper);color:var(--ink);font-weight:700;text-decoration:none' href='group1_report.pdf' target='_blank' rel='noopener'>Open the report (PDF)</a> <a style='display:inline-block;padding:.4rem .8rem;margin:.2rem .4rem .2rem 0;border:1px solid var(--markline);border-radius:5px;background:var(--paper);color:var(--ink);font-weight:700;text-decoration:none' href='group1_report.pdf' download>Download the PDF</a> <a style='display:inline-block;padding:.4rem .8rem;margin:.2rem .4rem .2rem 0;border:1px solid var(--markline);border-radius:5px;background:var(--paper);color:var(--ink);font-weight:700;text-decoration:none' href='Group1_design.html' download>Download the design file (Group1_design.html)</a></p><p class='small'>The design file is the twin file that the group submits with the report. Double-click it, then push Open this design in the twin: the twin opens with the Group 1 design.</p></div><h3>Where the forces in Section 2 come from</h3><ol><li>Enter the design in the twin Settings (Arm geometry, Cylinders and hydraulics, Load, Bin and pick width), with the catalog cylinder.</li><li>Push <strong>Show worst point</strong> (panel step 3).</li><li>Read the Readouts: worst point <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Worst point of the work path&quot;, &quot;worst&quot;: true}'>(54.5, 55.0) in</button>; cylinder 1 <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 1 at the worst point&quot;, &quot;worst&quot;: true}'>321.1 lb push</button>; cylinder 2 <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Cylinder 2 at the worst point&quot;, &quot;worst&quot;: true}'>329.9 lb pull</button>. These go in Table 4 of the report.</li><li>Check them by hand at that point (F20): the hand check in Section 2 gives the same forces.</li></ol><p>Other twin values in the report: bin inner rim distance <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Rim clearance over the inner rim&quot;, &quot;field&quot;: &quot;Bin inner rim distance (in)&quot;}'>46.5 in</button> (the nearest position with Rim clearance OK); length changes <button type="button" class="lk" data-tw='{&quot;readout&quot;: &quot;Length change, far pick point to drop point&quot;}'>+5.57 in and -15.86 in</button> (cycle time, Section 4).</p><div class='pdfwrap'><iframe src='group1_report.pdf#view=FitH' title='Group 1 final report (PDF)' style='width:100%;height:85vh;border:1px solid var(--line, #d3d9df);border-radius:6px'></iframe></div></section>
   </main>
   <section class="twin" aria-label="Live digital twin">
-    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261102b" title="Lab and tractor twin with the Group 1 values"></iframe>
+    <iframe id="tw" src="../twins/pick-place-twin.html?v=20261122" title="Lab and tractor twin with the Group 1 values"></iframe>
   </section>
 </div>
 <script>
