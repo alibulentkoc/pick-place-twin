@@ -122,6 +122,8 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 #circ text{ font-size:10px; fill:var(--muted); font-family:inherit; } #circ text.m{ fill:var(--ink); }
 #circ .coil{ cursor:pointer; } #circ .coil rect{ fill:var(--chip); stroke:var(--ink); stroke-width:1.2; } #circ .coil line{ stroke:var(--ink); stroke-width:1; }
 #circ .coil.on rect{ fill:var(--accent); stroke:var(--accent); }
+#circ .cbv.open rect{ fill:var(--accent); stroke:var(--accent); }
+#circ .cbv.hold rect{ stroke:var(--ok); stroke-width:2; }
 #circ [id^="vs"]{ transition:transform .15s ease; }
 #circ .mframe{ fill:#8a929c; } #circ .mbarrel{ fill:#c9ced4; stroke:var(--ink); stroke-width:1; }
 #circ .mrod{ stroke:var(--muted); stroke-width:3; stroke-linecap:round; } #circ .mpis{ stroke:var(--ink); stroke-width:2.5; }
@@ -333,6 +335,14 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 <circle id="mt" class="mjoint" r="3.5"/>
 <text id="ml0" text-anchor="end">Cyl 1</text><text id="ml1">Cyl 2</text>
 </g>
+<g id="cbvs">
+<path id="cbp0" class="sym dash" d=""/><path id="cbp1" class="sym dash" d=""/>
+<g id="cbv0A" class="cbv"><rect class="box" x="-7" y="-6" width="14" height="12"/><circle class="sym" cx="0" cy="2" r="2"/><path class="sym" d="M-4,-3 L0,0 L4,-3"/></g>
+<g id="cbv0B" class="cbv"><rect class="box" x="-7" y="-6" width="14" height="12"/><circle class="sym" cx="0" cy="2" r="2"/><path class="sym" d="M-4,-3 L0,0 L4,-3"/></g>
+<g id="cbv1A" class="cbv"><rect class="box" x="-7" y="-6" width="14" height="12"/><circle class="sym" cx="0" cy="2" r="2"/><path class="sym" d="M-4,-3 L0,0 L4,-3"/></g>
+<g id="cbv1B" class="cbv"><rect class="box" x="-7" y="-6" width="14" height="12"/><circle class="sym" cx="0" cy="2" r="2"/><path class="sym" d="M-4,-3 L0,0 L4,-3"/></g>
+<text id="cbl0" text-anchor="middle" style="display:none"></text><text id="cbl1" text-anchor="middle" style="display:none"></text>
+</g>
 <g transform="translate(0,36)">
 <path class="ln" id="ser" d="M92,194 V208 H242 V194"/>
 <path class="ln" id="v2t" d="M258,194 V300"/>
@@ -364,6 +374,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 </g>
 </svg>
       <div class="ckey"><span class="k kp"></span>Pressure flow <span class="k kr"></span>Return flow <span class="k ko"></span>No flow</div>
+      <p class="small">Small boxes at the cylinder ports: counterbalance valves (CBV), one on each cylinder port (dual valve), shown when Settings, Counterbalance valves, Fitted is checked. The dashed line is the cross pilot: each valve opens from the pressure in the other line. Green outline: holding the load; orange: open while the cylinder moves.</p>
       <p class="small">The cylinders are drawn as mounted on the rig and move with it. Press and hold a solenoid coil (the small boxes at each valve end) to shift that valve.</p>
       <div class="pump" id="pump"></div>
       </details>
@@ -2963,11 +2974,18 @@ document.getElementById('undoDesign').onclick = function(){
   var now = designValues(); applyDesign(bk.values); store(BACKUP_KEY, now);
   say('Previous values brought back (from ' + whenText(bk.when) + '). Push again to switch back.', 'ok');
 };
+// Save a file: inside a Claude artifact use its downloads capability (the frame blocks normal downloads); elsewhere a normal download
+var dlCap = null; try { if (window.claude && claude.use) claude.use('downloads').then(function(d){ dlCap = d; }).catch(function(){}); } catch (e) {}
+function designName(ext){ var gs = document.getElementById('grpSel'); return (gs && gs.value ? 'Group' + gs.value + '_design' : 'my-arm-design') + '.' + ext; }
+function saveFile(name, text, type, okMsg){
+  if (dlCap) { dlCap.save({ filename:name, data:text }).then(function(){ say(okMsg, 'ok'); }).catch(function(e){ var c = e && e.code; say(c === 'declined' ? 'Save cancelled.' : 'This view cannot save files (' + (c || 'unavailable') + '). Open the twin on GitHub Pages to download.', c === 'declined' ? 'warn' : 'bad'); }); return; }
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type:type }));
+  a.download = name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500); say(okMsg, 'ok');
+}
 document.getElementById('downloadDesign').onclick = function(){
   var data = JSON.stringify({ twin:'Two-cylinder pick-and-place', saved:new Date().toISOString(), values:designValues() }, null, 2);
-  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type:'application/json' }));
-  a.download = 'my-arm-design.json'; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
-  say('Design downloaded as my-arm-design.json (a data file). Open a file brings it back on any computer.', 'ok');
+  var nm = designName('json');
+  saveFile(nm, data, 'application/json', 'Design saved as ' + nm + ' (a data file). Open a file brings it back on any computer.');
 };
 // A design web page: double-click it to open the online twin with the values loaded; it also lists the values in the twin's order
 var TWIN_ONLINE = 'https://alibulentkoc.github.io/pick-place-twin/twins/pick-place-twin.html';
@@ -2989,9 +3007,8 @@ document.getElementById('downloadPage').onclick = function(){
     '<p><a class="go" href="' + url + '">Open this design in the twin</a></p>' +
     '<p>The link opens the online twin with all values below loaded (an internet connection is needed). In the twin, push Show worst point to check the design.</p>' +
     '<table>' + rows + '</table><p style="color:#4a5562;font-size:13px">Values in the order of the twin\'s Settings folders.</p></body></html>';
-  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([page], { type:'text/html' }));
-  a.download = 'my-arm-design.html'; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
-  say('Design downloaded as my-arm-design.html. Double-click it, then push Open this design in the twin.', 'ok');
+  var nm = designName('html');
+  saveFile(nm, page, 'text/html', 'Design saved as ' + nm + '. Double-click it, then push Open this design in the twin.');
 };
 document.getElementById('openDesignFile').onclick = function(){ document.getElementById('designFile').click(); };
 document.getElementById('designFile').onchange = function(ev){
@@ -3462,6 +3479,13 @@ function drawMech(){
     var cap = { x:Pv.x + ux * 8 + nx * w, y:Pv.y + uy * 8 + ny * w }, rod = { x:E.x - ux * 6 + nx * w, y:E.y - uy * 6 + ny * w };
     at('c' + i + 'A', 'd', 'M' + r1(cap.x) + ',' + r1(cap.y) + ' H' + lanes[i][0] + ' V196 H' + vp[i][0] + ' V206');
     at('c' + i + 'B', 'd', 'M' + r1(rod.x) + ',' + r1(rod.y) + ' H' + lanes[i][1] + ' V190 H' + vp[i][1] + ' V206');
+    // counterbalance valves sit on the ports (cap A, rod B); each is piloted from the other line (dashed)
+    var cA = { x:cap.x + (lanes[i][0] < cap.x ? -11 : 11), y:cap.y }, cB = { x:rod.x + (lanes[i][1] < rod.x ? -11 : 11), y:rod.y };
+    var showCB = !!P.cbOn;
+    ['A', 'B'].forEach(function(e){ var c = e === 'A' ? cA : cB, el = document.getElementById('cbv' + i + e); el.setAttribute('transform', 'translate(' + r1(c.x) + ',' + r1(c.y) + ')'); el.style.display = showCB ? '' : 'none'; });
+    at('cbp' + i, 'd', showCB ? 'M' + r1(cA.x) + ',' + r1(cA.y + 6) + ' L' + r1(cB.x) + ',' + r1(cB.y - 6) : '');
+    
+    at('cbl' + i, 'x', r1(cA.x)); at('cbl' + i, 'y', r1(cA.y - 9));
     var mid = { x:Pv.x + ux * bl * 0.5 + nx * 14, y:Pv.y + uy * bl * 0.5 + ny * 14 };
     at('ml' + i, 'x', r1(mid.x)); at('ml' + i, 'y', r1(mid.y + 3));
   }
@@ -3509,6 +3533,7 @@ function updateCircuit(){
       setLn(hi, 'p', !stall); setLn(lo, stall ? '' : 'r', !stall);
     } else { setLn(A, '', false); setLn(B, '', false); }
     document.getElementById('vs' + i).setAttribute('transform', 'translate(' + (v * 28) + ',0)');
+    ['A', 'B'].forEach(function(e){ var el = document.getElementById('cbv' + i + e); if (el) el.setAttribute('class', 'cbv' + (v !== 0 && !stall ? ' open' : ' hold')); });
     document.getElementById('cl' + i + 'a').setAttribute('class', 'coil' + (v > 0 ? ' on' : ''));
     document.getElementById('cl' + i + 'b').setAttribute('class', 'coil' + (v < 0 ? ' on' : ''));
   }
