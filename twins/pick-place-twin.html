@@ -30,7 +30,11 @@
 html{ scroll-padding-top:env(safe-area-inset-top,0px); height:100%; }
 body{ margin:0; height:100%; background:var(--panel); color:var(--ink);
   font-family:system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size:14px; line-height:1.45; }
-.app{ display:grid; grid-template-columns:minmax(0,1fr) 380px; height:100%; }
+.app{ display:grid; grid-template-columns:minmax(0,1fr) 6px var(--panelW,380px); height:100%; }
+.resizer{ cursor:col-resize; background:var(--line); touch-action:none; outline:none; }
+.resizer:hover,.resizer:focus-visible,.resizer.drag{ background:var(--accent); }
+.panel{ zoom:var(--pz,1); }
+.uirow .btn{ padding:4px 9px; font-size:13px; }
 .stage{ position:relative; background:var(--stage); min-height:0; overflow:hidden; }
 #gl{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; }
 .inset{ position:absolute; left:12px; bottom:12px; width:300px; height:200px; border:1px solid var(--line); border-radius:4px; pointer-events:none; }
@@ -149,6 +153,8 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 }
 @media (max-width: 860px){
   .app{ grid-template-columns:1fr; grid-template-rows:56vh auto; height:auto; }
+  .resizer{ display:none; }
+  .uirow .pw{ display:none; }
   body{ height:auto; }
   .stage{ height:56vh; }
   .panel{ border-left:0; border-top:1px solid var(--line); overflow:visible; }
@@ -160,7 +166,9 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
 /* Embedded in an example page: keep the 3D view and the panel side by side down to 600 px */
 @media (min-width: 600px){
   html.embedded body{ height:100%; }
-  html.embedded .app{ grid-template-columns:minmax(0,1fr) 340px; grid-template-rows:none; height:100%; }
+  html.embedded .app{ grid-template-columns:minmax(0,1fr) 6px var(--panelW,340px); grid-template-rows:none; height:100%; }
+  html.embedded .resizer{ display:block; }
+  html.embedded .uirow .pw{ display:inline-block; }
   html.embedded .stage{ height:auto; }
   html.embedded .panel{ border-left:1px solid var(--line); border-top:0; overflow-y:auto; }
 }
@@ -180,6 +188,7 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
       <div class="legnote">Shaded: where the tip can go. The lowest tip height is the gripper length + 0.5 in, so the fingers stay above the ground.</div>
     </div>
   </main>
+  <div class="resizer" id="resizer" role="separator" aria-orientation="vertical" aria-label="Panel width: drag, or use the left and right arrow keys" title="Drag to resize the panel. Double-click to reset." tabindex="0"></div>
   <aside class="panel">
     <header>
       <h1>Two-cylinder pick-and-place</h1>
@@ -193,6 +202,13 @@ select{ font:inherit; color:var(--ink); background:var(--panel); border:1px soli
           <select id="spd"><option value="1">1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option></select>
         </label>
         <button class="btn" id="resetBtn">Reset rig</button>
+      </div>
+      <div class="row tight uirow" style="margin-top:6px">
+        <span class="small" style="margin:0">Text</span>
+        <button class="btn" id="fsDown" title="Smaller text">A-</button><button class="btn" id="fsUp" title="Larger text">A+</button>
+        <span class="small pw" style="margin:0 0 0 6px">Panel</span>
+        <button class="btn pw" id="pwDown">Narrower</button><button class="btn pw" id="pwUp">Wider</button>
+        <button class="btn" id="uiReset" title="Default text size and panel width">Reset</button>
       </div>
       <div class="status" id="status">Steps 1 to 3 are required for the design project. Step 4 is optional.</div>
     </section>
@@ -3661,6 +3677,37 @@ resize();
 requestAnimationFrame(frame);
 })();
 
+</script>
+<script>
+// Panel layout: text size (zoom) and panel width; drag the bar between the view and the panel. Kept in this browser only.
+(function(){
+  var root = document.documentElement, KEY = 'twinLayout', st = { pz:1, pw:0 };
+  try { var j = JSON.parse(localStorage.getItem(KEY) || '{}'); if (j.pz) st.pz = j.pz; if (j.pw) st.pw = j.pw; } catch (e) {}
+  var panel = document.querySelector('.panel'), bar = document.getElementById('resizer');
+  function apply(save){
+    root.style.setProperty('--pz', st.pz);
+    if (st.pw) root.style.setProperty('--panelW', st.pw + 'px'); else root.style.removeProperty('--panelW');
+    if (save) try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+  }
+  function clampW(w){ return Math.round(Math.max(260, Math.min(window.innerWidth * 0.7, w))); }
+  function curW(){ return panel.getBoundingClientRect().width; }
+  function zoomBy(d){ st.pz = Math.round(Math.max(0.8, Math.min(1.6, st.pz + d)) * 10) / 10; apply(true); }
+  function widthBy(d){ st.pw = clampW(curW() + d); apply(true); }
+  document.getElementById('fsUp').onclick = function(){ zoomBy(0.1); };
+  document.getElementById('fsDown').onclick = function(){ zoomBy(-0.1); };
+  document.getElementById('pwUp').onclick = function(){ widthBy(60); };
+  document.getElementById('pwDown').onclick = function(){ widthBy(-60); };
+  document.getElementById('uiReset').onclick = function(){ st = { pz:1, pw:0 }; apply(true); };
+  bar.addEventListener('pointerdown', function(e){
+    e.preventDefault(); bar.setPointerCapture(e.pointerId); bar.classList.add('drag');
+    var move = function(ev){ st.pw = clampW(window.innerWidth - ev.clientX - 3); apply(false); };
+    var up = function(){ bar.classList.remove('drag'); bar.removeEventListener('pointermove', move); bar.removeEventListener('pointerup', up); bar.removeEventListener('pointercancel', up); apply(true); };
+    bar.addEventListener('pointermove', move); bar.addEventListener('pointerup', up); bar.addEventListener('pointercancel', up);
+  });
+  bar.addEventListener('dblclick', function(){ st.pw = 0; apply(true); });
+  bar.addEventListener('keydown', function(e){ if (e.key === 'ArrowLeft') { widthBy(20); e.preventDefault(); } else if (e.key === 'ArrowRight') { widthBy(-20); e.preventDefault(); } });
+  apply(false);
+})();
 </script>
 </body>
 </html>
